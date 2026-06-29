@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指定濫用防止医薬品 判定チェッカー</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .form-section, .result-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .result-card {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            margin-top: 20px;
+        }
+        .result-status {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .status-ng { background-color: #fee2e2; color: #991b1b; }
+        .status-warning { background-color: #fef3c7; color: #92400e; }
+        .status-ok { background-color: #dcfce3; color: #166534; }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #cbd5e1;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+        .script-box {
+            margin-top: 15px;
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-left: 4px solid #3b82f6;
+            border-radius: 0 4px 4px 0;
+        }
+        .script-box p { margin: 0; font-size: 0.95rem; }
+        .script-title { font-weight: bold; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-section">
+        <h2>入力パネル</h2>
+        
+        <div class="form-group">
+            <label>1. 薬の分類</label>
+            <select id="category">
+                <option value="7">かぜ薬・解熱鎮痛薬・鼻炎薬（基準: 7日分）</option>
+                <option value="5">その他・せき止め等（基準: 5日分）</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>2. 成人の「1日最大服用量」（錠/包）</label>
+            <input type="number" id="dailyDose" min="1" value="3">
+        </div>
+
+        <div class="form-group">
+            <label>3. パッケージ総量（錠/包）</label>
+            <input type="number" id="totalAmount" min="1" value="30">
+        </div>
+
+        <div class="form-group">
+            <label>4. お客様の年齢</label>
+            <select id="age">
+                <option value="under18">18歳未満（未成年）または疑わしい</option>
+                <option value="over18">明らかに18歳以上（成人）</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>5. 購入個数</label>
+            <select id="quantity">
+                <option value="single">1個のみ</option>
+                <option value="multiple">複数個（合算・他薬含む）</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="result-section">
+        <h2>判定結果</h2>
+        <div class="result-card" id="resultCard">
+            <div id="resultStatus" class="result-status status-ok">判定中...</div>
+            
+            <div class="info-row">
+                <span>算出日数:</span>
+                <span id="calcDays">-- 日分</span>
+            </div>
+            <div class="info-row">
+                <span>容量区分:</span>
+                <span id="volumeType">--</span>
+            </div>
+            
+            <div class="script-box" id="scriptBox">
+                <div class="script-title">お声がけスクリプト</div>
+                <p id="scriptText">--</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // 入力値の取得
+        const categoryLimit = parseInt(document.getElementById('category').value);
+        const dailyDose = parseFloat(document.getElementById('dailyDose').value) || 1;
+        const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 1;
+        const age = document.getElementById('age').value;
+        const quantity = document.getElementById('quantity').value;
+
+        // 容量の計算
+        const days = totalAmount / dailyDose;
+        const isLargeVolume = days > categoryLimit;
+        const volumeText = isLargeVolume ? "大容量" : "小容量";
+
+        // DOM要素
+        const statusEl = document.getElementById('resultStatus');
+        const calcDaysEl = document.getElementById('calcDays');
+        const volumeTypeEl = document.getElementById('volumeType');
+        const scriptTextEl = document.getElementById('scriptText');
+
+        // 表示の更新
+        calcDaysEl.textContent = `${days.toFixed(1)} 日分 (基準: ${categoryLimit}日)`;
+        volumeTypeEl.textContent = volumeText;
+
+        // ルール判定
+        if (age === "under18") {
+            if (isLargeVolume || quantity === "multiple") {
+                statusEl.textContent = "販売不可（法律違反）";
+                statusEl.className = "result-status status-ng";
+                scriptTextEl.innerHTML = "「申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量や複数個の販売が禁止されております。」<br><br>※販売をお断りし、必要に応じて相談窓口を案内してください。";
+            } else {
+                statusEl.textContent = "販売可（氏名確認必須）";
+                statusEl.className = "result-status status-warning";
+                scriptTextEl.innerHTML = "「ご提示ありがとうございます。国の定めに従いまして、ご購入者様のお名前をお伺い（またはご記入）してもよろしいでしょうか？」";
+            }
+        } else {
+            if (isLargeVolume || quantity === "multiple") {
+                statusEl.textContent = "販売可（購入理由の確認必須）";
+                statusEl.className = "result-status status-warning";
+                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><br>※正当な理由がない場合は販売不可。";
+            } else {
+                statusEl.textContent = "通常販売可能";
+                statusEl.className = "result-status status-ok";
+                scriptTextEl.innerHTML = "（特別な確認は不要ですが、頻繁に来店される等の違和感があればお声がけをしてください）";
+            }
+        }
+    }
+
+    // イベントリスナーの設定
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('change', calculate);
+        input.addEventListener('keyup', calculate);
+    });
+
+    // 初期計算
+    calculate();
+</script>
+
+</body>
+</html>
