@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>指定濫用防止医薬品 判定チェッカー</title>
+    <title>指定濫用防止医薬品 判定チェッカー v2</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
@@ -32,23 +32,38 @@
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 10px;
             margin-top: 0;
+            color: #1e293b;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         label {
             display: block;
             font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: #475569;
         }
         select, input[type="number"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
             font-size: 1rem;
             box-sizing: border-box;
+            background-color: #f8fafc;
+            transition: border-color 0.2s;
+        }
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background-color: #fff;
+        }
+        .med-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+            padding-left: 5px;
         }
         .result-card {
             padding: 20px;
@@ -61,58 +76,56 @@
             font-size: 1.4rem;
             font-weight: bold;
             margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 15px 10px;
+            border-radius: 6px;
             text-align: center;
         }
-        .status-ng { background-color: #fee2e2; color: #991b1b; }
-        .status-warning { background-color: #fef3c7; color: #92400e; }
-        .status-ok { background-color: #dcfce3; color: #166534; }
+        .status-ng { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .status-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .status-ok { background-color: #dcfce3; color: #166534; border: 1px solid #86efac; }
         
         .info-row {
             display: flex;
             justify-content: space-between;
             border-bottom: 1px dashed #cbd5e1;
-            padding: 8px 0;
-            font-size: 0.9rem;
+            padding: 10px 0;
+            font-size: 0.95rem;
+        }
+        .info-value {
+            font-weight: bold;
         }
         .script-box {
-            margin-top: 15px;
+            margin-top: 20px;
             background-color: #f1f5f9;
             padding: 15px;
             border-left: 4px solid #3b82f6;
             border-radius: 0 4px 4px 0;
         }
-        .script-box p { margin: 0; font-size: 0.95rem; }
-        .script-title { font-weight: bold; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; }
+        .script-box p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
+        .script-title { font-weight: bold; font-size: 0.85rem; color: #64748b; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="form-section">
-        <h2>入力パネル</h2>
+        <h2>レジ確認パネル</h2>
         
         <div class="form-group">
-            <label>1. 薬の分類</label>
-            <select id="category">
-                <option value="7">かぜ薬・解熱鎮痛薬・鼻炎薬（基準: 7日分）</option>
-                <option value="5">その他・せき止め等（基準: 5日分）</option>
+            <label>1. 対象商品を選ぶ</label>
+            <select id="medicine">
+                <!-- JavaScriptでマスタデータから生成されます -->
             </select>
+            <div id="medInfo" class="med-info">--</div>
         </div>
 
         <div class="form-group">
-            <label>2. 成人の「1日最大服用量」（錠/包）</label>
-            <input type="number" id="dailyDose" min="1" value="3">
+            <label>2. パッケージの総量（錠・包・カプセル）</label>
+            <input type="number" id="totalAmount" min="1" value="16" placeholder="例: 16">
         </div>
 
         <div class="form-group">
-            <label>3. パッケージ総量（錠/包）</label>
-            <input type="number" id="totalAmount" min="1" value="30">
-        </div>
-
-        <div class="form-group">
-            <label>4. お客様の年齢</label>
+            <label>3. お客様の年齢</label>
             <select id="age">
                 <option value="under18">18歳未満（未成年）または疑わしい</option>
                 <option value="over18">明らかに18歳以上（成人）</option>
@@ -120,10 +133,10 @@
         </div>
 
         <div class="form-group">
-            <label>5. 購入個数</label>
+            <label>4. 購入個数（同一・他薬合算）</label>
             <select id="quantity">
                 <option value="single">1個のみ</option>
-                <option value="multiple">複数個（合算・他薬含む）</option>
+                <option value="multiple">複数個（合算して2個以上）</option>
             </select>
         </div>
     </div>
@@ -134,16 +147,16 @@
             <div id="resultStatus" class="result-status status-ok">判定中...</div>
             
             <div class="info-row">
-                <span>算出日数:</span>
-                <span id="calcDays">-- 日分</span>
+                <span>計算された日数:</span>
+                <span id="calcDays" class="info-value">-- 日分</span>
             </div>
             <div class="info-row">
-                <span>容量区分:</span>
-                <span id="volumeType">--</span>
+                <span>法律上の容量区分:</span>
+                <span id="volumeType" class="info-value">--</span>
             </div>
             
             <div class="script-box" id="scriptBox">
-                <div class="script-title">お声がけスクリプト</div>
+                <div class="script-title">スタッフお声がけスクリプト</div>
                 <p id="scriptText">--</p>
             </div>
         </div>
@@ -151,17 +164,54 @@
 </div>
 
 <script>
+    // --- 【マスタデータ】 ---
+    // 今後新しい薬が増えたら、ここに追記するだけでアプリが更新されます
+    const medicineMaster = {
+        "med_01": { name: "アネトンせき止め錠", categoryLimit: 5, dailyDose: 12, type: "せき止め" },
+        "med_02": { name: "クールワンせき止めGX", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
+        "med_03": { name: "パブロンゴールドA（錠）", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
+        "med_04": { name: "パイロンPL顆粒", categoryLimit: 7, dailyDose: 3, type: "風邪薬" },
+        "med_05": { name: "ベンザブロックLカプレット", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "med_06": { name: "メジコンせき止め錠Pro", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
+        "med_07": { name: "ロキソニン総合かぜ薬", categoryLimit: 7, dailyDose: 6, type: "風邪薬" }
+    };
+
+    // プルダウンの初期化
+    const medSelect = document.getElementById('medicine');
+    for (const [key, data] of Object.entries(medicineMaster)) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = data.name;
+        medSelect.appendChild(option);
+    }
+
     function calculate() {
+        // 選択された薬のデータを取得
+        const selectedMedKey = medSelect.value;
+        const medData = medicineMaster[selectedMedKey];
+        
+        // 画面に薬の裏側情報を表示
+        document.getElementById('medInfo').textContent = 
+            `※裏側データ設定値: ${medData.type}（基準${medData.categoryLimit}日分） / 成人1日量: ${medData.dailyDose}`;
+
         // 入力値の取得
-        const categoryLimit = parseInt(document.getElementById('category').value);
-        const dailyDose = parseFloat(document.getElementById('dailyDose').value) || 1;
-        const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 1;
+        const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
         const age = document.getElementById('age').value;
         const quantity = document.getElementById('quantity').value;
 
-        // 容量の計算
-        const days = totalAmount / dailyDose;
-        const isLargeVolume = days > categoryLimit;
+        // エラーハンドリング（未入力時）
+        if (totalAmount <= 0) {
+            document.getElementById('resultStatus').textContent = "総量を入力してください";
+            document.getElementById('resultStatus').className = "result-status";
+            document.getElementById('calcDays').textContent = "--";
+            document.getElementById('volumeType').textContent = "--";
+            document.getElementById('scriptText').textContent = "--";
+            return;
+        }
+
+        // 容量の計算 (日数 = パッケージ総量 ÷ 1日最大量)
+        const days = totalAmount / medData.dailyDose;
+        const isLargeVolume = days > medData.categoryLimit;
         const volumeText = isLargeVolume ? "大容量" : "小容量";
 
         // DOM要素
@@ -171,7 +221,7 @@
         const scriptTextEl = document.getElementById('scriptText');
 
         // 表示の更新
-        calcDaysEl.textContent = `${days.toFixed(1)} 日分 (基準: ${categoryLimit}日)`;
+        calcDaysEl.textContent = `${days.toFixed(1)} 日分 (上限: ${medData.categoryLimit}日)`;
         volumeTypeEl.textContent = volumeText;
 
         // ルール判定
@@ -179,7 +229,7 @@
             if (isLargeVolume || quantity === "multiple") {
                 statusEl.textContent = "販売不可（法律違反）";
                 statusEl.className = "result-status status-ng";
-                scriptTextEl.innerHTML = "「申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量や複数個の販売が禁止されております。」<br><br>※販売をお断りし、必要に応じて相談窓口を案内してください。";
+                scriptTextEl.innerHTML = "「申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量や複数個の販売が禁止されております。」<br><br><span style='color:#dc2626; font-size:0.85rem;'>※販売をお断りし、必要に応じて相談窓口（まもろうよこころ等）を案内してください。</span>";
             } else {
                 statusEl.textContent = "販売可（氏名確認必須）";
                 statusEl.className = "result-status status-warning";
@@ -189,7 +239,7 @@
             if (isLargeVolume || quantity === "multiple") {
                 statusEl.textContent = "販売可（購入理由の確認必須）";
                 statusEl.className = "result-status status-warning";
-                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><br>※正当な理由がない場合は販売不可。";
+                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><br><span style='color:#b45309; font-size:0.85rem;'>※『家族で使う』等の正当な理由がない場合は販売不可。</span>";
             } else {
                 statusEl.textContent = "通常販売可能";
                 statusEl.className = "result-status status-ok";
