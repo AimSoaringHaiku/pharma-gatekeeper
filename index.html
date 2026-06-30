@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>指定濫用防止医薬品 判定チェッカー v2.2</title>
+    <title>指定濫用防止医薬品 判定チェッカー</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,108 +19,63 @@
             border: 1px solid #c8c6c4;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+        /* エクセル風ヘッダー */
         .header {
-            background-color: #107c41; /* エクセル風のグリーン */
+            background-color: #107c41;
             color: white;
             padding: 10px 15px;
             font-size: 1.1rem;
             font-weight: bold;
         }
-        .filter-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        .filter-table { width: 100%; border-collapse: collapse; }
         .filter-table th, .filter-table td {
             border-bottom: 1px solid #e1dfdd;
             padding: 10px 15px;
             text-align: left;
             font-size: 0.95rem;
         }
-        .filter-table th {
-            background-color: #f3f2f1;
-            width: 35%;
-            font-weight: normal;
-            color: #605e5c;
-            border-right: 1px solid #e1dfdd;
-        }
-        select, input[type="number"] {
+        .filter-table th { background-color: #f3f2f1; width: 35%; border-right: 1px solid #e1dfdd; }
+        
+        /* 参照資料テーブル（エクセル風） */
+        .doc-table {
             width: 100%;
-            padding: 6px 10px;
-            border: 1px solid #8a8886;
-            border-radius: 2px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            background-color: #ffffff;
-        }
-        select:focus, input[type="number"]:focus {
-            outline: 1px solid #107c41;
-            border-color: #107c41;
-        }
-        .med-info {
+            border-collapse: collapse;
+            margin-top: 20px;
             font-size: 0.85rem;
-            color: #d83b01;
-            margin-top: 6px;
-            font-weight: bold;
         }
-        .note-text {
-            font-size: 0.8rem;
-            color: #605e5c;
-            margin-top: 8px;
-            line-height: 1.4;
-            background-color: #f3f2f1;
+        .doc-table th {
+            background-color: #dff6dd;
+            color: #107c41;
             padding: 8px;
-            border-radius: 4px;
-            border-left: 3px solid #107c41;
-        }
-        .result-section {
-            padding: 20px;
-            background-color: #faf9f8;
-            border-top: 2px solid #107c41;
-        }
-        .result-status {
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 12px;
+            border: 1px solid #c8c6c4;
             text-align: center;
-            border: 1px solid transparent;
-            margin-bottom: 15px;
         }
+        .doc-table td {
+            padding: 8px;
+            border: 1px solid #c8c6c4;
+        }
+        .doc-table a { color: #005a9e; text-decoration: none; font-weight: bold; }
+        .doc-table a:hover { text-decoration: underline; }
+
+        /* その他UI部品は維持 */
+        .med-info { font-size: 0.85rem; color: #d83b01; margin-top: 6px; font-weight: bold; }
+        .note-text { font-size: 0.8rem; color: #605e5c; margin-top: 8px; background-color: #f3f2f1; padding: 8px; border-radius: 4px; border-left: 3px solid #107c41; }
+        .result-section { padding: 20px; background-color: #faf9f8; border-top: 2px solid #107c41; }
+        .result-status { font-size: 1.2rem; font-weight: bold; padding: 12px; text-align: center; margin-bottom: 15px; border: 1px solid transparent; }
         .status-ng { background-color: #fde7e9; color: #a4262c; border-color: #a4262c; }
         .status-warning { background-color: #fff4ce; color: #797775; border-color: #d83b01; }
         .status-ok { background-color: #dff6dd; color: #107c41; border-color: #107c41; }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed #c8c6c4;
-            padding: 8px 0;
-            font-size: 0.95rem;
-        }
-        .info-value {
-            font-weight: bold;
-        }
-        .script-box {
-            margin-top: 15px;
-            background-color: #ffffff;
-            border: 1px solid #c8c6c4;
-            padding: 15px;
-            border-left: 4px solid #107c41;
-        }
-        .script-title {
-            font-weight: bold;
-            font-size: 0.85rem;
-            color: #107c41;
-            margin-bottom: 8px;
-        }
+        .info-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #c8c6c4; padding: 8px 0; font-size: 0.95rem; }
+        .info-value { font-weight: bold; }
+        .script-box { margin-top: 15px; background-color: #ffffff; border: 1px solid #c8c6c4; padding: 15px; border-left: 4px solid #107c41; }
+        .script-title { font-weight: bold; font-size: 0.85rem; color: #107c41; margin-bottom: 8px; }
         .script-box p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        指定濫用防止医薬品 判定フィルター
-    </div>
+    <div class="header">指定濫用防止医薬品 判定フィルター</div>
     
     <table class="filter-table">
         <tr>
@@ -130,31 +85,29 @@
                 <div id="medInfo" class="med-info">--</div>
                 <div class="note-text">
                     ※15歳未満の用量が設定されている場合でも、日数計算は「成人の1日最大服用量」を基準とします。<br>
-                    ※厚労省通知により、用法用量に「適宜増減」とあっても「認められている最大の用法・用量（最大量）」を基準として計算します。
+                    ※適宜増減等の記載があっても「認められている最大量」で計算するのがルールです。
                 </div>
             </td>
         </tr>
         <tr>
-            <th>2. 包装内数量（パッケージ総量）</th>
-            <td>
-                <input type="number" id="totalAmount" min="1" value="16" placeholder="例: 16">
-            </td>
+            <th>2. 包装内数量</th>
+            <td><input type="number" id="totalAmount" min="1" value="16"></td>
         </tr>
         <tr>
             <th>3. お客様の年齢</th>
             <td>
                 <select id="age">
-                    <option value="under18">18歳未満（未成年）または疑わしい</option>
-                    <option value="over18">明らかに18歳以上（成人）</option>
+                    <option value="under18">18歳未満（未成年）</option>
+                    <option value="over18">18歳以上（成人）</option>
                 </select>
             </td>
         </tr>
         <tr>
-            <th>4. 購入個数（同一・他薬合算）</th>
+            <th>4. 購入個数</th>
             <td>
                 <select id="quantity">
                     <option value="single">1個のみ</option>
-                    <option value="multiple">複数個（合算して2個以上）</option>
+                    <option value="multiple">複数個</option>
                 </select>
             </td>
         </tr>
@@ -162,25 +115,30 @@
 
     <div class="result-section">
         <div id="resultStatus" class="result-status status-ok">判定中...</div>
-        
-        <div class="info-row">
-            <span>計算された日数:</span>
-            <span id="calcDays" class="info-value">-- 日分</span>
-        </div>
-        <div class="info-row">
-            <span>法律上の容量区分:</span>
-            <span id="volumeType" class="info-value">--</span>
-        </div>
-        
+        <div class="info-row"><span>一箱の消費日数:</span><span id="calcDays" class="info-value">--</span></div>
+        <div class="info-row"><span>容量区分:</span><span id="volumeType" class="info-value">--</span></div>
         <div class="script-box" id="scriptBox">
             <div class="script-title">スタッフお声がけスクリプト</div>
             <p id="scriptText">--</p>
         </div>
     </div>
+
+    <!-- リファレンス・エクセル風資料集 -->
+    <div style="padding: 20px;">
+        <h2>参照資料・マニュアル（即時確認用）</h2>
+        <table class="doc-table">
+            <tr><th>カテゴリ</th><th>資料名</th><th>PDFリンク</th></tr>
+            <tr><td>啓発(中高生)</td><td>薬のオーバードーズって何だろう</td><td><a href="https://www.mhlw.go.jp/content/001405036.pdf" target="_blank">閲覧</a></td></tr>
+            <tr><td>啓発(小学生)</td><td>薬のオーバードーズって何だろう</td><td><a href="https://www.mhlw.go.jp/content/001405040.pdf" target="_blank">閲覧</a></td></tr>
+            <tr><td>岡山県薬</td><td>STOP！オーバードーズ</td><td><a href="https://www.opa.or.jp/resources/link/file.php?uid=16516_6a0515533e18b" target="_blank">閲覧</a></td></tr>
+            <tr><td>岡山県薬</td><td>オーバードーズは知らないうちに？</td><td><a href="https://www.opa.or.jp/resources/link/file.php?uid=70985_6614d0a4d6ce0" target="_blank">閲覧</a></td></tr>
+            <tr><td>医療者対応</td><td>ゲートキーパー対応マニュアル</td><td><a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank">閲覧</a></td></tr>
+            <tr><td>法的資料</td><td>薬機法改正の要点(令和7年)</td><td><a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank">閲覧</a></td></tr>
+        </table>
+    </div>
 </div>
 
 <script>
-    // --- 【マスタデータ】 ---
     const medicineMaster = {
         "med_01": { name: "アネトンせき止め錠", categoryLimit: 5, dailyDose: 12, type: "せき止め" },
         "med_02": { name: "クールワンせき止めGX", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
@@ -191,7 +149,6 @@
         "med_07": { name: "ロキソニン総合かぜ薬", categoryLimit: 7, dailyDose: 6, type: "風邪薬" }
     };
 
-    // プルダウンの初期化
     const medSelect = document.getElementById('medicine');
     for (const [key, data] of Object.entries(medicineMaster)) {
         const option = document.createElement('option');
@@ -201,78 +158,40 @@
     }
 
     function calculate() {
-        // 選択された薬のデータを取得
-        const selectedMedKey = medSelect.value;
-        const medData = medicineMaster[selectedMedKey];
-        
-        // 画面に薬の裏側情報を表示（適宜増減ではなく法律上の最大量であることを明記）
-        document.getElementById('medInfo').textContent = 
-            `※ 1日最大服用量（成人・15歳以上）: ${medData.dailyDose} 錠/包 （基準: ${medData.type} ${medData.categoryLimit}日分）`;
-
-        // 入力値の取得
+        const medData = medicineMaster[medSelect.value];
         const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
         const age = document.getElementById('age').value;
         const quantity = document.getElementById('quantity').value;
-
-        // エラーハンドリング（未入力時）
-        if (totalAmount <= 0) {
-            document.getElementById('resultStatus').textContent = "包装内数量を入力してください";
-            document.getElementById('resultStatus').className = "result-status";
-            document.getElementById('calcDays').textContent = "--";
-            document.getElementById('volumeType').textContent = "--";
-            document.getElementById('scriptText').textContent = "--";
-            return;
-        }
-
-        // 容量の計算 (日数 = 包装内数量 ÷ 1日最大量)
         const days = totalAmount / medData.dailyDose;
         const isLargeVolume = days > medData.categoryLimit;
-        const volumeText = isLargeVolume ? "大容量" : "小容量";
 
-        // DOM要素
-        const statusEl = document.getElementById('resultStatus');
-        const calcDaysEl = document.getElementById('calcDays');
-        const volumeTypeEl = document.getElementById('volumeType');
-        const scriptTextEl = document.getElementById('scriptText');
+        document.getElementById('calcDays').textContent = `${days.toFixed(1)} 日分 (上限: ${medData.categoryLimit}日)`;
+        document.getElementById('volumeType').textContent = isLargeVolume ? "大容量" : "小容量";
 
-        // 表示の更新
-        calcDaysEl.textContent = `${days.toFixed(1)} 日分 (上限: ${medData.categoryLimit}日)`;
-        volumeTypeEl.textContent = volumeText;
-
-        // ルール判定
         if (age === "under18") {
             if (isLargeVolume || quantity === "multiple") {
-                statusEl.textContent = "販売不可（法律違反）";
-                statusEl.className = "result-status status-ng";
-                scriptTextEl.innerHTML = "「申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量や複数個の販売が禁止されております。」<br><br><span style='color:#a4262c; font-size:0.85rem;'>※販売をお断りし、必要に応じて相談窓口（まもろうよこころ等）を案内してください。</span>";
+                document.getElementById('resultStatus').textContent = "販売不可（法律違反）";
+                document.getElementById('resultStatus').className = "result-status status-ng";
+                document.getElementById('scriptText').innerHTML = "18歳未満への販売は法律で禁止されています。販売をお断りし、必要に応じて相談窓口（まもろうよこころ等）の案内資料をお渡しください。";
             } else {
-                statusEl.textContent = "販売可（氏名確認必須）";
-                statusEl.className = "result-status status-warning";
-                scriptTextEl.innerHTML = "「ご提示ありがとうございます。国の定めに従いまして、ご購入者様のお名前をお伺い（またはご記入）してもよろしいでしょうか？」";
+                document.getElementById('resultStatus').textContent = "販売可（氏名確認必須）";
+                document.getElementById('resultStatus').className = "result-status status-warning";
+                document.getElementById('scriptText').textContent = "身分証での年齢確認と、氏名の記録をお願いします。";
             }
         } else {
             if (isLargeVolume || quantity === "multiple") {
-                statusEl.textContent = "販売可（購入理由の確認必須）";
-                statusEl.className = "result-status status-warning";
-                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><br><span style='color:#d83b01; font-size:0.85rem;'>※『家族で使う』等の正当な理由がない場合は販売不可。</span>";
+                document.getElementById('resultStatus').textContent = "販売可（購入理由の確認必須）";
+                document.getElementById('resultStatus').className = "result-status status-warning";
+                document.getElementById('scriptText').textContent = "適正使用の範囲内か、購入理由をヒアリングしてください。";
             } else {
-                statusEl.textContent = "通常販売可能";
-                statusEl.className = "result-status status-ok";
-                scriptTextEl.innerHTML = "（特別な確認は不要ですが、頻繁に来店される等の違和感があればお声がけをしてください）";
+                document.getElementById('resultStatus').textContent = "通常販売可能";
+                document.getElementById('resultStatus').className = "result-status status-ok";
+                document.getElementById('scriptText').textContent = "適正使用の範囲内です。";
             }
         }
     }
-
-    // イベントリスナーの設定
-    const inputs = document.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        input.addEventListener('change', calculate);
-        input.addEventListener('keyup', calculate);
-    });
-
-    // 初期計算
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('change', calculate));
     calculate();
 </script>
-
 </body>
 </html>
