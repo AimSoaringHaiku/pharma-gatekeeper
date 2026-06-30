@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>指定濫用防止医薬品 判定チェッカー v3.0</title>
+    <title>指定濫用防止医薬品 判定チェッカー v3.1</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -71,6 +71,10 @@
         select:focus, input[type="number"]:focus {
             outline: 2px solid #107c41;
             border-color: transparent;
+        }
+        optgroup {
+            font-weight: bold;
+            color: #107c41;
         }
         .med-info {
             font-size: 0.85rem;
@@ -314,22 +318,45 @@
 </div>
 
 <script>
+    // --- 【マスタデータ管理部】 ---
+    // 将来的に外部JSONファイルからの読み込み(fetch)に切り替えやすいよう独立させています
     const medicineMaster = {
-        "med_01": { name: "アネトンせき止め錠", categoryLimit: 5, dailyDose: 12, type: "せき止め" },
-        "med_02": { name: "クールワンせき止めGX", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
-        "med_03": { name: "パブロンゴールドA（錠）", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-        "med_04": { name: "パイロンPL顆粒", categoryLimit: 7, dailyDose: 3, type: "風邪薬" },
-        "med_05": { name: "ベンザブロックLカプレット", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
-        "med_06": { name: "メジコンせき止め錠Pro", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
-        "med_07": { name: "ロキソニン総合かぜ薬", categoryLimit: 7, dailyDose: 6, type: "風邪薬" }
+        // --- 基準: 5日分（せき止め等）---
+        "aneton": { name: "アネトンせき止め錠", categoryLimit: 5, dailyDose: 12, type: "せき止め" },
+        "coolone_gx": { name: "クールワンせき止めGX", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
+        "medicon_pro": { name: "メジコンせき止め錠Pro", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
+        
+        // --- 基準: 7日分（風邪薬等）---
+        "pabron_gold_a_tab": { name: "パブロンゴールドA（錠）", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
+        "pylon_pl_granules": { name: "パイロンPL顆粒", categoryLimit: 7, dailyDose: 3, type: "風邪薬" },
+        "pylon_pl_granules_pro": { name: "パイロンPL顆粒Pro", categoryLimit: 7, dailyDose: 4, type: "風邪薬" }, // 1日4回服用
+        "pylon_pl_tab": { name: "パイロンPL錠", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "pylon_pl_tab_pro": { name: "パイロンPL錠Pro", categoryLimit: 7, dailyDose: 8, type: "風邪薬" }, // 1日4回服用
+        "pylon_pl_tab_gold": { name: "パイロンPL錠ゴールド", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_l_cap": { name: "ベンザブロックLカプレット", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_ip_tab": { name: "ベンザブロックIP錠", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
+        "benza_ip_cap": { name: "ベンザブロックIPカプレット", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_ip_plus": { name: "ベンザブロックIPプラス", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_plus": { name: "ベンザブロックプラス", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_s_premium_dx": { name: "ベンザブロックSプレミアムDX", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_l_premium_dx": { name: "ベンザブロックLプレミアムDX", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "benza_ip_premium": { name: "ベンザブロックIPプレミアム", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
+        "loxonin_cold": { name: "ロキソニン総合かぜ薬", categoryLimit: 7, dailyDose: 6, type: "風邪薬" }
     };
 
+    // プルダウンの初期化（カテゴリ別にグループ化して見やすく整理）
     const medSelect = document.getElementById('medicine');
+    const groups = {};
     for (const [key, data] of Object.entries(medicineMaster)) {
+        if (!groups[data.type]) {
+            groups[data.type] = document.createElement('optgroup');
+            groups[data.type].label = `【${data.type}】（基準: ${data.categoryLimit}日分）`;
+            medSelect.appendChild(groups[data.type]);
+        }
         const option = document.createElement('option');
         option.value = key;
         option.textContent = data.name;
-        medSelect.appendChild(option);
+        groups[data.type].appendChild(option);
     }
 
     function calculate() {
