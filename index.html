@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>指定濫用防止医薬品 判定チェッカー v3.0</title>
+    <title>指定濫用防止医薬品 判定チェッカー v4.0</title>
     <style>
         body {
-            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f3f2f1;
             color: #323130;
             margin: 0;
@@ -17,15 +17,13 @@
             margin: 0 auto;
             background: #ffffff;
             border: 1px solid #c8c6c4;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .header {
-            background-color: #107c41; /* エクセル風のグリーン */
+            background-color: #107c41;
             color: white;
-            padding: 15px 20px;
-            font-size: 1.2rem;
+            padding: 12px 15px;
+            font-size: 1.1rem;
             font-weight: bold;
             display: flex;
             justify-content: space-between;
@@ -52,85 +50,75 @@
         }
         .filter-table th, .filter-table td {
             border-bottom: 1px solid #e1dfdd;
-            padding: 15px;
+            padding: 12px 15px;
             text-align: left;
             font-size: 0.95rem;
         }
         .filter-table th {
-            background-color: #f8f9fa;
+            background-color: #f3f2f1;
             width: 35%;
-            font-weight: bold;
-            color: #475569;
+            font-weight: normal;
+            color: #605e5c;
             border-right: 1px solid #e1dfdd;
         }
         select, input[type="number"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #94a3b8;
-            border-radius: 4px;
+            padding: 8px 10px;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.95rem;
             background-color: #ffffff;
             box-sizing: border-box;
         }
         select:focus, input[type="number"]:focus {
-            outline: 2px solid #107c41;
-            border-color: transparent;
+            outline: 1px solid #107c41;
+            border-color: #107c41;
         }
         .med-info {
             font-size: 0.85rem;
-            color: #b45309;
-            margin-top: 8px;
+            color: #d83b01;
+            margin-top: 6px;
             font-weight: bold;
         }
         .note-text {
             font-size: 0.8rem;
-            color: #64748b;
-            margin-top: 10px;
-            line-height: 1.5;
-            background-color: #f8fafc;
-            padding: 10px;
+            color: #605e5c;
+            margin-top: 8px;
+            line-height: 1.4;
+            background-color: #f3f2f1;
+            padding: 8px;
             border-radius: 4px;
             border-left: 3px solid #107c41;
         }
+        
         .result-section {
-            padding: 25px;
-            background-color: #f8fafc;
+            padding: 20px;
+            background-color: #faf9f8;
             border-top: 2px solid #107c41;
         }
         .result-status {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             border: 1px solid transparent;
-            margin-bottom: 20px;
-            border-radius: 6px;
+            margin-bottom: 15px;
+            border-radius: 4px;
         }
-        .status-ng { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5; }
-        .status-warning { background-color: #fef3c7; color: #92400e; border-color: #fcd34d; }
-        .status-ok { background-color: #dcfce3; color: #166534; border-color: #86efac; }
+        .status-ng { background-color: #fde7e9; color: #a4262c; border-color: #a4262c; }
+        .status-warning { background-color: #fff4ce; color: #797775; border-color: #d83b01; }
+        .status-ok { background-color: #dff6dd; color: #107c41; border-color: #107c41; }
         
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed #cbd5e1;
-            padding: 10px 0;
-            font-size: 1rem;
-        }
-        .info-value { font-weight: bold; }
-        
-        /* スタッフ向けワンポイント啓発アラート */
         .staff-alert {
             display: none;
-            background-color: #fff1f2;
-            border-left: 4px solid #e11d48;
+            background-color: #fde7e9;
+            border-left: 4px solid #a4262c;
             padding: 12px;
             margin-bottom: 15px;
-            border-radius: 0 4px 4px 0;
         }
         .staff-alert-title {
-            color: #be123c;
+            color: #a4262c;
             font-weight: bold;
             font-size: 0.85rem;
             margin-bottom: 4px;
@@ -138,68 +126,111 @@
         .staff-alert p {
             margin: 0;
             font-size: 0.85rem;
-            color: #881337;
+            color: #750b1c;
             line-height: 1.4;
         }
 
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #c8c6c4;
+            padding: 10px 0;
+            font-size: 0.95rem;
+        }
+        .info-label-sub {
+            font-size: 0.8rem;
+            color: #605e5c;
+            display: block;
+            margin-top: 2px;
+        }
+        .info-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
         .script-box {
-            margin-top: 20px;
+            margin-top: 15px;
             background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 18px;
+            border: 1px solid #c8c6c4;
+            padding: 15px;
             border-left: 4px solid #107c41;
-            border-radius: 4px;
         }
         .script-title {
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #107c41;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-        .script-box p { margin: 0; font-size: 1rem; line-height: 1.6; color: #334155; }
+        .script-box p { margin: 0; font-size: 0.95rem; line-height: 1.5; color: #323130; }
 
-        /* 相談窓口案内カード */
-        .consultation-card {
+        /* 啓発資料カード */
+        .materials-card {
             display: none;
             margin-top: 20px;
             background-color: #f0fdf4;
-            border: 2px dashed #4ade80;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
+            border: 1px solid #4ade80;
+            padding: 15px;
+            border-radius: 4px;
         }
-        .consultation-title {
-            font-size: 1.1rem;
+        .materials-title {
+            font-size: 1rem;
             font-weight: bold;
             color: #166534;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-        .consultation-desc {
+        .materials-desc {
             font-size: 0.9rem;
             color: #166534;
-            margin-bottom: 15px;
-            line-height: 1.5;
+            margin-bottom: 12px;
+            line-height: 1.4;
         }
-        .consultation-links {
+        .materials-links {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            align-items: center;
+            gap: 8px;
         }
-        .consultation-link {
+        .materials-link {
             display: inline-block;
             background-color: #ffffff;
             border: 1px solid #22c55e;
             color: #15803d;
             padding: 10px 15px;
-            border-radius: 6px;
+            border-radius: 4px;
             font-weight: bold;
+            font-size: 0.9rem;
             text-decoration: none;
-            width: 80%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: background-color 0.2s;
         }
-        
-        /* お客様向け啓発モーダル */
+        .materials-link:hover {
+            background-color: #dcfce3;
+        }
+        .materials-sub {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* フッターリンク */
+        .footer-links {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #e1dfdd;
+            font-size: 0.8rem;
+            color: #605e5c;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .footer-links a {
+            color: #107c41;
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -212,39 +243,18 @@
         .modal-content {
             background-color: #ffffff;
             padding: 30px;
-            border-radius: 12px;
+            border-radius: 8px;
             max-width: 90%;
             width: 500px;
             text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .modal-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-        .modal-title {
-            font-size: 1.4rem;
-            color: #107c41;
-            font-weight: bold;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-        .modal-text {
-            font-size: 1.1rem;
-            color: #334155;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            text-align: left;
-        }
+        .modal-icon { font-size: 3rem; margin-bottom: 10px; }
+        .modal-title { font-size: 1.3rem; color: #107c41; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
+        .modal-text { font-size: 1rem; color: #323130; line-height: 1.6; margin-bottom: 25px; text-align: left; }
         .modal-close {
-            background-color: #107c41;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            font-size: 1.1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
+            background-color: #107c41; color: white; border: none; padding: 10px 30px;
+            font-size: 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;
         }
     </style>
 </head>
@@ -253,7 +263,7 @@
 <div class="container">
     <div class="header">
         指定濫用防止医薬品 判定フィルター
-        <button class="btn-explain" onclick="openModal()">💡 お客様へのお願い</button>
+        <button class="btn-explain" onclick="openModal()">💡 なぜ制限があるの？</button>
     </div>
     
     <table class="filter-table">
@@ -298,14 +308,17 @@
         
         <!-- スタッフ向けワンポイント啓発（アラート） -->
         <div id="staffAlert" class="staff-alert">
-            <div class="staff-alert-title">⚠️ 【スタッフ向け重要アラート】</div>
-            <p>このお薬（特に大容量・複数個）の過量摂取（オーバードーズ）は、<strong>意識障害、せん妄、幻覚などの深刻な健康被害や依存症に直結</strong>する恐れがあります。命を守るゲートキーパーとしての厳格な対応をお願いします。</p>
+            <div class="staff-alert-title">⚠️ 【スタッフ向けアラート】</div>
+            <p>大容量・複数個の過量摂取（オーバードーズ）は、<strong>意識障害、せん妄、幻覚などの深刻な健康被害や依存症</strong>に直結する恐れがあります。適正使用の厳格な確認をお願いします。</p>
         </div>
 
         <div id="resultStatus" class="result-status status-ok">判定中...</div>
         
         <div class="info-row">
-            <span>計算された日数:</span>
+            <div>
+                <span>一箱の消費日数:</span>
+                <span class="info-label-sub">※1日最大量で服用した場合の使い切り目安</span>
+            </div>
             <span id="calcDays" class="info-value">-- 日分</span>
         </div>
         <div class="info-row">
@@ -318,26 +331,37 @@
             <p id="scriptText">--</p>
         </div>
 
-        <!-- 相談窓口案内カード（NG判定時に表示） -->
-        <div id="consultationCard" class="consultation-card">
-            <div class="consultation-title">🌱 お客様へのご案内</div>
-            <div class="consultation-desc">
-                もし、お辛いお気持ちを抱えていらっしゃる場合は、専門の相談員がお話を伺います。<br>
-                ぜひ以下の窓口をご利用ください。（画面を写真に撮っていただいて構いません）
+        <!-- 啓発資料のご案内（印刷・提示用） -->
+        <div id="materialsCard" class="materials-card">
+            <div class="materials-title">🌱 お客様へのご案内資料</div>
+            <div class="materials-desc">
+                適正使用に関する厚労省の公式資料です。必要に応じてタブレットの画面をお見せするか、印刷してお渡しください。
             </div>
-            <div class="consultation-links">
-                <div class="consultation-link">📞 まもろうよ こころ（厚生労働省）</div>
-                <div class="consultation-link">💬 あなたはひとりじゃない（内閣府）</div>
+            <div class="materials-links">
+                <a href="https://www.mhlw.go.jp/content/001405036.pdf" target="_blank" class="materials-link">📄 中高生向け「薬のオーバードーズって何だろう」</a>
+                <a href="https://www.mhlw.go.jp/content/001405040.pdf" target="_blank" class="materials-link">📄 小学生向け「薬のオーバードーズって何だろう」</a>
+                <a href="https://www.mhlw.go.jp/content/001075630.pdf" target="_blank" class="materials-link">🖼️ 一般用医薬品の乱用防止ポスター</a>
+            </div>
+            <div class="materials-sub">
+                ※深刻な事案の場合は「まもろうよ こころ」等の公的相談窓口もご案内ください。
             </div>
         </div>
+    </div>
+    
+    <!-- スタッフ向けバックエンド資料リンク -->
+    <div class="footer-links">
+        【スタッフ用・関連資料（厚労省）】<br>
+        <a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank">ゲートキーパーとしての薬剤師等の対応マニュアル</a> |
+        <a href="https://www.mhlw.go.jp/content/11120000/001638681.pdf" target="_blank">指定濫用防止医薬品の指定について</a><br>
+        <a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank">令和7年の薬機法等の一部改正について</a>
     </div>
 </div>
 
 <!-- お客様向け啓発モーダル -->
 <div id="explainModal" class="modal-overlay">
     <div class="modal-content">
-        <div class="modal-icon">💊</div>
-        <div class="modal-title">お薬の適正な使用と皆様の健康を守るための、国のルールです。</div>
+        <div class="modal-icon">💡</div>
+        <div class="modal-title">お薬の適正な使用と健康を守るための、<br>国のルールです。</div>
         <div class="modal-text">
             市販薬を安全にお使いいただくため、国（薬機法）の定めにより、一度にご購入いただける<strong>個数や容量に制限</strong>が設けられております。<br><br>
             一部のお薬は、定められた量を超えて服用した場合、健康に重大な影響を及ぼす恐れがあります。<br><br>
@@ -359,7 +383,6 @@
         "med_07": { name: "ロキソニン総合かぜ薬", categoryLimit: 7, dailyDose: 6, type: "風邪薬" }
     };
 
-    // プルダウンの初期化
     const medSelect = document.getElementById('medicine');
     for (const [key, data] of Object.entries(medicineMaster)) {
         const option = document.createElement('option');
@@ -368,23 +391,16 @@
         medSelect.appendChild(option);
     }
 
-    // モーダルの開閉関数
-    function openModal() {
-        document.getElementById('explainModal').style.display = 'flex';
-    }
-    function closeModal() {
-        document.getElementById('explainModal').style.display = 'none';
-    }
+    function openModal() { document.getElementById('explainModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('explainModal').style.display = 'none'; }
 
     function calculate() {
-        // 選択された薬のデータを取得
         const selectedMedKey = medSelect.value;
         const medData = medicineMaster[selectedMedKey];
         
         document.getElementById('medInfo').textContent = 
             `※ 1日最大服用量（成人・15歳以上）: ${medData.dailyDose} 錠/包 （基準: ${medData.type} ${medData.categoryLimit}日分）`;
 
-        // 入力値の取得
         const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
         const age = document.getElementById('age').value;
         const quantity = document.getElementById('quantity').value;
@@ -394,9 +410,8 @@
         const volumeTypeEl = document.getElementById('volumeType');
         const scriptTextEl = document.getElementById('scriptText');
         const staffAlertEl = document.getElementById('staffAlert');
-        const consultationCardEl = document.getElementById('consultationCard');
+        const materialsCardEl = document.getElementById('materialsCard');
 
-        // エラーハンドリング（未入力時）
         if (totalAmount <= 0) {
             statusEl.textContent = "包装内数量を入力してください";
             statusEl.className = "result-status";
@@ -404,11 +419,10 @@
             volumeTypeEl.textContent = "--";
             scriptTextEl.textContent = "--";
             staffAlertEl.style.display = "none";
-            consultationCardEl.style.display = "none";
+            materialsCardEl.style.display = "none";
             return;
         }
 
-        // 容量の計算
         const days = totalAmount / medData.dailyDose;
         const isLargeVolume = days > medData.categoryLimit;
         const volumeText = isLargeVolume ? "大容量" : "小容量";
@@ -416,22 +430,21 @@
         calcDaysEl.textContent = `${days.toFixed(1)} 日分 (上限: ${medData.categoryLimit}日)`;
         volumeTypeEl.textContent = volumeText;
 
-        // 【啓発】大容量または複数個の場合、スタッフ向けアラートを表示
+        // スタッフ向けアラート（大容量・複数個時）
         if (isLargeVolume || quantity === "multiple") {
             staffAlertEl.style.display = "block";
         } else {
             staffAlertEl.style.display = "none";
         }
 
-        // ルール判定と相談窓口の表示制御
-        consultationCardEl.style.display = "none"; // 初期化
+        materialsCardEl.style.display = "none"; // 初期化
 
         if (age === "under18") {
             if (isLargeVolume || quantity === "multiple") {
                 statusEl.textContent = "販売不可（法律違反）";
                 statusEl.className = "result-status status-ng";
-                scriptTextEl.innerHTML = "「申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量や複数個の販売が禁止されております。」<br><br><span style='color:#dc2626; font-weight:bold;'>※お客様に下の『相談窓口カード』をお見せし、撮影やメモをご案内してください。</span>";
-                consultationCardEl.style.display = "block"; // 相談窓口を表示
+                scriptTextEl.innerHTML = "「申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量や複数個の販売が禁止されております。」<br><br><span style='color:#a4262c; font-size:0.85rem;'>※必要に応じて下の『啓発資料（リーフレット）』をお渡しするか、画面をお見せしてください。</span>";
+                materialsCardEl.style.display = "block";
             } else {
                 statusEl.textContent = "販売可（氏名確認必須）";
                 statusEl.className = "result-status status-warning";
@@ -441,8 +454,8 @@
             if (isLargeVolume || quantity === "multiple") {
                 statusEl.textContent = "販売可（購入理由の確認必須）";
                 statusEl.className = "result-status status-warning";
-                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><br><span style='color:#b45309; font-weight:bold;'>※『家族で使う』等の正当な理由がない場合は販売不可とし、必要に応じて相談窓口を案内してください。</span>";
-                consultationCardEl.style.display = "block"; // 大人の不自然な購入時も案内できるよう表示
+                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><br><span style='color:#d83b01; font-size:0.85rem;'>※『家族で使う』等の正当な理由がない場合は販売不可とし、必要に応じて啓発資料をご案内ください。</span>";
+                materialsCardEl.style.display = "block";
             } else {
                 statusEl.textContent = "通常販売可能";
                 statusEl.className = "result-status status-ok";
@@ -451,14 +464,12 @@
         }
     }
 
-    // イベントリスナーの設定
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => {
         input.addEventListener('change', calculate);
         input.addEventListener('keyup', calculate);
     });
 
-    // 初期計算
     calculate();
 </script>
 
