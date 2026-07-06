@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指定濫用防止医薬品 判定チェッカー v5.0（総合現場マニュアル版）</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f2f1;
+            color: #323130;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #c8c6c4;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #107c41;
+            color: white;
+            padding: 12px 20px;
+        }
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-enlighten {
+            background-color: #ffffff;
+            color: #107c41;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background-color 0.2s;
+        }
+        .btn-enlighten:hover { background-color: #e1dfdd; }
+        
+        .filter-table { width: 100%; border-collapse: collapse; }
+        .filter-table th, .filter-table td {
+            border-bottom: 1px solid #e1dfdd;
+            padding: 12px 18px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .filter-table th {
+            background-color: #faf9f8;
+            width: 35%;
+            font-weight: 600;
+            color: #605e5c;
+            border-right: 1px solid #e1dfdd;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #8a8886;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        select:focus, input[type="number"]:focus {
+            outline: 2px solid #107c41;
+            border-color: transparent;
+        }
+        optgroup { font-weight: bold; color: #107c41; }
+        .med-info {
+            font-size: 0.85rem;
+            color: #d83b01;
+            margin-top: 6px;
+            font-weight: bold;
+        }
+        .note-text {
+            font-size: 0.8rem;
+            color: #605e5c;
+            margin-top: 8px;
+            line-height: 1.5;
+            background-color: #f3f2f1;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #107c41;
+        }
+        
+        .result-section {
+            padding: 20px;
+            background-color: #faf9f8;
+            border-top: 2px solid #107c41;
+        }
+        .result-status {
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid transparent;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .status-ng { background-color: #fde7e9; color: #a4262c; border-color: #a4262c; }
+        .status-warning { background-color: #fff4ce; color: #797775; border-color: #d83b01; }
+        .status-ok { background-color: #dff6dd; color: #107c41; border-color: #107c41; }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #c8c6c4;
+            padding: 10px 0;
+            font-size: 0.95rem;
+        }
+        .info-value { font-weight: bold; color: #323130; }
+        
+        .script-box {
+            margin-top: 15px;
+            background-color: #ffffff;
+            border: 1px solid #c8c6c4;
+            padding: 16px;
+            border-left: 5px solid #107c41;
+            border-radius: 4px;
+        }
+        .script-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #107c41;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .script-text { font-size: 1rem; line-height: 1.6; margin: 0; font-weight: 500; color: #201f1e; }
+        .alert-text {
+            color: #a4262c;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e1dfdd;
+        }
+
+        /* 案内カード */
+        .guidance-card {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #e6f2ed;
+            border: 1px solid #107c41;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .guidance-card h4 { margin: 0 0 10px 0; color: #107c41; font-size: 0.95rem; }
+        .guidance-card p { font-size: 0.85rem; margin-bottom: 12px; color: #323130; }
+        .link-list { display: flex; flex-direction: column; gap: 8px; }
+        .link-btn {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #107c41;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #107c41;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .link-btn:hover { background-color: #107c41; color: white; }
+
+        /* ナレッジタブ・エリア */
+        .knowledge-section {
+            margin-top: 25px;
+            border-top: 2px solid #c8c6c4;
+            background: #ffffff;
+        }
+        .tabs {
+            display: flex;
+            background-color: #f3f2f1;
+            border-bottom: 1px solid #c8c6c4;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 10px;
+            border: none;
+            background: none;
+            font-size: 0.88rem;
+            font-weight: bold;
+            color: #605e5c;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { background-color: #e1dfdd; color: #323130; }
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #107c41;
+            border-bottom-color: #107c41;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .tab-content.active { display: block; }
+        .tab-content h4 { color: #107c41; margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; border-bottom: 2px solid #e6f2ed; padding-bottom: 6px; }
+        .tab-content h5 { color: #201f1e; margin: 16px 0 6px 0; font-size: 0.95rem; border-left: 4px solid #107c41; padding-left: 8px; }
+        .tab-content p, .tab-content li { color: #484644; }
+        .tab-content ul { padding-left: 20px; margin-top: 6px; }
+        
+        .card-box {
+            background: #faf9f8;
+            border: 1px solid #e1dfdd;
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        .tag-red { display: inline-block; background: #fde7e9; color: #a4262c; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; margin-right: 6px; }
+        .tag-green { display: inline-block; background: #dff6dd; color: #107c41; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; margin-right: 6px; }
+        .tag-gray { display: inline-block; background: #f3f2f1; color: #605e5c; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; margin-right: 6px; }
+
+        /* フッター（スタッフ用リンク） */
+        .footer-links {
+            max-width: 900px;
+            margin: 20px auto 30px;
+            padding: 15px 20px;
+            background-color: #ffffff;
+            border: 1px solid #c8c6c4;
+            border-radius: 6px;
+        }
+        .footer-links h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #605e5c; }
+        .footer-links ul { margin: 0; padding-left: 20px; font-size: 0.85rem; }
+        .footer-links a { color: #0078d4; text-decoration: none; }
+        .footer-links a:hover { text-decoration: underline; }
+
+        /* モーダル (啓発ポップアップ) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .modal-content h3 { color: #107c41; margin-top: 0; font-size: 1.3rem; border-bottom: 2px solid #107c41; padding-bottom: 8px; }
+        .modal-content p { font-size: 0.95rem; line-height: 1.8; color: #323130; }
+        .modal-highlight {
+            background-color: #fff4ce;
+            border-left: 4px solid #d83b01;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #201f1e;
+            font-weight: bold;
+        }
+        .modal-close {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #107c41;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .modal-close:hover { background-color: #0b5a2f; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-area">
+        <div class="header-title">🛡️ 指定濫用防止医薬品 判定チェッカー</div>
+        <button class="btn-enlighten" onclick="document.getElementById('modal').style.display='flex'">💡 なぜこのルールがあるの？（根幹概念）</button>
+    </div>
+    
+    <!-- 判定フィルター部 -->
+    <table class="filter-table">
+        <tr>
+            <th>1. 対象商品を選ぶ</th>
+            <td>
+                <select id="medicine"></select>
+                <div id="medInfo" class="med-info">--</div>
+                <div class="note-text">
+                    ※15歳未満の用量が設定されている場合でも、日数計算は「成人の1日最大服用量」を基準とします。<br>
+                    ※厚労省通知により、用法用量に「適宜増減」とあっても「認められている最大の用法・用量（最大量）」を基準として計算します。<br>
+                    ※「商品名・シリーズの罠」や「妊婦・授乳婦・ドーピング等」の詳細は下部の現場ナレッジタブをご確認ください。
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>2. 包装内数量（パッケージ総量）</th>
+            <td>
+                <input type="number" id="totalAmount" min="1" value="16" placeholder="例: 16">
+            </td>
+        </tr>
+        <tr>
+            <th>3. お客様の年齢</th>
+            <td>
+                <select id="age">
+                    <option value="under18">18歳未満（未成年）または疑わしい</option>
+                    <option value="over18">明らかに18歳以上（成人）</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>4. 購入個数（同一・他薬合算）</th>
+            <td>
+                <select id="quantity">
+                    <option value="single">1個のみ</option>
+                    <option value="multiple">複数個（合算して2個以上）</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <div class="result-section">
+        <div id="resultStatus" class="result-status status-ok">判定中...</div>
+        
+        <div class="info-row">
+            <span>一箱の消費日数（目安）:</span>
+            <span id="calcDays" class="info-value">-- 日分</span>
+        </div>
+        <div class="info-row">
+            <span>法律上の容量区分:</span>
+            <span id="volumeType" class="info-value">--</span>
+        </div>
+        
+        <div class="script-box" id="scriptBox">
+            <div class="script-title">💬 スタッフお声がけスクリプト（商品お預かり起点）</div>
+            <p id="scriptText" class="script-text">--</p>
+            <div id="alertText" class="alert-text" style="display:none;"></div>
+        </div>
+
+        <!-- 案内カード -->
+        <div id="guidanceCard" class="guidance-card">
+            <h4>【お客様へのお渡し・ご案内資料】</h4>
+            <p>※必要に応じて以下の資料をご提示、または印刷してお渡しください。</p>
+            <div class="link-list">
+                <a href="https://www.mhlw.go.jp/content/001405036.pdf" target="_blank" class="link-btn">中高生のみなさんへ「薬のオーバードーズって何だろう」</a>
+                <a href="https://www.mhlw.go.jp/content/001405040.pdf" target="_blank" class="link-btn">小学生のみなさんへ「薬のオーバードーズって何だろう」</a>
+                <a href="https://www.mhlw.go.jp/content/001075630.pdf" target="_blank" class="link-btn">一般用医薬品の乱用防止に関するポスター（厚労省）</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 現場アドバンスド・ナレッジ（タブエリア） -->
+    <div class="knowledge-section">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab1', this)">📐 計算式・判定手順</button>
+            <button class="tab-btn" onclick="switchTab('tab2', this)">🔍 判断に迷う薬・シリーズの罠</button>
+            <button class="tab-btn" onclick="switchTab('tab3', this)">🏃‍♂️ ドーピング規制メモ</button>
+            <button class="tab-btn" onclick="switchTab('tab4', this)">🚨 次の盲点・隠れたリスク</button>
+        </div>
+
+        <!-- タブ1: 計算式・判定手順フロー -->
+        <div id="tab1" class="tab-content active">
+            <h4>【テキスト版：判定手順フローと計算式】</h4>
+            <div class="card-box">
+                <strong>STEP 1：薬の分類を確認し、基準日数を把握する</strong><br>
+                ・かぜ薬、解熱鎮痛薬、鼻炎用内服薬 ＝ <span class="tag-green">基準：7日分</span><br>
+                ・それ以外の薬（せき止め薬など） ＝ <span class="tag-green">基準：5日分</span>
+            </div>
+            <div class="card-box">
+                <strong>STEP 2：成人（15歳以上）の「1日服用量」を確認する</strong><br>
+                ・パッケージの用法・用量から「1回量 × 1日の服用回数」を計算します。<br>
+                <span style="font-size:0.85rem; color:#605e5c;">※「適宜増減」とあっても、認められている最大の用法・用量を基準とします。</span>
+            </div>
+            <div class="card-box">
+                <strong>STEP 3：パッケージ総量が「何日分」になるか計算する</strong><br>
+                ・<strong>計算式：パッケージ総量 ÷ 1日服用量 ＝ 〇〇日分</strong><br>
+                <span style="font-size:0.85rem; color:#605e5c;">例：包装48錠 ÷ 1日最大服用量9錠 ＝ 約5.3日分</span>
+            </div>
+            <div class="card-box">
+                <strong>STEP 4：基準日数と照らし合わせて判定する</strong><br>
+                ・計算した日数が基準日数（5日または7日）以下 ＝ <span class="tag-green">🟢 小容量</span> （通常1個販売・氏名確認不要／18歳未満も1個可）<br>
+                ・計算した日数が基準日数（5日または7日）を超える ＝ <span class="tag-red">🔴 大容量</span> （18歳未満は法律で販売禁止／成人は理由確認必須）
+            </div>
+        </div>
+
+        <!-- タブ2: 判断に迷う薬・シリーズの罠 -->
+        <div id="tab2" class="tab-content">
+            <h4>【判断に迷う薬・ブランド名称の由来・現場実践ナレッジ】</h4>
+            <p style="font-size:0.85rem; color:#605e5c;">※OTC添付文書と医療臨床での使い方（妊婦・授乳婦等）の区別の意図を含みます。</p>
+            
+            <h5>1. パブロンシリーズ（大黒柱と記号の罠）</h5>
+            <div class="card-box">
+                ・<strong>パブロンゴールドA〈錠〉</strong>：ボトル包装のみ。昔ながらの処方を守る大黒柱。「A」は1955年の「A(せき用)/B(熱用)」に由来し、現在は「家族みんなで使える定番」の記号。ジヒドロコデイン・メチルエフェドリン配合で<span class="tag-red">対象〇</span>。<br>
+                ・<strong>パブロンSゴールドW錠</strong>：すべてシート(PTP)包装。「W」は気道粘膜ダブルケア。コデイン系を含まず、抗ヒスタミンもカルビノキサミンのため<span class="tag-gray">対象外×</span>。<br>
+                ・<strong>パブロンエースPro-X / パブロンS</strong>：Pro-Xは大人専用（イブプロフェン600mgで喉に最強）、Sは5才からのファミリー用（ノンカフェイン）。いずれもコデイン・エフェドリン・デキストロメトルファンのいずれかを含み<span class="tag-red">対象〇</span>。<br>
+                ・<strong>パブロン鼻炎カプセルSa / 鼻炎速溶錠EX</strong>：プソイドエフェドリン配合のため<span class="tag-red">対象〇</span>。<br>
+                ・<strong>パブロンせき止めトリプル錠 / 持続性パブロン錠</strong>：トリプルはデキストロメトルファン配合、持続性はジヒドロコデイン・メチルエフェドリン配合でともに<span class="tag-red">対象〇</span>。<br>
+                ・<span class="tag-green">★重要</span> 大人の風邪・せき止めの中で、指定乱用成分非含有は麦門冬湯ベースの<strong>「パブロン50」</strong>のみ。
+            </div>
+
+            <h5>2. コンタック＆バファリンシリーズ</h5>
+            <div class="card-box">
+                ・<strong>新コンタック鼻炎Z</strong>：コンタックブランドの中で唯一、指定濫用成分を含まない<span class="tag-gray">対象外×</span>（セチリジン1日1回）。※ただしセチリジン塩酸塩は<strong>「妊婦又は妊娠している可能性のある婦人は禁忌」</strong>と明記。<br>
+                ・その他コンタック（600プラス/総合かぜ薬DX/せき止めダブル等）：総じてプソイドエフェドリン等を含み<span class="tag-red">対象〇</span>。<br>
+                ・<strong>バファリンプレミアムDX / クイック＋</strong>：「DX」は鎮痛成分20%増(市販最大量)＋眠気成分(アリルイソプロピルアセチル尿素)カットで運転可。「クイック＋」は2025年からのリニューアル新名称（JAN・中身は同一）。指定濫用成分は不使用で<span class="tag-gray">対象外×</span>。<br>
+                ・<strong>バファリンルナJ / ルナi / ライト</strong>：ルナJは小中高校生用チュアブル（アセトアミノフェンのみ）。ルナiはイブプロフェン＋アセトアミノフェン(小粒・眠くならない)。ライトはアスピリン少なめの胃に優しい処方。いずれも<span class="tag-gray">対象外×</span>。
+            </div>
+
+            <h5>3. アレグラFX・タリオンAR・クラリチンEX（抗ヒスタミンの実践知識）</h5>
+            <div class="card-box">
+                ・<strong>アレグラFX</strong>：名称「F」はFexofenadine・Fast・Effect、「X」は進化。処方薬の添付文書には「有益性が危険性を上回る場合のみ」とあるが、<strong>実臨床の授乳婦評価では「L1(最も安全)」に分類され無条件で使われる薬。</strong>ただし、OTCにおいては添付文書の文言に忠実であることが、単なる保守的姿勢ではなく「説明責任の観点から合理的な選択」となる。<br>
+                ・<strong>アレグラFXプレミアム</strong>：2025年秋発売。血管収縮剤プソイドエフェドリン追加配合のため<span class="tag-red">対象〇</span>。医療用ディレグラと同様、<strong>閉塞隅角緑内障は禁忌</strong>。<br>
+                ・<strong>タリオンAR / クラリチンEX</strong>：ARはAllergic Rhinitis(アレルギー性鼻炎)、EXはスイッチOTCの区別の意図。医療用にはある「皮膚のうつり（かゆみ・蕁麻疹）」がOTCでは適応外されている（受診遅延の防止や慢性掻痒への効果疑問符のため）。両者とも<span class="tag-gray">対象外×</span>。
+            </div>
+
+            <h5>4. トラベルミン・ガスター・タイレノール・ムヒAZ錠等</h5>
+            <div class="card-box">
+                ・<strong>トラベルミンR</strong>：「眠くなりにくい(Reduce somnolence)/リフレッシュ(Refresh)」。主成分ジフェニドールでジフェンヒドラミンを含まないため<span class="tag-gray">対象外×</span>（11才以上）。<br>
+                ・<strong>無印トラベルミン錠 / ジュニア</strong>：医療用と同成分でジフェンヒドラミンを含むため<span class="tag-red">対象〇</span>（大人は15才〜、ジュニアは5〜14才専用だが対象）。<br>
+                ・<strong>トラベルミン「1」/ ファミリー</strong>：メクリジン＋スコポラミンのため問題なく<span class="tag-gray">対象外×</span>。<br>
+                ・<strong>ガスター10 / S錠</strong>：「S」はSpeed/Smooth。授乳の実臨床ではファモチジンは「L1(安全)」だが、OTC添付文書上は「授乳を避けてください」と明記（説明責任の優先）。<span class="tag-gray">対象外×</span>。<br>
+                ・<strong>タイレノールA vs カロナールA</strong>：タイレノール小児用は日本に存在しない（15才以上のみ）。カロナールは2025年に「5才以上のジュニア用」「微粒タイプ」が登場。<span class="tag-gray">対象外×</span>。<br>
+                ・<strong>ムヒAZ錠</strong>：アゼラスチン配合。数少ない市販・皮膚掻痒対策の第2世代（他にはアレジンAZ錠、メキタジン配合ジンマート錠等）。眠気最小限だが<strong>運転不可</strong>。<span class="tag-gray">対象外×</span>。<br>
+                ・<strong>葛根湯エキス錠S「コタロー」</strong>：マオウ成分を含んでいても、薬効分類が「漢方製剤」「生薬製剤」に該当する場合は単一化学成分のエフェドリンとはみなされず<span class="tag-gray">対象外×</span>（小青竜湯、麻黄湯、防風通聖散等も同様）。<br>
+                ・<strong>木クレオソート（正露丸等）</strong>：PMDA基準により「直径6mm以上の丸剤・錠剤は5歳未満不可」。また5歳未満・乳幼児の下痢は、薬で止めるより「脱水防止と速やかな受診」が最優先される。
+            </div>
+        </div>
+
+        <!-- タブ3: ドーピング規制メモ -->
+        <div id="tab3" class="tab-content">
+            <h4>【🏃‍♂️ 部活生・アスリート向け：ドーピング規制メモ】</h4>
+            <p>運動活動が多い世代（中高生の部活動、国体・インターハイ選手、市民マラソン・大会出場者など）への販売時には、指定濫用成分とは異なる「ドーピング規制（WADA禁止薬物）」の観点からもゲートキーパーとしてのアドバイスが有効です。</p>
+            
+            <div class="card-box" style="border-left: 4px solid #0078d4;">
+                <strong style="color:#0078d4;">⚠️ 競技大会で「陽性（違反）」となる主な市販薬成分</strong><br>
+                <strong>1. プソイドエフェドリン / メチルエフェドリン / エフェドリン</strong><br>
+                ・総合風邪薬、鼻炎薬、咳止め薬（パブロン、ベンザブロック、コンタック等）の多くに配合。<br>
+                ・<strong>【ルール】「競技会（試合）の時のみ禁止」</strong>：交感神経を興奮させパフォーマンスを上げるため、試合時に体内に残っているとドーピング違反になります。<strong>大会の数日前から服用を中止する必要があります。</strong><br><br>
+                
+                <strong>2. マオウ（麻黄）を含む漢方製剤・生薬</strong><br>
+                ・葛根湯、小青竜湯、麻黄湯、防風通聖散、五虎湯 など。<br>
+                ・<strong>【罠】法規制では対象外だが、ドーピングではアウト！</strong>：マオウには天然のエフェドリンが含まれているため、ドーピング検査では陽性となります。「漢方だから体に優しくて大会前でも大丈夫」という誤解を解く必要があります。
+            </div>
+
+            <div class="card-box">
+                <strong>💡 現場でのお声がけポイント</strong><br>
+                部活やスポーツ大会を控えているお客様から「風邪薬・鼻炎薬」の相談を受けた場合は、<strong>「近々、試合や大会の予定はありますか？」</strong>と確認し、予定がある場合はドーピング禁止物質を含まない薬（アセトアミノフェン単剤のカロナール・タイレノール、漢方でもマオウを含まない香蘇散や小柴胡湯、アレルギー薬ではクラリチンやアレグラなど）を推奨してください。
+            </div>
+        </div>
+
+        <!-- タブ4: 次の盲点・隠れたリスク -->
+        <div id="tab4" class="tab-content">
+            <h4>【🚨 次の盲点：法規制の枠を超えて現場が警戒すべき隠れた問題】</h4>
+            <p>現在の改正薬機法で指定された8成分のルールを遵守するのは当然の「ガードレール」ですが、現場のゲートキーパーとしては、法令の枠外で社会問題化しつつある以下の「隠れたリスク」にも目を向ける必要があります。</p>
+            
+            <div class="card-box" style="border-left: 4px solid #d83b01;">
+                <strong style="color:#d83b01;">① 大量摂取による心不全・急性死亡リスク：【無水カフェイン】</strong><br>
+                ・<strong>対象製品</strong>：エスタロンモカ、オールP、一部の強壮ドリンク、および多くの「総合風邪薬・鎮痛薬」への微量配合。<br>
+                ・<strong>実態</strong>：今回の指定濫用防止医薬品の8成分には入っていません。しかし、眠気覚まし錠剤を何十錠も一気飲みする若者が後を絶ちません。<br>
+                ・<strong>着目すべき理由</strong>：カフェインは一定量を超えると<strong>「致死的な不整脈や心停止」</strong>をダイレクトに引き起こすため、実はコデインなどよりも急性死亡リスクが遥かに高い危険な物質です。風邪薬（パブロン等）のOD時にも、主成分のコデインより、一緒に含まれているカフェインの過剰摂取で心臓が止まりかけるケースが多発しており、実質的な危険度は最上位です。頻繁な大量購入者には強い警戒が必要です。
+            </div>
+
+            <div class="card-box" style="border-left: 4px solid #d83b01;">
+                <strong style="color:#d83b01;">② 便秘薬の悪用・摂食障害の闇：【ビサコジル・センノシド】</strong><br>
+                ・<strong>対象製品</strong>：コーラック、武田漢方便秘薬、カイベールC など。<br>
+                ・<strong>実態</strong>：いわゆる「下剤（便秘薬）」です。精神を高揚させるODとは異なり、主に10代〜20代の摂食障害（過食嘔吐や「痩せ姫」等）に悩む女性たちの間で、体重を落とす・食べたものをリセットする目的で大量乱用されています。<br>
+                ・<strong>着目すべき理由</strong>：1回に数十錠を毎日飲むような乱用が続くと、腸の神経が完全に破壊され自力で排便できなくなる（無緊張性結腸）ほか、<strong>激しい下痢による低カリウム血症から不整脈・突然死を招くリスク</strong>があり、精神科や婦人科で非常に深刻視されています。若い女性が毎回大容量の下剤を買いに来る場合は、単なる便秘ではない可能性を意識してください。
+            </div>
+
+            <div class="card-box" style="border-left: 4px solid #605e5c;">
+                <strong style="color:#323130;">③ 処方薬の「市販化（スイッチOTC）」待ち成分への警戒</strong><br>
+                ・現在、病院の処方薬（医療用）の依存で最も問題になっているものの一つに、神経の痛みを抑える<strong>「プレガバリン（リリカ）」</strong>や<strong>「ガバペンチン」</strong>という薬があります。将来的にこれらがスイッチOTCとして市販化された場合、新たな乱用のターゲットになる危険性が極めて高いため、動向を注視していく必要があります。
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- スタッフ用 根拠資料リンク集 -->
+<div class="footer-links">
+    <h4>▼ スタッフ確認用リンク（法的根拠・対応マニュアル）</h4>
+    <ul>
+        <li><a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank">ゲートキーパーとしての薬剤師等の対応マニュアル</a></li>
+        <li><a href="https://www.mhlw.go.jp/content/11120000/001638681.pdf" target="_blank">指定濫用防止医薬品の指定について（告示）</a></li>
+        <li><a href="https://www.mhlw.go.jp/content/11120000/001649558.pdf" target="_blank">指定濫用防止医薬品販売等手順書モデル</a></li>
+        <li><a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank">令和7年 薬機法等の一部改正について</a></li>
+    </ul>
+</div>
+
+<!-- 啓発ポップアップ（根幹概念の共有） -->
+<div id="modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>💡 なぜこのルールがあるのか？（根幹概念）</h3>
+        <p>
+            いつもご利用いただき、誠にありがとうございます。<br>
+            医薬品の販売際して、販売個数や容量の確認、あるいはご購入理由のお伺いなど、お客様にはお手数をおかけしております。
+        </p>
+        
+        <div class="modal-highlight">
+            「個人の問題ではなく、社会構造的な問題として」<br>
+            なぜこのルールが存在するのか。その答えは、「法令で決まっているから」でも、単に「薬が危険だから」でもありません。<br><br>
+            かつて、制度規制が十分でなく、安全確認が希薄な中で利益が優先されて販売されていた経緯の中で、<strong style="color:#a4262c;">【オーバードーズ（過量服用）により、未来ある若い命が失われてしまった痛ましい事例】</strong>が実際にあったからです。
+        </div>
+
+        <p>
+            この販売制限は、過去に亡くなった方々から社会が学び、二度と同じ悲劇を繰り返さないために作り上げた<strong>「命を守るためのガードレール」</strong>です。<br><br>
+            現場の私たち店舗スタッフは、単にレジの確認作業をしているのではなく、お客様の安全と健康を守る「最後の砦（ゲートキーパー）」としてお声がけをさせていただいております。<br>
+            適正な使用と安全確保のため、販売時のご確認にご理解とご協力をお願い申し上げます。
+        </p>
+        <button class="modal-close" onclick="document.getElementById('modal').style.display='none'">閉じる（確認しました）</button>
+    </div>
+</div>
+
+<script>
+    // --- 【マスタデータ管理部（スプシ「修正対象」シート準拠）】 ---
+    const medicineMaster = {
+        // ==========================================
+        //  1. 【せき止め】対象 〇（基準: 5日分）
+        // ==========================================
+        "aneton": { 
+            name: "☆アネトンせき止め錠", 
+            categoryLimit: 5, dailyDose: 12, kubun: "〇", group: "せき止め（対象 〇）",
+            note: "要確認：コデイン・メチルエフェドリン配合。パッケージ容量によってルールが異なるため現物の錠数を確認。"
+        },
+        "medicon_pro": { 
+            name: "☆メジコンせき止め錠Pro", 
+            categoryLimit: 5, dailyDose: 6, kubun: "〇", group: "せき止め（対象 〇）",
+            note: "要確認：デキストロメトルファン配合。規定日数内のため小容量扱い。"
+        },
+        
+        // ==========================================
+        //  2. 【風邪薬】対象 〇（基準: 7日分）
+        // ==========================================
+        "pabron_gold_a_tab": { 
+            name: "☆パブロンゴールドA錠", 
+            categoryLimit: 7, dailyDose: 9, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：ジヒドロコデイン・メチルエフェドリン配合。大容量(130錠/210錠など)は18歳未満絶対販売不可。"
+        },
+        "pylon_pl_tab_gold": { 
+            name: "☆パイロンPL錠ゴールド", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：デキストロメトルファン配合によりシリーズ唯一の対象（〇）。規定日数内・小容量。"
+        },
+        "benza_l_cap": { 
+            name: "☆ベンザブロックL カプレット", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：ジヒドロコデイン・プソイドエフェドリン配合。規定日数内・小容量。"
+        },
+        "benza_ip_tab": { 
+            name: "☆ベンザブロックIP錠", 
+            categoryLimit: 7, dailyDose: 9, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：ジヒドロコデイン・メチルエフェドリン配合。規定日数内・小容量。"
+        },
+        "benza_ip_cap": { 
+            name: "☆ベンザブロックIP カプレット", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：ジヒドロコデイン・メチルエフェドリン配合。規定日数内・小容量。"
+        },
+        "benza_ip_premium": { 
+            name: "☆ベンザブロックIPプレミアム", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：ジヒドロコデイン・メチルエフェドリン配合。規定日数内・小容量。"
+        },
+        "benza_l_premium_dx": { 
+            name: "☆ベンザブロックLプレミアムDX", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：プソイドエフェドリン・デキストロメトルファン配合。規定日数内・小容量。"
+        },
+        "benza_s_premium_dx": { 
+            name: "☆ベンザブロックSプレミアムDX", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：プソイドエフェドリン・デキストロメトルファン配合。容量によってルール分岐。"
+        },
+        "loxonin_cold": { 
+            name: "☆ロキソニン総合かぜ薬", 
+            categoryLimit: 7, dailyDose: 6, kubun: "〇", group: "風邪薬（対象 〇）",
+            note: "要確認：ジヒドロコデイン・メチルエフェドリン配合。12錠/24錠とも小容量。"
+        },
+
+        // ==========================================
+        //  3. 【対象外品目】区分 ×（確認不要・通常販売可）
+        // ==========================================
+        "pylon_pl_granules": { 
+            name: "☆パイロンPL顆粒 [対象外 ×]", 
+            categoryLimit: 7, dailyDose: 3, kubun: "×", group: "対象外（区分 ×・確認不要）",
+            note: "対象外（×）：抗ヒスタミン成分が『プロメタジン』のため指定8成分に該当せず。通常販売可。"
+        },
+        "pylon_pl_granules_pro": { 
+            name: "☆パイロンPL顆粒Pro [対象外 ×]", 
+            categoryLimit: 7, dailyDose: 4, kubun: "×", group: "対象外（区分 ×・確認不要）",
+            note: "対象外（×）：抗ヒスタミン成分が『プロメタジン』のため指定8成分に該当せず。通常販売可。"
+        },
+        "pylon_pl_tab": { 
+            name: "☆パイロンPL錠 [対象外 ×]", 
+            categoryLimit: 7, dailyDose: 6, kubun: "×", group: "対象外（区分 ×・確認不要）",
+            note: "対象外（×）：抗ヒスタミン成分が『プロメタジン』のため指定8成分に該当せず。通常販売可。"
+        },
+        "pylon_pl_tab_pro": { 
+            name: "☆パイロンPL錠Pro [対象外 ×]", 
+            categoryLimit: 7, dailyDose: 8, kubun: "×", group: "対象外（区分 ×・確認不要）",
+            note: "対象外（×）：抗ヒスタミン成分が『プロメタジン』のため指定8成分に該当せず。通常販売可。"
+        },
+
+        // ==========================================
+        //  4. 【廃版品目】区分 廃版（店頭在庫販売時はルール適用）
+        // ==========================================
+        "coolone_gx": { 
+            name: "☆クールワンせき止めGX [廃版]", 
+            categoryLimit: 5, dailyDose: 6, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はジヒドロコデイン・メチルエフェドリン配合ルール適用。"
+        },
+        "benza_l_plus_cap": { 
+            name: "☆ベンザブロックLプラス カプレット [廃版]", 
+            categoryLimit: 7, dailyDose: 6, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はイブプロフェン等配合・小容量ルール適用。"
+        },
+        "benza_l_plus_tab": { 
+            name: "☆ベンザブロックLプラス錠 [廃版]", 
+            categoryLimit: 7, dailyDose: 9, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はルール適用。"
+        },
+        "benza_ip_plus_cap": { 
+            name: "☆ベンザブロックIPプラス カプレット [廃版]", 
+            categoryLimit: 7, dailyDose: 6, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はルール適用。"
+        },
+        "benza_ip_plus_tab": { 
+            name: "☆ベンザブロックIPプラス錠 [廃版]", 
+            categoryLimit: 7, dailyDose: 9, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はルール適用。"
+        },
+        "benza_s_plus_cap": { 
+            name: "☆ベンザブロックSプラス カプレット [廃版]", 
+            categoryLimit: 7, dailyDose: 6, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はルール適用。"
+        },
+        "benza_s_plus_tab": { 
+            name: "☆ベンザブロックSプラス錠 [廃版]", 
+            categoryLimit: 7, dailyDose: 9, kubun: "廃版", group: "廃版（デッドストック等）",
+            note: "【メーカー廃版】店頭在庫を販売する場合はルール適用。"
+        }
+    };
+
+    // プルダウンの初期化
+    const medSelect = document.getElementById('medicine');
+    const groups = {};
+    for (const [key, data] of Object.entries(medicineMaster)) {
+        const groupKey = data.group;
+        if (!groups[groupKey]) {
+            groups[groupKey] = document.createElement('optgroup');
+            groups[groupKey].label = `【${groupKey}】`;
+            medSelect.appendChild(groups[groupKey]);
+        }
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = data.name;
+        groups[groupKey].appendChild(option);
+    }
+
+    // 計算・スクリプト生成ロジック
+    function calculate() {
+        const selectedMedKey = medSelect.value;
+        const medData = medicineMaster[selectedMedKey];
+        
+        document.getElementById('medInfo').textContent = 
+            `※ 1日最大服用量: ${medData.dailyDose} 錠/包 （基準: ${medData.categoryLimit}日分） ｜ 【スプシ備考】 ${medData.note}`;
+
+        const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
+        const age = document.getElementById('age').value;
+        const quantity = document.getElementById('quantity').value;
+
+        const statusEl = document.getElementById('resultStatus');
+        const calcDaysEl = document.getElementById('calcDays');
+        const volumeTypeEl = document.getElementById('volumeType');
+        const scriptTextEl = document.getElementById('scriptText');
+        const alertTextEl = document.getElementById('alertText');
+        const guidanceCardEl = document.getElementById('guidanceCard');
+
+        if (totalAmount <= 0) {
+            statusEl.textContent = "包装内数量を入力してください";
+            statusEl.className = "result-status";
+            calcDaysEl.textContent = "--";
+            volumeTypeEl.textContent = "--";
+            scriptTextEl.textContent = "--";
+            alertTextEl.style.display = 'none';
+            guidanceCardEl.style.display = 'none';
+            return;
+        }
+
+        const days = totalAmount / medData.dailyDose;
+
+        // 対象外（×）の場合
+        if (medData.kubun === "×") {
+            statusEl.textContent = "通常販売可能（規制対象外 ×）";
+            statusEl.className = "result-status status-ok";
+            calcDaysEl.textContent = `${days.toFixed(1)} 日分 (規制対象外)`;
+            volumeTypeEl.textContent = "対象外（規制なし）";
+            scriptTextEl.innerHTML = "「商品お預かりいたします。こちらのお薬は『指定濫用防止医薬品』の規制対象外（区分 ×）ですので、年齢確認や個数制限なく通常通り販売が可能です。」<br><span style='font-size:0.85rem; color:#605e5c;'>（※配合されている抗ヒスタミン成分が『プロメタジン』のため、国の指定8成分に該当しません）</span>";
+            alertTextEl.style.display = 'none';
+            guidanceCardEl.style.display = 'none';
+            return;
+        }
+
+        // 対象（〇）または廃版の場合
+        const isLargeVolume = days > medData.categoryLimit;
+        const volumeText = isLargeVolume ? "大容量" : "小容量";
+
+        calcDaysEl.textContent = `${days.toFixed(1)} 日分 (上限: ${medData.categoryLimit}日)`;
+        volumeTypeEl.textContent = medData.kubun === "廃版" ? `${volumeText} [廃版品]` : volumeText;
+
+        let showAlert = false;
+        let showGuidance = false;
+        let alertMsg = "※注意: 規定量を超えた過量摂取（オーバードーズ）は、意識障害、幻覚、呼吸障害など命に関わる重大な健康被害を引き起こす恐れがあります。";
+
+        const discontinuedPrefix = medData.kubun === "廃版" ? "<strong style='color:#a4262c;'>【※メーカー廃版品目】（店頭デッドストック等を販売する場合は以下のルールが適用されます）</strong><br><br>" : "";
+
+        // スクリプトの起点：「商品お預かりいたします。」を反映
+        if (age === "under18") {
+            if (isLargeVolume || quantity === "multiple") {
+                statusEl.textContent = "販売不可（法律違反）";
+                statusEl.className = "result-status status-ng";
+                scriptTextEl.innerHTML = discontinuedPrefix + "「商品お預かりいたします。……誠に申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量パッケージや複数個の販売が禁止されており、こちらの商品はお売りすることができません。」";
+                showAlert = true;
+                showGuidance = true;
+            } else {
+                statusEl.textContent = "販売可（氏名確認必須）";
+                statusEl.className = "result-status status-warning";
+                scriptTextEl.innerHTML = discontinuedPrefix + "「商品お預かりいたします。国の定めに従いまして、ご購入者様のお名前とお年齢を確認させていただいております。お名前をお伺い（またはご記入）してもよろしいでしょうか？」";
+            }
+        } else {
+            if (isLargeVolume || quantity === "multiple") {
+                statusEl.textContent = "販売可（購入理由の確認必須）";
+                statusEl.className = "result-status status-warning";
+                scriptTextEl.innerHTML = discontinuedPrefix + "「商品お預かりいたします。こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用と安全を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><span style='font-size:0.85rem; color:#605e5c;'>（※『家族で使う』『旅行で予備がいる』等の正当な理由がない場合は販売不可）</span>";
+                showAlert = true;
+            } else {
+                statusEl.textContent = "通常販売可能";
+                statusEl.className = "result-status status-ok";
+                scriptTextEl.innerHTML = discontinuedPrefix + "「商品お預かりいたします。」（特別な確認は不要ですが、頻繁に来店される等、様子に違和感があればお声がけをしてください）";
+            }
+        }
+
+        if (showAlert) {
+            alertTextEl.textContent = alertMsg;
+            alertTextEl.style.display = 'block';
+        } else {
+            alertTextEl.style.display = 'none';
+        }
+
+        if (showGuidance) {
+            guidanceCardEl.style.display = 'block';
+        } else {
+            guidanceCardEl.style.display = 'none';
+        }
+    }
+
+    // タブ切り替えロジック
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('change', calculate);
+        input.addEventListener('keyup', calculate);
+    });
+
+    calculate();
+</script>
+
+</body>
+</html>
