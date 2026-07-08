@@ -3,246 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>指定濫用防止医薬品 判定チェッカー v3.1</title>
+    <title>指定濫用防止医薬品 判定システム v6.2</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f3f2f1;
-            color: #323130;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #ffffff;
-            border: 1px solid #c8c6c4;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .header-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #107c41;
-            color: white;
-            padding: 10px 15px;
-        }
-        .header-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        .btn-enlighten {
-            background-color: #ffffff;
-            color: #107c41;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .btn-enlighten:hover { background-color: #f3f2f1; }
-        
-        .filter-table { width: 100%; border-collapse: collapse; }
-        .filter-table th, .filter-table td {
-            border-bottom: 1px solid #e1dfdd;
-            padding: 12px 15px;
-            text-align: left;
-            font-size: 0.95rem;
-        }
-        .filter-table th {
-            background-color: #f3f2f1;
-            width: 35%;
-            font-weight: normal;
-            color: #605e5c;
-            border-right: 1px solid #e1dfdd;
-        }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #8a8886;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-        }
-        select:focus, input[type="number"]:focus {
-            outline: 2px solid #107c41;
-            border-color: transparent;
-        }
-        optgroup {
-            font-weight: bold;
-            color: #107c41;
-        }
-        .med-info {
-            font-size: 0.85rem;
-            color: #d83b01;
-            margin-top: 6px;
-            font-weight: bold;
-        }
-        .note-text {
-            font-size: 0.8rem;
-            color: #605e5c;
-            margin-top: 8px;
-            line-height: 1.4;
-            background-color: #f3f2f1;
-            padding: 8px;
-            border-radius: 4px;
-            border-left: 3px solid #107c41;
-        }
-        
-        .result-section {
-            padding: 20px;
-            background-color: #faf9f8;
-            border-top: 2px solid #107c41;
-        }
-        .result-status {
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid transparent;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        .status-ng { background-color: #fde7e9; color: #a4262c; border-color: #a4262c; }
-        .status-warning { background-color: #fff4ce; color: #797775; border-color: #d83b01; }
-        .status-ok { background-color: #dff6dd; color: #107c41; border-color: #107c41; }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed #c8c6c4;
-            padding: 10px 0;
-            font-size: 0.95rem;
-        }
+        /* エクセルライクな標準化デザイン */
+        body { font-family: "Meiryo UI", "Yu Gothic UI", sans-serif; background-color: #F3F2F1; color: #333333; margin: 0; padding: 15px; font-size: 13.5px; line-height: 1.5; }
+        .container { max-width: 950px; margin: 0 auto; background: #FFFFFF; border: 1px solid #CCCCCC; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .header-area { display: flex; justify-content: space-between; align-items: center; background-color: #217346; color: #FFFFFF; padding: 8px 15px; }
+        .header-title { font-size: 14px; font-weight: bold; }
+        .btn-enlighten { background-color: #FFFFFF; color: #217346; border: 1px solid #1E6B40; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+        .btn-enlighten:hover { background-color: #E1DFDD; }
+        .filter-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .filter-table th, .filter-table td { border: 1px solid #CCCCCC; padding: 8px 12px; vertical-align: middle; }
+        .filter-table th { background-color: #F3F2F1; width: 28%; font-weight: normal; color: #333333; }
+        select, input[type="number"] { width: 100%; padding: 6px 8px; border: 1px solid #A6A6A6; font-family: inherit; font-size: 13.5px; box-sizing: border-box; }
+        select:focus, input[type="number"]:focus { outline: 1px solid #217346; border-color: #217346; }
+        optgroup { font-weight: bold; color: #217346; }
+        .med-info { font-size: 12px; color: #C00000; margin-top: 4px; font-weight: bold; }
+        .note-text { font-size: 11.5px; color: #555555; margin-top: 6px; background-color: #F9F9F9; padding: 6px; border: 1px solid #E1DFDD; }
+        .result-section { padding: 15px; background-color: #FFFFFF; border-top: 2px solid #217346; }
+        .result-status { font-size: 16px; font-weight: bold; padding: 10px; text-align: center; border: 1px solid transparent; margin-bottom: 12px; }
+        .status-ng { background-color: #FDE7E9; color: #C00000; border-color: #C00000; }
+        .status-warning { background-color: #FFF4CE; color: #8A6D3B; border-color: #D83B01; }
+        .status-ok { background-color: #DFF6DD; color: #217346; border-color: #217346; }
+        .info-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #CCCCCC; padding: 6px 0; }
         .info-value { font-weight: bold; }
-        
-        .script-box {
-            margin-top: 15px;
-            background-color: #ffffff;
-            border: 1px solid #c8c6c4;
-            padding: 15px;
-            border-left: 4px solid #107c41;
-            border-radius: 4px;
-        }
-        .script-title {
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #107c41;
-            margin-bottom: 10px;
-        }
-        .script-text { font-size: 0.95rem; line-height: 1.5; margin: 0; }
-        .alert-text {
-            color: #a4262c;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #e1dfdd;
-        }
-
-        /* 案内カード (非表示デフォルト) */
-        .guidance-card {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e6f2ed;
-            border: 1px solid #107c41;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .guidance-card h4 { margin: 0 0 10px 0; color: #107c41; }
-        .guidance-card p { font-size: 0.85rem; margin-bottom: 10px; color: #323130; }
-        .link-list { display: flex; flex-direction: column; gap: 8px; }
-        .link-btn {
-            display: inline-block;
-            background-color: #ffffff;
-            color: #107c41;
-            text-decoration: none;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #107c41;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-        .link-btn:hover { background-color: #107c41; color: white; }
-
-        /* フッター（スタッフ用リンク） */
-        .footer-links {
-            max-width: 800px;
-            margin: 20px auto 0;
-            padding: 15px;
-            background-color: #ffffff;
-            border: 1px solid #c8c6c4;
-            border-radius: 4px;
-        }
-        .footer-links h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #605e5c; }
-        .footer-links ul { margin: 0; padding-left: 20px; font-size: 0.85rem; }
-        .footer-links a { color: #0078d4; text-decoration: none; }
-        .footer-links a:hover { text-decoration: underline; }
-
-        /* モーダル (啓発ポップアップ) */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
-            text-align: center;
-        }
-        .modal-content h3 { color: #107c41; margin-top: 0; font-size: 1.4rem; }
-        .modal-content p { font-size: 1.1rem; line-height: 1.6; color: #323130; text-align: left; }
-        .modal-close {
-            margin-top: 20px;
-            padding: 10px 30px;
-            background-color: #107c41;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
+        .script-box { margin-top: 15px; background-color: #F9F9F9; border: 1px solid #CCCCCC; padding: 12px; border-left: 4px solid #217346; }
+        .script-title { font-weight: bold; font-size: 13px; color: #217346; margin-bottom: 6px; }
+        .script-text { font-size: 13.5px; margin: 0; font-weight: normal; color: #000000; }
+        .alternative-box { margin-top: 10px; background-color: #FFFAF0; border: 1px solid #FFB900; border-left: 4px solid #D83B01; padding: 10px; }
+        .alternative-title { font-weight: bold; font-size: 12.5px; color: #D83B01; margin-bottom: 4px; }
+        .alternative-text { font-size: 12.5px; margin: 0; }
+        .detail-panel { margin: 15px; border: 1px solid #2B579A; background-color: #F0F6FF; }
+        .detail-panel-header { background-color: #2B579A; color: #FFFFFF; padding: 6px 12px; font-weight: bold; font-size: 13px; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background-color: #CCCCCC; }
+        .detail-card { background: #FFFFFF; padding: 10px; }
+        .detail-card-title { font-size: 12.5px; font-weight: bold; color: #2B579A; border-bottom: 1px solid #E1DFDD; padding-bottom: 4px; margin-bottom: 6px; }
+        .detail-card-body { font-size: 12px; }
+        .manual-section { margin: 0 15px 15px; border-top: 1px solid #CCCCCC; padding-top: 15px; }
+        details { background: #FFFFFF; border: 1px solid #CCCCCC; margin-bottom: 6px; padding: 8px 12px; }
+        summary { font-weight: bold; color: #333333; cursor: pointer; font-size: 13px; outline: none; }
+        .manual-content { margin-top: 10px; font-size: 12px; border-top: 1px dotted #CCCCCC; padding-top: 8px; }
+        .rule-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12px; }
+        .rule-table th, .rule-table td { border: 1px solid #CCCCCC; padding: 6px; text-align: center; }
+        .rule-table th { background: #F3F2F1; }
+        .tag-red { color: #C00000; font-weight: bold; }
+        .tag-green { color: #217346; font-weight: bold; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #FFFFFF; padding: 20px; border: 1px solid #CCCCCC; max-width: 650px; max-height: 85vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-content h3 { color: #333333; margin-top: 0; font-size: 15px; border-bottom: 2px solid #333333; padding-bottom: 6px; }
+        .modal-content p { font-size: 13px; line-height: 1.6; }
+        .modal-highlight { background-color: #F9F9F9; border-left: 3px solid #555555; padding: 10px; margin: 10px 0; font-size: 12.5px; }
+        .modal-close { margin-top: 15px; padding: 6px 20px; background-color: #F3F2F1; color: #333333; border: 1px solid #CCCCCC; font-size: 13px; cursor: pointer; width: 100%; }
+        .modal-close:hover { background-color: #E1DFDD; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-area">
-        <div class="header-title">指定濫用防止医薬品 判定フィルター</div>
-        <button class="btn-enlighten" onclick="document.getElementById('modal').style.display='flex'">💡 なぜ制限があるの？</button>
+        <div class="header-title">指定濫用防止医薬品 判定システム v6.2 (自動生成版)</div>
+        <button class="btn-enlighten" onclick="document.getElementById('modal').style.display='flex'">【確認】販売制限の理由および確認業務の根拠</button>
     </div>
     
     <table class="filter-table">
         <tr>
-            <th>1. 対象商品を選ぶ</th>
+            <th>1. 対象商品の選択</th>
             <td>
                 <select id="medicine"></select>
                 <div id="medInfo" class="med-info">--</div>
                 <div class="note-text">
-                    ※15歳未満の用量が設定されている場合でも、日数計算は「成人の1日最大服用量」を基準とします。<br>
-                    ※厚労省通知により、用法用量に「適宜増減」とあっても「認められている最大の用法・用量（最大量）」を基準として計算します。
+                    【法解釈・実務鉄則】小容量1個の販売時であっても、18歳未満には「氏名・年齢の確認」、成人には「他店での直近購入状況の確認」が法令上必須となります。<br>
+                    ※「適宜増減」や小児用量に関わらず、成人の1日最大服用量を計算基準とします。
                 </div>
             </td>
         </tr>
         <tr>
-            <th>2. 包装内数量（パッケージ総量）</th>
+            <th>2. 包装内数量（総量）</th>
             <td>
-                <input type="number" id="totalAmount" min="1" value="16" placeholder="例: 16">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="number" id="totalAmount" min="1" placeholder="例: 48" style="width:120px;">
+                    <span id="amountStatus" style="font-size:12px; color:#555;"></span>
+                </div>
             </td>
         </tr>
         <tr>
-            <th>3. お客様の年齢</th>
+            <th>3. 購入者の年齢</th>
             <td>
                 <select id="age">
                     <option value="under18">18歳未満（未成年）または疑わしい</option>
@@ -251,7 +96,7 @@
             </td>
         </tr>
         <tr>
-            <th>4. 購入個数（同一・他薬合算）</th>
+            <th>4. 購入個数（他薬合算）</th>
             <td>
                 <select id="quantity">
                     <option value="single">1個のみ</option>
@@ -263,109 +108,1076 @@
 
     <div class="result-section">
         <div id="resultStatus" class="result-status status-ok">判定中...</div>
-        
-        <div class="info-row">
-            <span>一箱の消費日数（目安）:</span>
-            <span id="calcDays" class="info-value">-- 日分</span>
-        </div>
-        <div class="info-row">
-            <span>法律上の容量区分:</span>
-            <span id="volumeType" class="info-value">--</span>
-        </div>
-        
-        <div class="script-box" id="scriptBox">
-            <div class="script-title">スタッフお声がけスクリプト</div>
-            <p id="scriptText" class="script-text">--</p>
-            <div id="alertText" class="alert-text" style="display:none;"></div>
-        </div>
+        <div class="info-row"><span>一箱の消費日数（目安）:</span><span id="calcDays" class="info-value">-- 日分</span></div>
+        <div class="info-row"><span>法令上の容量区分:</span><span id="volumeType" class="info-value">--</span></div>
+        <div class="script-box" id="scriptBox"><div class="script-title">【対応手順】お声がけスクリプト</div><p id="scriptText" class="script-text">--</p></div>
+        <div class="alternative-box" id="altBox"><div class="alternative-title">【推奨】代替薬・トリアージ提案（販売謝絶時等）</div><p class="alternative-text" id="altText">--</p></div>
+    </div>
 
-        <!-- 案内カード (判定により表示/非表示) -->
-        <div id="guidanceCard" class="guidance-card">
-            <h4>【お客様へのお渡し・ご案内資料】</h4>
-            <p>※必要に応じて以下の資料をご提示、または印刷してお渡しください。</p>
-            <div class="link-list">
-                <a href="https://www.mhlw.go.jp/content/001405036.pdf" target="_blank" class="link-btn">中高生のみなさんへ「薬のオーバードーズって何だろう」</a>
-                <a href="https://www.mhlw.go.jp/content/001405040.pdf" target="_blank" class="link-btn">小学生のみなさんへ「薬のオーバードーズって何だろう」</a>
-                <a href="https://www.mhlw.go.jp/content/001075630.pdf" target="_blank" class="link-btn">一般用医薬品の乱用防止に関するポスター（厚労省）</a>
-            </div>
+    <div class="detail-panel" id="detailPanel">
+        <div class="detail-panel-header"><span>【アドバンスド情報】<span id="detailMedName">製品名</span></span></div>
+        <div class="detail-grid">
+            <div class="detail-card"><div class="detail-card-title">【用法・用量（実態）】</div><div class="detail-card-body" id="detailPosition">--</div></div>
+            <div class="detail-card"><div class="detail-card-title">【妊婦・授乳婦情報】</div><div class="detail-card-body" id="detailMaternity">--</div></div>
+            <div class="detail-card"><div class="detail-card-title">【ドーピング規制・スポーツ】</div><div class="detail-card-body" id="detailDoping">--</div></div>
+            <div class="detail-card"><div class="detail-card-title">【運転・機械操作】</div><div class="detail-card-body" id="detailDriving">--</div></div>
         </div>
     </div>
+
+    <div class="manual-section">
+        <details open>
+            <summary>【早見表】正しい販売ルールのまとめ（小容量1個・大容量の対応）</summary>
+            <div class="manual-content">
+                <table class="rule-table">
+                    <tr><th>購入者の年齢</th><th>購入する容量</th><th>氏名・年齢の確認</th><th>他店での購入状況確認</th><th>販売の可否</th></tr>
+                    <tr><td><strong>18歳未満</strong></td><td>小容量（1個）</td><td><span class="tag-red">必須（要身分証等）</span></td><td><span class="tag-red">必須</span></td><td>条件を満たせば販売可</td></tr>
+                    <tr><td><strong>18歳以上</strong></td><td>小容量（1個）</td><td><span style="color:#777;">原則不要</span></td><td><span class="tag-red">必須</span></td><td>通常通り販売可</td></tr>
+                </table>
+                <p style="margin:6px 0 0; color:#C00000; font-weight:bold;">※【販売謝絶】18歳未満への「大容量製品」や「複数個（他薬・他店合算含む）」の販売は、理由を問わず一律禁止（販売不可）です。</p>
+            </div>
+        </details>
+        
+        <details>
+            <summary>【計算手順】基準日数の把握と消費日数の割り出し</summary>
+            <div class="manual-content">
+                <strong>STEP 1：薬の分類を確認し、基準日数を把握する</strong><br>
+                ・かぜ薬、解熱鎮痛薬、鼻炎用内服薬 ＝ <span class="tag-green">基準：7日分</span><br>
+                ・それ以外の薬（せき止め薬など） ＝ <span class="tag-green">基準：5日分</span><br><br>
+                <strong>STEP 2：成人（15歳以上）の「1日最大服用量」を確認する</strong><br>
+                ・パッケージの用法・用量から「1回量 × 1日の服用回数」を計算します。<br><br>
+                <strong>STEP 3：パッケージ総量が「何日分」になるか割り出す</strong><br>
+                ・<strong>計算式：パッケージ総量 ÷ 1日最大服用量 ＝ 消費日数（日分）</strong><br><br>
+                <strong>STEP 4：基準日数と照らし合わせて容量区分を判定する</strong><br>
+                ・計算した日数が基準日数以下 ＝ <span class="tag-green">小容量（小包装）</span><br>
+                ・計算した日数が基準日数を超える ＝ <span class="tag-red">大容量（大包装）</span>
+            </div>
+        </details>
+
+        <details>
+            <summary>【医療エビデンス】過量服薬におけるタイムライン上の致死リスク</summary>
+            <div class="manual-content">
+                <strong>■ 無水カフェイン：初日の急性心毒性</strong><br>致死的な不整脈や痙攣を引き起こし、救急搬送中やICUに入ってすぐに亡くなるケースでは直接の死因となることが多いです。<br><br>
+                <strong>■ アセトアミノフェン：3日目以降の遅延性劇症肝不全</strong><br>数日間は無症状か軽微な胃腸症状であっても、時間経過的に引き返せない状況になってから致命的な劇症肝不全になる遅延性毒性が特徴的です。
+            </div>
+        </details>
+
+        <div style="margin-top: 15px; background-color:#FFFFFF; padding: 12px; border: 1px solid #CCCCCC;">
+            <strong style="font-size:13px; color:#333333;">▼ スタッフ確認用リンク（法的根拠・対応マニュアル）</strong><br>
+            <ul style="margin: 8px 0 0 0; padding-left: 24px; font-size:12.5px;">
+                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank" style="color:#005A9E;">ゲートキーパーとしての薬剤師等の対応マニュアル</a></li>
+                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/content/11120000/001638681.pdf" target="_blank" style="color:#005A9E;">指定濫用防止医薬品の指定について（告示）</a></li>
+                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/content/11120000/001649558.pdf" target="_blank" style="color:#005A9E;">指定濫用防止医薬品販売等手順書モデル</a></li>
+                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank" style="color:#005A9E;">令和7年 薬機法等の一部改正について</a></li>
+            </ul>
+        </div>
+        </div>
 </div>
 
-<!-- スタッフ用 根拠資料リンク集 -->
-<div class="footer-links">
-    <h4>▼ スタッフ確認用リンク（法的根拠・対応マニュアル）</h4>
-    <ul>
-        <li><a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank">ゲートキーパーとしての薬剤師等の対応マニュアル</a></li>
-        <li><a href="https://www.mhlw.go.jp/content/11120000/001638681.pdf" target="_blank">指定濫用防止医薬品の指定について（告示）</a></li>
-        <li><a href="https://www.mhlw.go.jp/content/11120000/001649558.pdf" target="_blank">指定濫用防止医薬品販売等手順書モデル</a></li>
-        <li><a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank">令和7年 薬機法等の一部改正について</a></li>
-    </ul>
-</div>
-
-<!-- お客様向け 啓発ポップアップ -->
 <div id="modal" class="modal-overlay">
     <div class="modal-content">
-        <h3>お薬の適正な使用のために</h3>
-        <p>
-            いつもご利用ありがとうございます。<br><br>
-            一部の市販薬において、用法・用量を超えた過量服用（オーバードーズ）による健康被害が社会問題となっています。<br><br>
-            お客様の健康と安全をお守りするため、<strong>国（厚生労働省）のルールにより、対象となるお薬の「販売個数」や「販売容量」に制限が設けられております。</strong><br><br>
-            ご不便をおかけいたしますが、適正な使用と安全確保のため、販売時のご確認にご理解とご協力をお願い申し上げます。
-        </p>
-        <button class="modal-close" onclick="document.getElementById('modal').style.display='none'">閉じる</button>
+        <h3>販売制限の理由および確認業務の根拠</h3>
+        <p>医薬品の販売に際し、「販売個数や容量の確認」、「ご購入理由のお伺い」など、ご面倒をおかけしております。</p>
+        <div class="modal-highlight">
+            <strong>「個人の問題ではなく、社会構造的な問題として」</strong><br>
+            かつて、制度規制が十分でなく、服用状況・安全確認が不十分な中で当該医薬品が販売されていた際に、<br>
+            <span style="color:#C00000; font-weight:bold;">【規定量を上回る自己判断による服用により、身体への致命的な損傷に至った事例】</span>が実際にありました。<br>
+            過去の事例から学び、同じ事象を繰り返さないことが今回の販売制限の目的です。
+        </div>
+        <p><strong>市販薬の厳格な承認基準</strong><br>市販薬には厚労省の厳格な配合・最大量のルールが存在し、製薬メーカーが最適な混合比率を設計しています。最大効果・最小副作用は、「用法用量を守ること」で達成されます。</p>
+        <p><strong>国の救済制度の対象外リスク</strong><br>「意図的な過量服薬」による健康被害はメーカーの保証範囲を超え、国の救済制度においても対象外となります。複数の薬の同時服用も自己責任となるため、飲み合わせ等を確認させて頂く必要があります。</p>
+        <button class="modal-close" onclick="document.getElementById('modal').style.display='none'">閉じる（確認済み）</button>
     </div>
 </div>
 
 <script>
-    // --- 【マスタデータ管理部】 ---
-    // 将来的に外部JSONファイルからの読み込み(fetch)に切り替えやすいよう独立させています
- const medicineMaster = {
-    // --- 基準: 5日分 ---
-    "aneton": { name: "アネトンせき止め錠", categoryLimit: 5, dailyDose: 12, type: "せき止め" },
-    "coolone_gx": { name: "クールワンせき止めGX", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
-    "medicon_pro": { name: "メジコンせき止め錠Pro", categoryLimit: 5, dailyDose: 6, type: "せき止め" },
-    
-    // --- 基準: 7日分 ---
-    "pabron_gold_a_tab": { name: "パブロンゴールドA（錠）", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-    
-    // ベンザブロックシリーズ（カプレットと錠で用量が異なるものがあるため注意）
-    "benza_l_plus_cap": { name: "ベンザブロックLプラス（カプレット）", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
-    "benza_l_plus_tab": { name: "ベンザブロックLプラス錠", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-    "benza_ip_plus_cap": { name: "ベンザブロックIPプラス（カプレット）", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
-    "benza_ip_plus_tab": { name: "ベンザブロックIPプラス錠", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-    "benza_s_plus_cap": { name: "ベンザブロックSプラス（カプレット）", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
-    "benza_s_plus_tab": { name: "ベンザブロックSプラス錠", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-    
-    // プレミアムDXシリーズ（錠剤が多いため注意）
-    "benza_l_premium_dx": { name: "ベンザブロックLプレミアムDX錠", categoryLimit: 7, dailyDose: 6, type: "風邪薬" },
-    "benza_ip_premium_dx": { name: "ベンザブロックIPプレミアムDX錠", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-    "benza_s_premium_dx": { name: "ベンザブロックSプレミアムDX錠", categoryLimit: 7, dailyDose: 9, type: "風邪薬" },
-    
-    "loxonin_cold": { name: "ロキソニン総合かぜ薬", categoryLimit: 7, dailyDose: 6, type: "風邪薬" }
-};
+    // Pythonスクリプトがここにデータを挿入します
+    const medicineMaster = {
+        
+    "med_0": {
+        "name": "アネトンせき止め錠",
+        "defaultAmount": 0,
+        "categoryLimit": 5,
+        "dailyDose": 12.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "アネトンせき止め錠は、いろいろな原因で起こる「せき」をしずめ「たん」の切れをよくします。飲みやすいフィルムコーティング錠で、12歳のお子様から服用できます。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は服用しないか、服用時は授乳を避けること。妊婦又は妊娠していると思われる人は相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_1": {
+        "name": "パブロンゴールドA〈錠〉",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "パブロンゴールドA〈錠〉：ﾎﾞﾄﾙ包装しか存在しない｡昔ながらの処方を守る、一番売れる大黒柱(Ace/Advanced予想)｡Aはﾊﾟﾌﾞﾛﾝにおける汎用の記号｡\n        (1955年に「パブロンA・B」の2種発売。A：せきの出るかぜ用/B：熱の出るかぜ用。改良重ねられ「ゴールドA」となった現在でも「A」は「家族みんなで使える、せき・熱・鼻にバランスよく効く定番の常備薬」という記号)\n        パブロンSゴールドW錠には30・42・60錠包装があり、すべてシート（PTP）包装。（「W」は、「2つの成分で、気道粘膜をダブルケア」）\n        パブロンエースPro-X：大人専用。イブプロフェン600mgで「のどの痛み」に最強。\n        パブロンS：5才（微粒は1才）から使えてノンカフェインのファミリー用。S：（Special / Superior）「優しさ・飲みやすさ」の進化系｡\n　　パブロン鼻炎カプセルにはプソイドエフェドリン配合で、指定濫用対象？Saのこと？鼻炎速溶錠EXにも｡\n　　持続性パブロン錠にはジヒドロｺﾃﾞｲﾝ・メチルエフェドリン配合。パブロンせき止めトリプル錠にはデキストロメトルファン配合\n　★「パブロン」の大人向け（15才以上）の風邪薬・せき止め薬において、指定乱用成分非含有は「パブロン50」(麦門冬湯ﾍﾞｰｽ)｡",
+        "alternative": "パブロンゴールドA〈錠〉は、グアイフェネシンをはじめとする7種類の有効成分を配合したかぜ薬です。せき、たん、のどの痛み、くしゃみ、鼻水、鼻づまり、悪寒、発熱、頭痛、関節の痛み、筋肉の痛みなど、かぜの諸症状を総合的に緩和します。家庭の常備薬としてもおすすめです。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は服用しないか、本剤を服用する場合は授乳を避けること。妊婦又は妊娠していると思われる人は服用前に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_2": {
+        "name": "パイロンPL錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "パイロンPL錠は、サリチルアミド、アセトアミノフェン、プロメタジンメチレンジサリチル酸塩、無水カフェインの4つの有効成分を配合した非ピリン系のかぜ薬です。これらの成分の作用により、「のどの痛み」「発熱」「鼻みず」など、かぜの諸症状に優れた効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は服用前に医師等に相談すること。授乳中は服用可能だが、念のため医師に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_3": {
+        "name": "パイロンPL錠 ゴールド",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "パイロンPL錠 ゴールドは、サリチルアミドとアセトアミノフェン、プロメタジンメチレンジサリチル酸塩、無水カフェイン、デキストロメトルファン臭化水素酸塩水和物、ブロムヘキシン塩酸塩の6つの有効成分を配合した非ピリン系の総合かぜ薬です。せき、たん、のどの痛み、発熱、鼻みずなど、かぜの11症状に優れた効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は服用前に相談",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_4": {
+        "name": "パイロンPL錠Pro",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 8.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "パイロンPL錠Proは、解熱鎮痛成分であるサリチルアミドとアセトアミノフェン、抗ヒスタミン成分であるプロメタジンメチレンジサリチル酸塩、痛みをおさえるはたらきを助ける無水カフェインの4つの有効成分の作用により、「のどの痛み」「発熱」「鼻みず」などのかぜの諸症状にすぐれた効果を発揮する非ピリン系のかぜ薬です。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人、妊婦または妊娠していると思われる人は服用前に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_5": {
+        "name": "パイロンPL顆粒",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "パイロンPL顆粒は、解熱鎮痛成分サリチルアミドとアセトアミノフェン、抗ヒスタミン成分プロメタジンメチレンジサリチル酸塩、痛みをおさえるはたらきを助ける無水カフェインの4つの有効成分が作用し、「のどの痛み」「発熱」「鼻みず」などかぜの諸症状にすぐれた効果を発揮する非ピリン系かぜ薬です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は相談すること。授乳中は服用可能だが、念のため医師に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_6": {
+        "name": "パイロンPL顆粒Pro",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 4.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "パイロンPL顆粒Proは、解熱鎮痛成分であるサリチルアミドとアセトアミノフェン、抗ヒスタミン成分であるプロメタジンメチレンジサリチル酸塩、痛みをおさえるはたらきを助ける無水カフェインの4つの有効成分の作用により、「のどの痛み」「発熱」「鼻みず」などのかぜの諸症状にすぐれた効果を発揮する非ピリン系のかぜ薬です。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人、妊婦または妊娠していると思われる人は服用前に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_7": {
+        "name": "ベンザブロックIP",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "イブプロフェンの解熱鎮痛作用により、かぜによる発熱・悪寒・頭痛・のどの痛み・関節の痛みを緩和します。6種の成分がバランスよくはたらき、かぜの様々な症状を緩和。柑橘類などに含まれるビタミンPの一種であるヘスペリジンを配合。のみやすい小型の白色～帯黄白色のカプレットタイプの錠剤です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用禁止。授乳中は服用しないか授乳を避けること。妊婦または妊娠していると思われる人は服用前に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_8": {
+        "name": "ベンザブロックIPプレミアム",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "イブプロフェンとアセトアミノフェンの2種の解熱鎮痛成分が、発熱・悪寒、頭痛、のどの痛み、関節の痛みを緩和します。グリチルリチン酸がのどの炎症をおさえ、ビタミンCとヘスペリジンも配合。9種の成分でかぜの諸症状を総合的に緩和する薬です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用しないこと。授乳中の人は服用しないか、授乳を避けること。妊婦または妊娠していると思われる人は服用前に医師等に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_9": {
+        "name": "ベンザブロックIP錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "イブプロフェンの解熱鎮痛作用でかぜによる発熱・さむけ・頭痛・のどの痛み・関節の痛みを緩和する。6種の成分がバランスよく働き、かぜの諸症状（発熱、悪寒、頭痛、のどの痛み、関節の痛み、鼻水、鼻づまり、筋肉の痛み、せき、たん、くしゃみ）を緩和。柑橘類などに含まれるヘスペリジンを配合した、のみやすい小型の白色～帯黄白色の円形錠剤。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用しないこと。授乳中の人は本剤を服用しないか、服用する場合は授乳を避けること。妊婦または妊娠していると思われる人は服用前に医師等に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_10": {
+        "name": "ベンザブロックL",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "かぜの諸症状（のどの痛み，せき，発熱，鼻づまり，鼻水，くしゃみ，悪寒，頭痛，関節の痛み，筋肉の痛み）の緩和。イブプロフェンの解熱鎮痛作用でのどの痛み・発熱などを緩和し、ジヒドロコデインリン酸塩がせき中枢に、塩酸プソイドエフェドリンが鼻粘膜の充血に働き、鼻づまりを緩和。5種の成分がバランスよくはたらき、のみやすい小型の白いカプレットタイプの錠剤。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用しないこと。授乳中の人は服用しないか、服用する場合は授乳を避けること。妊婦または妊娠していると思われる人は服用前に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_11": {
+        "name": "ベンザブロックLプレミアムDX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "本製品はイブプロフェン600mg（1日量）を配合し、のどの痛みや発熱を抑えます。トラネキサム酸が粘膜の炎症を鎮め、デキストロメトルファンがせき中枢に作用してせきをしずめます。8種の成分配合で、かぜの諸症状を総合的に緩和する、のみやすい小型の白色～帯黄白色のカプレットタイプ錠剤です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用不可。妊婦または妊娠していると思われる人、授乳中の人は服用前に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_12": {
+        "name": "ベンザブロックSプレミアムDX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "かぜの諸症状（鼻水、鼻づまり、のどの痛み、くしゃみ、せき、たん、発熱、頭痛、関節・筋肉の痛み）を緩和する総合感冒薬。d-クロルフェニラミンマレイン酸塩、プソイドエフェドリン塩酸塩、ベラドンナ総アルカロイドなど9種の成分を配合し、特に鼻水・鼻づまり・くしゃみに効果を発揮します。のみやすい小型の淡黄色のカプレット錠です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人、授乳中の人は服用前に医師、薬剤師または登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_13": {
+        "name": "メジコンせき止め錠Pro",
+        "defaultAmount": 0,
+        "categoryLimit": 5,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "メジコンせき止め錠Proは、せき中枢に直接作用し、つらいせきの症状にすぐれた効果を発揮する非麻薬性のせき止め薬です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は服用前に医師、薬剤師または登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_14": {
+        "name": "ロキソニン総合かぜ薬",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "かぜの諸症状（鼻水，鼻づまり，くしゃみ，のどの痛み，せき，たん，悪寒，発熱，頭痛，関節の痛み，筋肉の痛み）の緩和",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用不可。授乳中の人は服用を避ける。妊婦または妊娠していると思われる人は服用前に医師または薬剤師に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_15": {
+        "name": "ロキソプロフェン錠「LS」",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "頭痛、歯痛、生理痛をはじめ、抜歯後の疼痛、咽喉痛、耳痛、関節痛、神経痛、腰痛、筋肉痛、肩こり痛、打撲痛、骨折痛、捻挫痛、外傷痛などの鎮痛に効果を発揮します。また、悪寒・発熱時の解熱にも使用できる一般用医薬品です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用禁止。妊婦又は妊娠していると思われる人、授乳中の人は要相談。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_16": {
+        "name": "ロキソプロフェン錠「クニヒロ」",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "ロキソプロフェン錠「クニヒロ」は、痛みや熱の原因となるプロスタグランジンの生成を抑えるロキソプロフェンナトリウム水和物を成分とした錠剤です。頭痛や生理痛、発熱時の解熱など様々な痛みや熱に効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用せず、妊婦または妊娠していると思われる人、授乳中の人は服用前に医師等に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_17": {
+        "name": "アレグラFX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "＊対象外",
+        "group": "対象医薬品リスト",
+        "note": "アレグラFX：Fexofenadineの頭文字「F」、（効き目Effectや、素早くFast届くという意味も）｡「X」は、「未知数、究極、進化」\n        アレグラの授乳の件は典型例で、処方薬の添付文書には「治療上の有益性が危険性を上回ると判断される場合にのみ」という定型文が入っていますが、実臨床ではL1（最も安全）に分類されていてほぼ無条件で使える薬。ただし、OTCにおいては「添付文書の文言に忠実」であることが、単なる保守的姿勢ではなく、説明責任の観点から合理的な選択\n        「アレグラFXプレミアム」：2025年秋発売、血管収縮剤のプソイドエフェドリン塩酸塩が追加配合(指定濫用対象)｡医療用のディレグラ配合錠と同様､ 閉塞隅角緑内障であれば禁忌",
+        "alternative": "第2世代抗ヒスタミン成分フェキソフェナジン塩酸塩を配合したアレルギー専用鼻炎薬。花粉やハウスダストによるくしゃみ、鼻水、鼻づまりなどのアレルギー症状に優れた効果を発揮します。脳に影響を与えにくく眠くなりにくいのが特長で、集中力や判断力の低下も起こしにくいです。1日2回朝夕服用で1日中効果が持続し、空腹時でも服用できます。花粉飛散予測日からの早めの服用が効果的です。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の服用は避ける。妊婦は医師に相談。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_18": {
+        "name": "エルペインコーワ",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "エルペインコーワは生理特有の痛みに効く生理痛専用薬です。「ズキズキする痛み」に効くイブプロフェンと「ぎゅ～っとねじれるような痛み」に効くブチルスコポラミン臭化物を配合し、生理特有の痛みに速く、よく効きます。眠くなる成分を含まず、1回1錠、小粒でのみやすい。お腹のゆるさを伴う生理痛にも適しています。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用不可。妊婦又は妊娠していると思われる人、授乳中の人は服用前に医師等に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_19": {
+        "name": "葛根湯エキス錠S「コタロー」",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 12.0,
+        "kubun": "△",
+        "group": "対象医薬品リスト",
+        "note": "葛根湯エキス錠S「コタロー」\n        薬効分類が「漢方製剤」「生薬製剤」に該当する場合は、マオウ成分を含んでいても「対象外（漢方製剤）」\n        葛根湯の承認書上の有効成分は「葛根湯エキス（マオウ、カッコン、タイソウ等の抽出エキス）」または「生薬粉末」であり、単一の化学成分である「エフェドリン」を有効成分とする製剤とは法規上みなされないため、「法規制の対象」とはされません。\n        葛根湯(4)以外にも､小青竜湯(3)/防風通聖散(1.2､長期想定)/麻黄湯(5)/五虎湯･麻杏甘石湯(4)/麻黄附子細辛湯(4)も同様(ﾏｵｳg/日)",
+        "alternative": "本剤は、かぜや肩こりなどに用いられる漢方薬です。食欲はあるが寒気があり、熱が出ても汗が出ない、頭痛があり肩や首筋がこったり、ふしぶしが痛いといったかぜに効果的です。かぜに関係なく肩こりや筋肉痛にも用いられます。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は服用前に医師、薬剤師または登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_20": {
+        "name": "カイベールC",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "カイベールCは、ビサコジルとセンノサイドの2つの有効成分を承認基準内最大量配合した便秘薬です。つらい便秘とそれに伴う肌あれ、吹出物、頭重、のぼせ、食欲不振、腹部膨満、腸内異常醗酵、痔といった不快症状に優れた効果を発揮します。1回1～3錠で服用量を調節でき、初回は1錠からお試しいただけます。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の服用は避けること。妊婦は服用前に医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_21": {
+        "name": "カロナールA",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "解熱鎮痛成分「アセトアミノフェン」が中枢神経に速やかに作用し、すぐれた鎮痛・解熱効果を発揮します。胃への負担が少なく、眠くなる成分（鎮静催眠成分）を含みません。頭痛、月経痛、歯痛、発熱など幅広い症状に1回1錠でよく効く、速効性とやさしさを兼ね備えた解熱鎮痛薬です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師、歯科医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_22": {
+        "name": "ガスター10",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "授乳と薬の専門的な観点（催奇性や乳児への影響）からみると、ファモチジンは授乳中でも比較的安全に使用できる「L1」と考えられています。一方で、市販薬としてのガスター10の添付文書上では「授乳中の人は本剤を服用しないか、服用する場合は授乳を避けて下さい」という注意書きがなされています",
+        "alternative": "本剤は、胃痛、もたれ、胸やけ、むかつきに優れた効果を発揮するH2ブロッカー胃腸薬です。従来の胃酸中和型の胃腸薬とは異なるタイプで、胃の不快な症状の原因となる胃酸の出過ぎをコントロールし、胃粘膜の修復を促します。1回1錠の服用で約8時間にわたって胃酸の分泌をコントロールすることができ、携帯に便利なPTP包装となっています。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用しないこと。授乳中の人は本剤を服用しないか、本剤を服用する場合は授乳を避けること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_23": {
+        "name": "ガスター10 S錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "ガスター10の市販薬で水なしで飲めるタイプは「S錠」。「S」は「スピードSpeedや、スムーズSmoothを意味。",
+        "alternative": "本剤は胃酸中和型の胃腸薬とは異なるタイプの胃腸薬で、胃痛、もたれ、胸やけ、むかつきに優れた効果を発揮します。胃の不快な症状の原因となる胃酸の出過ぎをコントロールし、胃粘膜の修復を促します。携帯に便利なPTP包装を採用しており、口の中の水分を含むと速やかに溶け、水なしでも服用できる速溶錠タイプです。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用しないこと。授乳中の人は服用しないか、服用する場合は授乳を避けること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_24": {
+        "name": "クラリチンEX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 1.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "クラリチンEX：Extension拡張や、Extra（特別、厳選された）の頭文字に由来。「医療用（処方薬）からスイッチ（転用）された経緯の区別の意図。\n        病院のクラリチンは「アレルギー性鼻炎」だけでなく「蕁麻疹」や「皮膚のかゆみ」にも適応があります。一方、市販のクラリチンEXは【鼻のアレルギー症状（鼻水、鼻づまり、くしゃみ）の緩和】に限定されています。対象年齢も、病院のクラリチンは小児（3歳〜）にも処方されますが、クラリチンEXは【15歳未満は服用できません】。\n        現状､市販薬では「皮膚の適応」が外されている。（受診遅延の防止､慢性掻痒には第2世代抗ヒスタミン薬単剤による効果に疑問符）",
+        "alternative": "クラリチンEXは、第2世代抗ヒスタミン成分ロラタジンを含有するアレルギー専用鼻炎薬です。花粉やハウスダストなどによる鼻水、鼻づまり、くしゃみといった鼻のアレルギー症状を緩和します。眠くなりにくく、「集中力、判断力、作業効率の低下」を起こしにくいのが特徴で、1日1回1錠の服用で効き目が長く続きます。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は本剤を服用しないか、本剤を服用する場合は授乳を避けること。妊婦又は妊娠していると思われる人は服用前に医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_25": {
+        "name": "サクロンQ",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "処方箋薬名では「ストロカイン」",
+        "alternative": "サクロンQは、胃酸やアルコールなどが胃粘膜を刺激して起きる「さしこみ、胃痛、はきけ」に速く効く胃ぐすりです。有効成分のオキセサゼインが胃粘膜に直接作用し、胃痛、腹痛、吐き気（むかつき、二日酔い・悪酔いのむかつき）、嘔吐、さしこみ、胸やけ、胃酸過多、胃部不快感、げっぷなどのつらい症状を速やかに改善します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用しないこと",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_26": {
+        "name": "新ウリエースBT",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 0.0,
+        "kubun": "一般用検査薬",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "身体の健康状態や体内の機能に変化や異常があると、尿中に含まれる成分も変化します。新ウリエースBTは尿中の糖（ブドウ糖）及びたん白（アルブミン）を検出する検査薬ですので、定期的に使用することで、体内の変化や異常をチェックし、健康管理や早期受診にお役立ていただけます。なお、本検査は尿中の糖及びたん白を検出するものであり、病気の診断を行うものではありません。",
+        "info": {
+            "position": "",
+            "maternity": "",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_27": {
+        "name": "新コンタック鼻炎Z",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 1.0,
+        "kubun": "＊対象外",
+        "group": "対象医薬品リスト",
+        "note": "新コンタック鼻炎Z：コンタックブランドの中で唯一､指定濫用成分含まない｡\n        セチリジン（第2世代）が寝る前1回持続。ただし、セチリジン塩酸塩は「妊婦又は妊娠している可能性のある婦人（禁忌）」と添付に明記\n        　その他「600プラス/総合かぜ薬/かぜ総合DX/かぜ総合/せき止めダブル/総合感冒薬EX」等、総じて指定濫用成分含む",
+        "alternative": "本剤はアレルギー専用鼻炎薬で、花粉やハウスダストなどによるくしゃみ、鼻水、鼻づまりといった鼻のアレルギー症状を緩和します。優れた効果を持つ第2世代抗アレルギー成分を配合しており、寝る前に1日1回1錠を服用するだけでしっかり効きます。直径約7ミリの小さな錠剤で飲みやすいのも特徴です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は相談すること。授乳中の人は本剤を服用しないか、本剤を服用する場合は授乳を避けること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_28": {
+        "name": "セルベール",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "粉薬タイプの「セルベール（細粒）」には「整胃錠」のように「整胃」という言葉が製品名に直接入っていません。製造元が理由ではなく、単に「錠剤（錠）」か「粉薬（細粒）」かの名称の区別によるもの",
+        "alternative": "普段から胃の弱りを感じる方におすすめの胃腸薬です。「胃もたれ」「胸やけ」などの症状を漫然と繰り返す方や、少し胃に負担がかかるだけで不快な症状を感じる方に適しています。胃酸などの刺激から胃の粘膜を守る「胃粘液」を増やし、さらに胃の運動を活発にして弱った胃の状態を整えます。サッと溶けて飲みやすい細粒剤です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師、薬剤師又は登録販売者に相談してください。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_29": {
+        "name": "セルベール整胃錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "胃もたれ、胸やけ、食べ過ぎなどに効果を現す胃腸薬です。普段から胃の弱りを感じる方や、少しの胃への負担で不快な症状を繰り返す方におすすめです。胃酸などの刺激から胃の粘膜を守る「胃粘液」を増やし、さらに胃の運動を活発にして弱った胃の状態を整えます。1回1錠で効く飲みやすい錠剤タイプで、弱った胃を元気にしていきます。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は、服用前に医師、薬剤師又は登録販売者に相談してください。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_30": {
+        "name": "新セルベール整胃プレミアム〈錠〉",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "最近、胃が弱ってきたと感じる方におすすめの胃腸薬です。胃を守るテプレノンを増量し処方強化した本剤は、胃粘液を増やして胃を守る「守る」、胃の運動を活発にする「動かす」、脂肪を分解して消化する力を高める「消化する」という3つの働きで胃もたれなどの弱ってきた胃の症状を改善します。1回1錠で効く飲みやすい錠剤です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は、服用前に医師、薬剤師又は登録販売者に相談してください。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_31": {
+        "name": "正露丸",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "木クレオソート：主な目的は、下痢・軟便、お腹の不快感の解消。作用機序は、腸の水分分泌抑制、蠕動運動の正常化\n        PMDAの基準では、「直径6mm以上の丸剤や錠剤は、窒息や誤嚥の危険があるため5歳未満の乳幼児に服用させてはならない」と定められています。\n        5歳未満の乳幼児を対象とした木クレオソートの安全性や適切な投与量に関する明確な臨床データが十分に存在しない\n        5歳未満、特に乳幼児の下痢は、薬で無理に止めるよりも「脱水症状の防止（水分補給）」と「速やかな受診」が最優先されます\n",
+        "alternative": "本剤は、主成分の日局木クレオソートをはじめ、アセンヤク末、オウバク末、カンゾウ末、チンピ末などの生薬が配合された、水分を含んだやわらかい黒褐色の丸剤です。胃腸の調子を整え、軟便、下痢、食あたり、水あたり、はき下し、消化不良による下痢などの症状に優れた効果を発揮します。また、むし歯の穴（歯窩）に直接つめることで、一時的にむし歯痛を和らげる効果も持ち合わせています。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦、妊娠していると思われる人、または授乳中の人は服用前に医師、歯科医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_32": {
+        "name": "タイレノールA",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "タイレノール：米J&J製。1955年アメリカで誕生、2000年 に日本で市販化。化学名「N-acetyl-p-aminophenol」から一部抜いて命名\n                　　　　市販の「タイレノール小児用」は日本に存在しない（15才以上のタイレノールAのみ）。\n        カロナール：国内医療用発祥。1970年代〜。「軽くなる」由来。日本では2024年 に市販化\n        　　　　　　2025年に「5才以上から飲めるジュニア用（小粒・低用量）」や「微粒（粉薬）タイプ」がラインナップに登場",
+        "alternative": "有効成分アセトアミノフェンが主に脳の体温調節中枢や痛みを伝える物質に作用し、熱を下げ、頭痛や生理痛などの痛みを和らげます。胃酸から胃壁を守るプロスタグランジンにほとんど影響を与えないため、空腹時にも服用できる胃にやさしい設計です。ただし、かぜによる悪寒・発熱時にはなるべく空腹時を避けて服用してください。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は、服用前に医師、歯科医師、薬剤師又は登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_33": {
+        "name": "タリオンAR",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "タリオンAR：Allergic Rhinitisアレルギー性鼻炎の頭文字に由来。鼻炎（AR）専用の市販薬という意味\n        現状､市販薬では「皮膚の適応」が外されている。（受診遅延の防止､慢性掻痒には第2世代抗ヒスタミン薬単剤による効果に疑問符）",
+        "alternative": "抗ヒスタミン作用と抗炎症作用を併せ持ち、くしゃみ、鼻みず、鼻づまりに効果を発揮します。眠くなりにくく、口がかわきにくい、日常生活への影響が少ない第2世代抗ヒスタミン薬です。朝夕1回1錠の服用で1日中効果が持続し、空腹時にも服用可能です。花粉やハウスダストなどによる鼻のアレルギー症状を緩和します。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は本剤を服用しないか、本剤を服用する場合は授乳を避けること。妊婦又は妊娠していると思われる人は相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_34": {
+        "name": "トラベルミンR",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "＊対象外",
+        "group": "対象医薬品リスト",
+        "note": "\"トラベルミンR：「眠くなりにくい（Reduce somnolence）」or「リフレッシュ（Refresh）」に由来とされる。\n        Rはジフェニドールが主役で、制限対象のジフェンヒドラミンが含まれない。「旅行を楽しめるように」との意図も｡ただし､11才未満は服用不可\n        ＊市販無印トラベルミン錠(医療用と同成分)はジフェンヒドラミン含むため、販売制限対象。（15才から服用可）\n        　　参考:トラベルミン・ジュニア：成分量を大人の半分にカットし、5才〜14才専用として販売\n　　　　　　ﾄﾗﾍﾞﾙﾐﾝ「1」は問題なし(メクリジン ＋ スコポラミン｡15歳から)｡『ファミリー』は、『1』の成分量を半分にした同一レシピ製品､5歳から。",
+        "alternative": "トラベルミンRは、乗物酔いによるめまい・吐き気・頭痛の予防及び緩和に効果的な乗りもの酔い薬です。眠気が比較的少なく、酔ってからでも効く成分を配合しているため、バスや電車などで移動する間も快適に旅行を楽しめます。11才以上のお子様から大人の方まで服用可能で、乗車船30分前に服用することで効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師、薬剤師又は登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_35": {
+        "name": "バファリンプレミアムDX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "\"バファリンシリーズはすべて対象外\n　　バファリンプレミアムDX ：改名前。シリーズ最速・最強(ﾌﾟﾚﾐｱﾑより鎮痛成分を約20％増)、眠くならない\n       　 バファリンプレミアムDXクイック＋：改名後。『バファリンプレミアムDX』は2025年よりこの名称に順次リニューアル（2025年7月､JANも同一）\n        　　　「プレミアム ＝ 鎮痛成分 ＋ 眠気成分」（アリルイソプロピルアセチル尿素:鎮静強いが､指定濫用防止はなし｡運転は不可）\n        　　　「プレミアムDX ＝ 鎮痛成分(2種)20%増量(市販最大量) - 眠気成分」（引き算｡運転可）\n        バファリンライト：胃に一番優しい、マイルドな効き目（「大人の胃に優しいライト」。 バファリンAに比べ、アスピリンの量が少なめ｡15歳未満不可）\n        バファリンルナJ：小中高校生用（Junior_7〜15才未満）、水なしで飲めるチュアブル。ルナ（Luna）：ローマ神話「月の女神」主に女性の悩みに寄り添うシリーズ。（アスピリン・イブプロフェン不使用、子どもにも安全な「アセトアミノフェン」）\n        バファリンルナi：15才以上。生理痛・頭痛向け、眠くならない、小粒。「i」：痛みをブロックする主成分Ibuprofenの頭文字”",
+        "alternative": "つらい頭痛に速効かつ高い鎮痛効果を発揮する解熱鎮痛薬です。有効成分としてイブプロフェンとアセトアミノフェンをダブル配合しており、頭痛、肩こり痛、生理痛、関節痛、腰痛などの様々な痛みに対して優れた鎮痛効果を示すほか、悪寒や発熱時の解熱にも効果を発揮します。また、胃粘膜保護成分として乾燥水酸化アルミニウムゲルも配合されています。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用しないこと。妊婦又は妊娠していると思われる人、授乳中の人は服用前に医師、歯科医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_36": {
+        "name": "ブスコパンA錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "医療用（病院の薬）の先発「ブスコパン錠10mg」は2026年4月に販売中止｡GE「ツルハラ」などは、製造・販売継続",
+        "alternative": "胃痛・腹痛・さしこみなどの痛みは、胃腸の過度の緊張やけいれんによって起こります。ブスコパンA錠は、優れた鎮痛鎮痙作用を持つブチルスコポラミン臭化物を配合しており、胃腸の異常な緊張を和らげることで、胃痛・腹痛・さしこみなどの痛みをはじめ、胃酸過多や胸やけに対しても優れた効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師、薬剤師又は登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_37": {
+        "name": "ムコダイン去たん錠Pro500",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "本剤は、有効成分L-カルボシステインの作用により、たんの切れをよくする去たん薬です。L-カルボシステインが「たん」を構成する気道粘液を正常化することで粘度を減らしてサラサラにし、出しやすくする作用があります。さらに、気道粘膜を修復することによっても、たんを出しやすくし、絡むたんの症状を改善します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人、および授乳中の人は、服用前に医師、薬剤師又は登録販売者に相談してください。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_38": {
+        "name": "ムヒAZ錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "ムヒAZ錠：AZはアゼラスチンのスペル由来\n        高いかゆみ止め効果を維持しながら、眠気やだるさを最小限に抑える設計（※ただし運転は不可）\n        数少ない「市販･皮膚掻痒対策･第2世代抗ﾋｽ」｡他にｱｾﾞﾗｽﾁﾝ同成分「アレジンAZ錠」､ﾒｷﾀｼﾞﾝ配合「ｼﾞﾝﾏｰﾄ錠」のみ｡いずれも15才以上。\n        　　第1世代では、ジフェンヒドラミン配合『レスタミンコーワ糖衣錠』（5才〜）､クロルフェニラミン配合『アレルギール錠』（4才〜）",
+        "alternative": "『ムヒAZ錠』は、全身に広がるかゆみや、かゆくて眠れないなどの症状に飲んで効く治療薬です。有効成分アゼラスチン塩酸塩が、かゆみやはれの「発症・拡大・悪化」を3方向から抑えます。1回1錠で12時間長く効き、塗り薬では対処しきれない広範囲のかゆみ・はれのほか、花粉やハウスダストなどによる鼻のアレルギー症状（くしゃみ、鼻水、鼻づまり）にも優れた効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用しないこと。授乳中の人は服用しないか、服用する場合は授乳を避けること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_39": {
+        "name": "レディガードコーワ",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "医療用医薬品（先発品）の商品名は「ブラダロン錠200mg」",
+        "alternative": "レディガードコーワは、女性における頻尿（排尿の回数が多い）や残尿感を改善するお薬です。有効成分であるフラボキサート塩酸塩が過敏な状態の膀胱を正常に改善します。1回1錠、1日3回の服用によって、トイレが近くて外出が不安な方や、就寝中に何度も尿意で目が覚めてしまうといった女性の尿トラブルに対して優れた効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用しないこと。授乳中の人は服用前に医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_40": {
+        "name": "ローカスタEX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "「ローカスタEX ＝ パントシン（パンテチン） ＋ ユベラ（ビタミンE） ＋ 大豆由来成分(ソイステロール；大豆油不けん化物600mg)」",
+        "alternative": "ローカスタEXは、パンテチンの働きによって脂質代謝を改善し、血中の総コレステロールを低下させます。またソイステロールが、コレステロールの腸管からの吸収を阻害し、体外への排泄を促します。さらに、天然型ビタミンEが、過酸化脂質の増加を抑え、末梢の血行をよくします。ルチンやビタミンB6も配合し、血清高コレステロールの改善や手足の冷え・しびれの緩和に効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_41": {
+        "name": "強肝，解毒，強力グットA錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 10.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "二日酔い・肝臓の疲れに。肝細胞を保護するオロチン酸や解毒を助けるメチオニン・ウコン等を配合",
+        "alternative": "肝臓は新陳代謝をつかさどる重要な臓器であり、栄養素の供給・貯蔵、有害物質の排泄といった役目を果たしますが、いたみやすい性質も持ちます。本剤は、宿酔（二日酔い）、自家中毒、流行性肝炎、じんましん、湿疹、吹出物、にきび、しもやけ、アレルギー性体質、肌のあれ、強精、病後回復期、妊産婦の栄養補給に効果があります。",
+        "info": {
+            "position": "",
+            "maternity": "",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_42": {
+        "name": "女性保健薬 命の母A",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 12.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "メグリビa：「更年期＋肌悩み」に。生薬13種､自律神経と肌を整える「加味逍遙散合四物湯」\n命の母A：更年期の総合不調に。生薬13種にビタミンB群やカルシウムなど\nアクティブ：更年期後関節・筋肉痛に。生薬10種｡骨・筋肉を補うゴシツやトウキなど\nホワイト：PMS生理前・生理痛に。生薬11種｡血の滞りを巡らせ痛みを鎮めるトウニンやダイオウなど",
+        "alternative": "更年期障害、更年期神経症、生理不順、冷え症、めまい、肩こり、貧血など、女性特有の心身の不調を改善する女性保健薬です。13種類の生薬とビタミン類、カルシウムなどを配合し、女性ホルモンのバランスや自律神経の乱れを穏やかに整えることで、更年期に起こるさまざまな症状を改善します。小さくて飲みやすい糖衣錠です。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中は服用しないか、授乳を避けること。妊婦または妊娠している可能性のある人は服用前に医師等に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_43": {
+        "name": "ツムラ漢方内服液葛根湯",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "引き始めのかぜ・頭痛・肩こりに｡体を温めて発汗を促すカッコンやマオウなど7種の生薬を配合。",
+        "alternative": "体力中等度以上のものの感冒の初期（汗をかいていないもの）、鼻かぜ、鼻炎、頭痛、肩こり、筋肉痛、手や肩の痛みに効果を発揮する漢方内服液です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は服用前に医師、薬剤師または登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_44": {
+        "name": "太田胃散A〈錠剤〉",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "太田漢方胃腸薬Ⅱ：【ストレス性の胃痛・神経性胃炎】に、自律神経を整える安中散加茯苓（粉末タイプ）。\n 太田漢方胃腸薬Ⅱ〈錠剤〉：【ストレス性の胃痛・神経性胃炎】に、自律神経を整える安中散加茯苓（錠剤タイプ）。\n 太田胃散：【飲みすぎ・胸やけ】に、7種の健胃生薬と胃酸を抑える制酸剤を配合した伝統の「粉末」総合胃腸薬。\n 太田胃散A〈錠剤〉：【脂っこい食事の胃もたれ・食べすぎ】に、脂肪やたん白質を強力に分解する4種の消化酵素配合の「錠剤」。\n 太田胃散NEXT：【急な食べすぎ・飲みすぎむかつき】に、コンビニでも手軽に買える指定医薬部外品の「粉末」健胃清涼剤。\n 太田胃散NEXT錠：【急な食べすぎ・飲みすぎむかつき】に、コンビニでも手軽に買える指定医薬部外品の「小粒錠剤」。\n 太田胃散S：【様々な胃の不調・胸やけ】に、味や香りをマイルドにしてより飲みやすくした「缶入り（粉末）」総合胃腸薬。 ",
+        "alternative": "近年の多様化した食生活において、加工食品や肉食など脂肪分の多い食事や不規則な食生活が胃に負担をかける機会を増やしています。太田胃散A〈錠剤〉は、胃の中の脂肪分を分解することで胃への負担を和らげ、不快な症状を改善する胃腸薬です。脂肪や肉類を消化するリパーゼAP6、ウルソデオキシコール酸、プロザイム6、ビオヂアスターゼ1000の働きにより、脂っこい食事や食べすぎによる胃のもたれに優れた効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師、薬剤師又は登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_45": {
+        "name": "コリホグス",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 4.0,
+        "kubun": "△",
+        "group": "対象医薬品リスト",
+        "note": "【指定対象外】だが、中枢抑制作用を持つため、アルコールやベンゾ系との併用･ODで重篤な呼吸抑制・昏睡を招く",
+        "alternative": "コリホグスは、つらい肩こりや首筋の痛み、腰痛、背痛などを内側からしっかり、すばやく鎮める内服薬です。筋肉弛緩成分クロルゾキサゾンが硬直した筋肉をゆるめ、痛み止め成分エテンザミドがつらい痛みを和らげます。捻挫、打ち身、神経痛、リウマチ性疼痛、四十肩、関節痛、筋炎、腱炎にも効果があります。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人、授乳中の人は服用前に医師、薬剤師または登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_46": {
+        "name": "ウット",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "【激しい興奮・自律神経の乱れ】に、尿素系2種を高濃度で配合した、中枢を強力に抑える精神鎮静薬。極めて精神依存の標的になりやすい",
+        "alternative": "現代社会のストレスにより引き起こされる精神の興奮や神経衰弱、頭痛などの神経症状を鎮静することを目的とした薬です。様々な神経症状に作用し、鎮静を必要とする諸症に効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は服用を避けること。妊婦または妊娠していると思われる人は服用前に医師、薬剤師等に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_47": {
+        "name": "ベンザブロックLプレミアムDX錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "本製品は、イブプロフェン600mg（1日量）を配合し、のどの痛みや発熱を抑えます。トラネキサム酸が粘膜の炎症を鎮め、デキストロメトルファン臭化水素酸塩水和物がせき中枢に作用し、せきを鎮めます。8種の成分配合により、のどの痛み、せき、発熱、鼻づまり、鼻水、くしゃみ、たん、悪寒、頭痛、関節痛、筋肉痛など、かぜの諸症状を幅広く緩和する総合かぜ薬です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用禁止。妊婦または妊娠していると思われる人、授乳中の人は服用前に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_48": {
+        "name": "ベンザブロックS",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "ベンザブロックSは、鼻汁の分泌を抑えるヨウ化イソプロパミドと抗ヒスタミン成分d-クロルフェニラミンマレイン酸塩で鼻水・くしゃみを緩和します。トラネキサム酸がのどの痛みを抑え、解熱鎮痛成分アセトアミノフェンなど8種の成分がバランスよく働き、かぜの諸症状を緩和します。のみやすい小型の淡黄色のカプレットタイプの錠剤です。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は服用しないか、服用する場合は授乳を避けること。妊婦または妊娠していると思われる人は服用前に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_49": {
+        "name": "ベンザブロックTプレミアムDX",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "本剤はイブプロフェン600mg（1日量）を配合し、のどの痛みや発熱を緩和します。ジヒドロコデインリン酸塩とdl-メチルエフェドリン塩酸塩がせきを鎮め、アンブロキソール塩酸塩がたんの排出を助けます。8種の成分配合により、かぜの諸症状（せき、たん、のどの痛み、鼻水、鼻づまり、くしゃみ、悪寒、発熱、頭痛、関節痛、筋肉痛）を総合的に緩和する、小型の淡黄色のカプレット錠です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用しないこと。授乳中の人は服用しないか、服用する場合は授乳を避けること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_50": {
+        "name": "新ルルAゴールドDXα",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "＊〇",
+        "group": "対象医薬品リスト",
+        "note": "\"「ルルと名のつくかぜ薬（内用）は、ドロップも含めてすべて指定濫用該当（1人1個制限）」\n## ルルアタック シリーズ（症状特化型・15歳以上）\n* ルルアタックCX：【つらいせき・たん】に、去たん成分L-カルボシステインと抗炎症イブプロフェンを配合。\n* ルルアタックCXプレミアム：【つらいせき・たん】に、イブプロフェンを1日最大量600mgまで増量し抗炎症を強化。\n* ルルアタックEX：【つらいのどの痛み・熱】に、炎症を抑えるトラネキサム酸とイブプロフェンをダブル配合。\n* ルルアタックEXプレミアム：【つらいのどの痛み・熱】に、イブプロフェンを1日最大量600mgまで増量し鎮痛を強化。\n* ルルアタックFXa：【つらい発熱・さむけ】に、熱を下げるアセトアミノフェンやショウキキョウエキスなどを配合。\n* ルルアタックNX：【つらい鼻水・鼻づまり】に、鼻水を止めるヨウ化イソプロパミドやd-クロルフェニラミンを配合。\n* ルルアタックNXプレミアム：【つらい鼻水・鼻づまり】に、さらに喉の腫れを抑えるトラネキサム酸を新配合。\n## ルル・新ルル シリーズ（定番総合かぜ薬・家族向けなど）\n* ルルゴールド細粒：【家族の総合かぜ薬】に、のどの痛みや鼻水に効くアセトアミノフェンや生薬を配合（1歳から服用可の粉末）。\n* 新ルル-A錠s：【家族の総合かぜ薬】に、のどの痛み、鼻水、せきに効く成分をバランスよく配合した伝統の白の錠剤。\n* 新ルルAゴールドDXα：【つらい鼻水・のどの痛み】に、持続性抗ヒスタミン成分クレマチシンやトラネキサム酸をプラス。コデインをDXMに変えて呼吸リスクを回避したため、「7歳から服用可能」（ただしベラドンナの抗コリン毒性の制限により7歳未満は不可）\n* 新ルルS細粒：【家族の総合かぜ薬】に、アセトアミノフェンなどを配合した、溶けやすく苦みのないサッと飲める粉末。\"",
+        "alternative": "新ルルAゴールドDXαは、つらいかぜの11症状（のどの痛み、発熱、鼻水、鼻づまり、せき、たん、悪寒、頭痛、くしゃみ、関節の痛み、筋肉の痛み）すべてに優れた効き目を発揮する総合かぜ薬です。抗炎症成分トラネキサム酸と解熱鎮痛成分アセトアミノフェンがのどの痛み・発熱に、持続性抗ヒスタミン成分クレマスチンフマル酸塩と副交感神経遮断成分ベラドンナ総アルカロイドが鼻水・鼻づまりに、去痰成分ブロムヘキシン塩酸塩がせき・たんに効果を発揮します。7歳以上から服用でき、苦味のない小粒の糖衣錠です。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人、授乳中の人は服用前に医師、薬剤師又は登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_51": {
+        "name": "新ブロン液エース",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 60.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "グアイフェネシン：【中枢作用なし・マイルド】気道分泌を促し痰を薄める安全性の高い去痰薬。ただし、過量摂取時には強烈な催吐作用（急性胃粘膜刺激による嘔吐）を発現するため、コデイン乱用時の「致死量吸着を物理的に阻害する因子」となる",
+        "alternative": "新ブロン液エースは、せき、たんに効果を発揮する鎮咳去痰薬です。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は服用しないか、服用する場合は授乳を避けること。妊婦又は妊娠していると思われる人は服用前に医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_52": {
+        "name": "ナロン錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "＊〇",
+        "group": "対象医薬品リスト",
+        "note": "古い製品のみブロモバレリル尿素配合で指定濫用の対象。\n* ナロン錠：【8歳からの発熱・頭痛】に、アセトアミノフェンと依存性のあるブロモvaleryl尿素を配合（指定濫用該当）。\n* ナロン顆粒：【1歳からの発熱・頭痛】に、アセトアミノフェンと依存性のあるブロモvaleryl尿素を配合（指定濫用該当）。\n* ナロンm：【7歳からの発熱・頭痛】に、眠くならず胃に優しいアセトアミノフェンとビタミン類を配合。\n* ナロンエースT：【大人のつらい頭痛・生理痛】に、イブプロフェンとエテンザミドをダブル配合した現在の主流。\n* ナロンエースプレミアム：【繰り返すつらい頭痛】に、エテンザミドを増量し胃粘膜保護成分をプラスした最上位版。 \"",
+        "alternative": "ナロン錠は、頭痛・歯痛・生理痛などの様々な痛みに効果的な解熱鎮痛薬です。アセトアミノフェンとエテンザミドの解熱鎮痛作用に加え、ブロモバレリル尿素の鎮静作用により痛みを効果的に和らげます。ピリン系の薬物を含まず、発熱時の解熱にも使用できます。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師等に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_53": {
+        "name": "新セデス錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "\"セデスシリーズはすべて対象外\nセデスV：【肩こり痛・腰痛】に、非ピリン系成分（アセトアミノフェン等）と疲労を和らげるビタミンB1を配合。\nセデス・ハイ：【がまんできない強い頭痛】に、強力なピリン系鎮痛成分IPAと鎮静成分を配合。\nセデス・ハイ プロテクト：【強い頭痛＋胃の弱さ】に、強力なIPAに加えて胃酸を中和し胃粘膜を守る成分をプラス。\nセデス・ハイG：【がまんできない強い頭痛】に、セデス・ハイと同じ強力なIPAを配合したサッと溶ける顆粒（粉）タイプ。\n新セデス錠：【普段の頭痛・生理痛】に、3つの成分で痛みを優しく抑える伝統的な非ピリン系のACE処方\"",
+        "alternative": "新セデス錠は4種類の成分を配合することにより、すぐれた鎮痛効果をあらわす非ピリン系解熱鎮痛薬です。速く効き、胃にソフトなのが特徴で、頭痛・月経痛（生理痛）・歯痛・神経痛・腰痛などの痛みの鎮痛や、悪寒・発熱時の解熱に効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦または妊娠していると思われる人は服用前に医師、歯科医師、薬剤師または登録販売者に相談すること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_54": {
+        "name": "ノーシン",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 3.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "\"ノーシンシリーズはすべて対象外\n* オトナノーシンピュア：【生理痛・頭痛】に、IB＋アリルイソプロピルアセチル尿素に胃粘膜保護成分の乾燥水酸化アルミニウムゲルをプラス。\n* ノーシンピュア：【女性の生理痛・頭痛】に、速効性のIB＋アリルイソプロピルアセチル尿素＋無水カフェインの定番構成。\n* 小中学生用ノーシンピュア：【7〜14歳の生理痛・頭痛】に、子どもに安全なAAPを単一の鎮痛成分として配合した小粒錠。\n* ノーシン：【大人の頭痛・発熱】に、素早く溶けて胃に優しい伝統の「ACE処方（AAP＋エテンザミド＋無水カフェイン）」の散剤。\n* ノーシン錠：【大人の頭痛・発熱】に、伝統の「ACE処方（AAP＋エテンザミド＋無水カフェイン）」をそのまま錠剤にしたタイプ。\n* ノーシンホワイト錠：【頭痛・生理痛】に、眠くなる成分を一切入れず、すっきり飲めるシャープな「ACE処方」の白の錠剤。\n* ノーシンアイ頭痛薬：【つらい頭痛】に、IBとAAPをダブル配合し、アリルイソプロピルアセチル尿素や無水カフェインを排除した眠気・カフェインゼロ処方。\n* ノーシンアセトアミノフェン錠(A)：【7歳からの頭痛・発熱】に、眠くなる成分やカフェインを一切含まない胃に優しいAAP単味剤。\"",
+        "alternative": "ノーシンは、ACE処方の3つの有効成分（アセトアミノフェン、エテンザミド、カフェイン水和物）が協力的に作用して、頭痛などの痛みや熱によく効きます。胃にやさしいのに速く効き、眠くなる成分や習慣性のある成分は含まれていません。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦又は妊娠していると思われる人は服用前に医師、歯科医師、薬剤師又は登録販売者に相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_55": {
+        "name": "ドリエル",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 2.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "ドリエル：【一時的な不眠】に、ジフェンヒドラミン塩酸塩を配合した、量を調節しやすいベーシックな「錠剤」（1回2錠）。\nドリエルEX：【一時的な不眠】に、ジフェンヒドラミン塩酸塩をラベンダー香料等とともに閉じ込めたソフト「カプセル」（1回1カプセル）。",
+        "alternative": "ドリエルは、ストレスや不規則な生活などによる一時的な不眠（寝つきが悪い、眠りが浅い）の症状を緩和する医薬品です。有効成分であるジフェンヒドラミン塩酸塩が、脳内のヒスタミンの働きを抑えることで眠気を誘発する作用を応用しており、就寝前の服用により効果を発揮します。",
+        "info": {
+            "position": "",
+            "maternity": "妊婦は服用不可、授乳中は服用を避けること",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_56": {
+        "name": "レスタミンコーワ糖衣錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 9.0,
+        "kubun": "〇",
+        "group": "対象医薬品リスト",
+        "note": "",
+        "alternative": "じんましん、湿疹、かぶれ、かゆみ、鼻炎に効果を発揮するアレルギー用薬です。体質や健康状態に応じて体内で起こる過敏反応（アレルギー反応）を改善し、じんましんや湿疹などのアレルギー性疾患を治療します。",
+        "info": {
+            "position": "",
+            "maternity": "授乳中の人は服用しないか、服用する場合は授乳を避けること。妊婦又は妊娠していると思われる人は相談すること。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    },
+    "med_57": {
+        "name": "イブA錠",
+        "defaultAmount": 0,
+        "categoryLimit": 7,
+        "dailyDose": 6.0,
+        "kubun": "対象外",
+        "group": "対象医薬品リスト",
+        "note": "\"イブシリーズはすべて対象外\n* イブA錠：【定番の生理痛・頭痛】に、IB150mg＋アリルイソプロピルアセチル尿素＋無水カフェインを配合。\n* イブA錠EX：【生理痛が特につらい時】に、主成分のIBを1回量200mgまで増量したイブAの上位版。\n* イブ〈糖衣錠〉：【小粒で苦くない】中身は「イブA錠」と全く同じで、表面を甘い膜で包んで飲みやすくしたタイプ。\n* イブクイック頭痛薬：【速攻の頭痛】に、IB150mg＋アリルイソプロピルアセチル尿素に胃を守り吸収を速める酸化Mgをプラス。\n* イブクイック頭痛薬DX：【つらい頭痛に最速】に、IBを1回量200mgに増量し、さらに酸化Mgを配合した速攻・高効果版。\n* イブスリーショットプレミアム：【3大痛（頭・生理・肩こり）】に、IBとAAPをダブル配合（各195mg）し、胃を守る酸化Mgを足した眠くならない最新処方。\"",
+        "alternative": "イブA錠は、イブプロフェンを配合した解熱鎮痛薬です。イブプロフェンの鎮痛・解熱効果を高めるアリルイソプロピルアセチル尿素と無水カフェインも配合されており、痛みや熱にすばやく優れた効き目をあらわします。月経痛、頭痛、発熱など、様々な痛みに効果があり、のみやすい小粒のフィルムコーティング錠です。",
+        "info": {
+            "position": "",
+            "maternity": "出産予定日12週以内の妊婦は服用禁止。妊婦または妊娠していると思われる人、授乳中の人は服用前に医師等に相談。",
+            "doping": "データなし（後日追加予定）",
+            "driving": "データなし（後日追加予定）"
+        }
+    }
 
-    // プルダウンの初期化（カテゴリ別にグループ化して見やすく整理）
+    };
+
     const medSelect = document.getElementById('medicine');
     const groups = {};
     for (const [key, data] of Object.entries(medicineMaster)) {
-        if (!groups[data.type]) {
-            groups[data.type] = document.createElement('optgroup');
-            groups[data.type].label = `【${data.type}】（基準: ${data.categoryLimit}日分）`;
-            medSelect.appendChild(groups[data.type]);
+        const groupKey = data.group || "その他";
+        if (!groups[groupKey]) {
+            groups[groupKey] = document.createElement('optgroup');
+            groups[groupKey].label = `【${groupKey}】`;
+            medSelect.appendChild(groups[groupKey]);
         }
         const option = document.createElement('option');
         option.value = key;
         option.textContent = data.name;
-        groups[data.type].appendChild(option);
+        groups[groupKey].appendChild(option);
+    }
+
+    if(medSelect.options.length > 0) {
+        medSelect.selectedIndex = 0;
+    }
+
+    medSelect.addEventListener('change', function() {
+        const data = medicineMaster[medSelect.value];
+        const statusSpan = document.getElementById('amountStatus');
+        if (data && data.defaultAmount) {
+            document.getElementById('totalAmount').value = data.defaultAmount;
+            statusSpan.textContent = "（※マスタ登録の標準規格を自動反映）";
+        } else {
+            document.getElementById('totalAmount').value = "";
+            statusSpan.textContent = "（※手入力：パッケージ総量を入力してください）";
+        }
+        calculate();
+    });
+
+    if(medicineMaster[medSelect.value] && medicineMaster[medSelect.value].defaultAmount) {
+        document.getElementById('totalAmount').value = medicineMaster[medSelect.value].defaultAmount;
+        document.getElementById('amountStatus').textContent = "（※マスタ登録の標準規格を自動反映）";
     }
 
     function calculate() {
         const selectedMedKey = medSelect.value;
         const medData = medicineMaster[selectedMedKey];
+        if(!medData) return;
         
         document.getElementById('medInfo').textContent = 
-            `※ 1日最大服用量（成人・15歳以上）: ${medData.dailyDose} 錠/包 （基準: ${medData.type} ${medData.categoryLimit}日分）`;
+            `【管理上の注意点】 最大1日用量: ${medData.dailyDose || "--"} ／ 基準日数: ${medData.categoryLimit || "--"}日 ｜ ${medData.note || ""}`;
+
+        document.getElementById('detailMedName').textContent = medData.name || "--";
+        document.getElementById('altText').innerHTML = medData.alternative || "該当情報なし";
+
+        if (medData.info) {
+            document.getElementById('detailPosition').innerHTML = medData.info.position || "--";
+            document.getElementById('detailMaternity').innerHTML = medData.info.maternity || "--";
+            document.getElementById('detailDoping').innerHTML = medData.info.doping || "--";
+            document.getElementById('detailDriving').innerHTML = medData.info.driving || "--";
+        }
 
         const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
         const age = document.getElementById('age').value;
@@ -375,76 +1187,62 @@
         const calcDaysEl = document.getElementById('calcDays');
         const volumeTypeEl = document.getElementById('volumeType');
         const scriptTextEl = document.getElementById('scriptText');
-        const alertTextEl = document.getElementById('alertText');
-        const guidanceCardEl = document.getElementById('guidanceCard');
 
         if (totalAmount <= 0) {
-            statusEl.textContent = "包装内数量を入力してください";
+            statusEl.textContent = "包装数量を入力してください";
             statusEl.className = "result-status";
             calcDaysEl.textContent = "--";
             volumeTypeEl.textContent = "--";
             scriptTextEl.textContent = "--";
-            alertTextEl.style.display = 'none';
-            guidanceCardEl.style.display = 'none';
             return;
         }
 
-        const days = totalAmount / medData.dailyDose;
+        const days = +(totalAmount / medData.dailyDose).toFixed(1);
+
+        if (medData.kubun === "×") {
+            statusEl.textContent = "【販売可】規制対象外";
+            statusEl.className = "result-status status-ok";
+            calcDaysEl.textContent = `${days} 日分`;
+            volumeTypeEl.textContent = "対象外";
+            scriptTextEl.innerHTML = "「商品お預かりいたします。」<br><span style='font-size:12px; color:#555;'>（規制対象外のため、年齢確認や他店状況の確認等は不要です）</span>";
+            return;
+        }
+
         const isLargeVolume = days > medData.categoryLimit;
         const volumeText = isLargeVolume ? "大容量" : "小容量";
 
-        calcDaysEl.textContent = `${days.toFixed(1)} 日分 (上限: ${medData.categoryLimit}日)`;
+        calcDaysEl.textContent = `${days} 日分 (上限: ${medData.categoryLimit}日)`;
         volumeTypeEl.textContent = volumeText;
-
-        let showAlert = false;
-        let showGuidance = false;
-        let alertMsg = "※注意: 規定量を超えた過量摂取（オーバードーズ）は、意識障害、幻覚、呼吸障害など命に関わる重大な健康被害を引き起こす恐れがあります。";
 
         if (age === "under18") {
             if (isLargeVolume || quantity === "multiple") {
-                statusEl.textContent = "販売不可（法律違反）";
+                statusEl.textContent = "【販売謝絶】法令により販売不可";
                 statusEl.className = "result-status status-ng";
-                scriptTextEl.innerHTML = "「誠に申し訳ございません。薬機法という法律により、18歳未満のお客様へは大容量パッケージや複数個の販売が禁止されております。お売りすることができません。」";
-                showAlert = true;
-                showGuidance = true; // 案内カードを表示
+                scriptTextEl.innerHTML = "「商品お預かりいたします。誠に申し訳ございません。薬機法により18歳未満のお客様へは大容量および複数個の販売が禁止されており、お売りすることができません。」";
             } else {
-                statusEl.textContent = "販売可（氏名確認必須）";
+                statusEl.textContent = "【販売可】氏名・年齢・購入状況の確認必須";
                 statusEl.className = "result-status status-warning";
-                scriptTextEl.innerHTML = "「ご提示ありがとうございます。国の定めに従いまして、ご購入者様のお名前をお伺い（またはご記入）してもよろしいでしょうか？」";
+                scriptTextEl.innerHTML = "「商品お預かりいたします。法令により、18歳未満のお客様には身分証によるお名前・年齢の確認、および直近での他店購入状況の確認が義務付けられております。身分証をご提示いただけますか？」";
             }
         } else {
             if (isLargeVolume || quantity === "multiple") {
-                statusEl.textContent = "販売可（購入理由の確認必須）";
+                statusEl.textContent = "【販売可】購入理由・購入状況の確認必須";
                 statusEl.className = "result-status status-warning";
-                scriptTextEl.innerHTML = "「こちらのお薬を複数個（または大容量）お求めとのことですが、お薬の適正使用を確認するため、ご購入の理由をお伺いしてもよろしいでしょうか？」<br><span style='font-size:0.85rem; color:#605e5c;'>（※『家族で使う』等の正当な理由がない場合は販売不可）</span>";
-                showAlert = true; // 大人でも大量購入時はリスクを意識させる
+                scriptTextEl.innerHTML = "「商品お預かりいたします。適正使用の確認のため、ご購入の理由および他店での直近のご購入状況をお伺いしてもよろしいでしょうか？」";
             } else {
-                statusEl.textContent = "通常販売可能";
+                statusEl.textContent = "【販売可】購入状況の確認必須";
                 statusEl.className = "result-status status-ok";
-                scriptTextEl.innerHTML = "（特別な確認は不要ですが、頻繁に来店される等、様子に違和感があればお声がけをしてください）";
+                scriptTextEl.innerHTML = "「商品お預かりいたします。法令により、直近で他店にて同種の医薬品をご購入されていないか確認させていただいております。」";
             }
-        }
-
-        // アラート文言の表示切替
-        if (showAlert) {
-            alertTextEl.textContent = alertMsg;
-            alertTextEl.style.display = 'block';
-        } else {
-            alertTextEl.style.display = 'none';
-        }
-
-        // 案内カード（リーフレット等）の表示切替
-        if (showGuidance) {
-            guidanceCardEl.style.display = 'block';
-        } else {
-            guidanceCardEl.style.display = 'none';
         }
     }
 
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => {
-        input.addEventListener('change', calculate);
-        input.addEventListener('keyup', calculate);
+        if (input.id !== 'medicine') {
+            input.addEventListener('change', calculate);
+            input.addEventListener('keyup', calculate);
+        }
     });
 
     calculate();
