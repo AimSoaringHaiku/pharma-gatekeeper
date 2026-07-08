@@ -3,57 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>指定濫用防止医薬品 判定システム v6.2</title>
+    <title>指定濫用防止医薬品 判定システム v6.3</title>
     <style>
-        /* エクセルライクな標準化デザイン */
-        body { font-family: "Meiryo UI", "Yu Gothic UI", sans-serif; background-color: #F3F2F1; color: #333333; margin: 0; padding: 15px; font-size: 13.5px; line-height: 1.5; }
+        /* エクセルライク・フォントサイズ拡大版 */
+        body { font-family: "Meiryo UI", "Yu Gothic UI", sans-serif; background-color: #F3F2F1; color: #333333; margin: 0; padding: 15px; font-size: 14.5px; line-height: 1.6; }
         .container { max-width: 950px; margin: 0 auto; background: #FFFFFF; border: 1px solid #CCCCCC; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .header-area { display: flex; justify-content: space-between; align-items: center; background-color: #217346; color: #FFFFFF; padding: 8px 15px; }
-        .header-title { font-size: 14px; font-weight: bold; }
-        .btn-enlighten { background-color: #FFFFFF; color: #217346; border: 1px solid #1E6B40; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+        .header-area { display: flex; justify-content: space-between; align-items: center; background-color: #217346; color: #FFFFFF; padding: 10px 15px; }
+        .header-title { font-size: 15px; font-weight: bold; }
+        .btn-enlighten { background-color: #FFFFFF; color: #217346; border: 1px solid #1E6B40; padding: 5px 12px; font-size: 13px; cursor: pointer; font-weight: bold;}
         .btn-enlighten:hover { background-color: #E1DFDD; }
         .filter-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .filter-table th, .filter-table td { border: 1px solid #CCCCCC; padding: 8px 12px; vertical-align: middle; }
+        .filter-table th, .filter-table td { border: 1px solid #CCCCCC; padding: 10px 12px; vertical-align: middle; }
         .filter-table th { background-color: #F3F2F1; width: 28%; font-weight: normal; color: #333333; }
-        select, input[type="number"] { width: 100%; padding: 6px 8px; border: 1px solid #A6A6A6; font-family: inherit; font-size: 13.5px; box-sizing: border-box; }
-        select:focus, input[type="number"]:focus { outline: 1px solid #217346; border-color: #217346; }
+        select, input[type="number"] { width: 100%; padding: 8px; border: 1px solid #A6A6A6; font-family: inherit; font-size: 14.5px; box-sizing: border-box; }
+        select:focus, input[type="number"]:focus { outline: 2px solid #217346; border-color: #217346; }
         optgroup { font-weight: bold; color: #217346; }
-        .med-info { font-size: 12px; color: #C00000; margin-top: 4px; font-weight: bold; }
-        .note-text { font-size: 11.5px; color: #555555; margin-top: 6px; background-color: #F9F9F9; padding: 6px; border: 1px solid #E1DFDD; }
-        .result-section { padding: 15px; background-color: #FFFFFF; border-top: 2px solid #217346; }
-        .result-status { font-size: 16px; font-weight: bold; padding: 10px; text-align: center; border: 1px solid transparent; margin-bottom: 12px; }
+        .med-info { font-size: 13px; color: #C00000; margin-top: 6px; font-weight: bold; }
+        .note-text { font-size: 12.5px; color: #555555; margin-top: 8px; background-color: #F9F9F9; padding: 8px; border: 1px solid #E1DFDD; }
+        .result-section { padding: 20px; background-color: #FFFFFF; border-top: 2px solid #217346; }
+        .result-status { font-size: 17px; font-weight: bold; padding: 12px; text-align: center; border: 1px solid transparent; margin-bottom: 15px; }
         .status-ng { background-color: #FDE7E9; color: #C00000; border-color: #C00000; }
         .status-warning { background-color: #FFF4CE; color: #8A6D3B; border-color: #D83B01; }
         .status-ok { background-color: #DFF6DD; color: #217346; border-color: #217346; }
-        .info-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #CCCCCC; padding: 6px 0; }
+        .info-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #CCCCCC; padding: 8px 0; }
         .info-value { font-weight: bold; }
-        .script-box { margin-top: 15px; background-color: #F9F9F9; border: 1px solid #CCCCCC; padding: 12px; border-left: 4px solid #217346; }
-        .script-title { font-weight: bold; font-size: 13px; color: #217346; margin-bottom: 6px; }
-        .script-text { font-size: 13.5px; margin: 0; font-weight: normal; color: #000000; }
-        .alternative-box { margin-top: 10px; background-color: #FFFAF0; border: 1px solid #FFB900; border-left: 4px solid #D83B01; padding: 10px; }
-        .alternative-title { font-weight: bold; font-size: 12.5px; color: #D83B01; margin-bottom: 4px; }
-        .alternative-text { font-size: 12.5px; margin: 0; }
-        .detail-panel { margin: 15px; border: 1px solid #2B579A; background-color: #F0F6FF; }
-        .detail-panel-header { background-color: #2B579A; color: #FFFFFF; padding: 6px 12px; font-weight: bold; font-size: 13px; }
+        .script-box { margin-top: 18px; background-color: #F9F9F9; border: 1px solid #CCCCCC; padding: 15px; border-left: 5px solid #217346; }
+        .script-title { font-weight: bold; font-size: 14px; color: #217346; margin-bottom: 8px; }
+        .script-text { font-size: 14.5px; margin: 0; font-weight: normal; color: #000000; }
+        .alternative-box { margin-top: 12px; background-color: #FFFAF0; border: 1px solid #FFB900; border-left: 5px solid #D83B01; padding: 12px; }
+        .alternative-title { font-weight: bold; font-size: 13.5px; color: #D83B01; margin-bottom: 6px; }
+        .alternative-text { font-size: 13.5px; margin: 0; }
+        .detail-panel { margin: 18px; border: 1px solid #2B579A; background-color: #F0F6FF; }
+        .detail-panel-header { background-color: #2B579A; color: #FFFFFF; padding: 8px 14px; font-weight: bold; font-size: 14px; }
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background-color: #CCCCCC; }
-        .detail-card { background: #FFFFFF; padding: 10px; }
-        .detail-card-title { font-size: 12.5px; font-weight: bold; color: #2B579A; border-bottom: 1px solid #E1DFDD; padding-bottom: 4px; margin-bottom: 6px; }
-        .detail-card-body { font-size: 12px; }
-        .manual-section { margin: 0 15px 15px; border-top: 1px solid #CCCCCC; padding-top: 15px; }
-        details { background: #FFFFFF; border: 1px solid #CCCCCC; margin-bottom: 6px; padding: 8px 12px; }
-        summary { font-weight: bold; color: #333333; cursor: pointer; font-size: 13px; outline: none; }
-        .manual-content { margin-top: 10px; font-size: 12px; border-top: 1px dotted #CCCCCC; padding-top: 8px; }
-        .rule-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12px; }
-        .rule-table th, .rule-table td { border: 1px solid #CCCCCC; padding: 6px; text-align: center; }
+        @media (max-width: 650px) { .detail-grid { grid-template-columns: 1fr; } }
+        .detail-card { background: #FFFFFF; padding: 12px; }
+        .detail-card-title { font-size: 13.5px; font-weight: bold; color: #2B579A; border-bottom: 1px solid #E1DFDD; padding-bottom: 6px; margin-bottom: 8px; }
+        .detail-card-body { font-size: 13px; }
+        .manual-section { margin: 0 18px 18px; border-top: 1px solid #CCCCCC; padding-top: 18px; }
+        details { background: #FFFFFF; border: 1px solid #CCCCCC; margin-bottom: 8px; padding: 10px 14px; }
+        summary { font-weight: bold; color: #333333; cursor: pointer; font-size: 14px; outline: none; }
+        .manual-content { margin-top: 12px; font-size: 13px; border-top: 1px dotted #CCCCCC; padding-top: 10px; }
+        .rule-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+        .rule-table th, .rule-table td { border: 1px solid #CCCCCC; padding: 8px; text-align: center; }
         .rule-table th { background: #F3F2F1; }
         .tag-red { color: #C00000; font-weight: bold; }
         .tag-green { color: #217346; font-weight: bold; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: #FFFFFF; padding: 20px; border: 1px solid #CCCCCC; max-width: 650px; max-height: 85vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .modal-content h3 { color: #333333; margin-top: 0; font-size: 15px; border-bottom: 2px solid #333333; padding-bottom: 6px; }
-        .modal-content p { font-size: 13px; line-height: 1.6; }
-        .modal-highlight { background-color: #F9F9F9; border-left: 3px solid #555555; padding: 10px; margin: 10px 0; font-size: 12.5px; }
-        .modal-close { margin-top: 15px; padding: 6px 20px; background-color: #F3F2F1; color: #333333; border: 1px solid #CCCCCC; font-size: 13px; cursor: pointer; width: 100%; }
+        .modal-content { background: #FFFFFF; padding: 25px; border: 1px solid #CCCCCC; max-width: 680px; max-height: 85vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-content h3 { color: #333333; margin-top: 0; font-size: 16px; border-bottom: 2px solid #333333; padding-bottom: 8px; }
+        .modal-content p { font-size: 14px; line-height: 1.6; }
+        .modal-highlight { background-color: #F9F9F9; border-left: 4px solid #555555; padding: 12px; margin: 12px 0; font-size: 13.5px; }
+        .modal-close { margin-top: 18px; padding: 8px 25px; background-color: #F3F2F1; color: #333333; border: 1px solid #CCCCCC; font-size: 14px; cursor: pointer; width: 100%; font-weight: bold;}
         .modal-close:hover { background-color: #E1DFDD; }
     </style>
 </head>
@@ -61,7 +62,7 @@
 
 <div class="container">
     <div class="header-area">
-        <div class="header-title">指定濫用防止医薬品 判定システム v6.2 (自動生成版)</div>
+        <div class="header-title">指定濫用防止医薬品 判定システム v6.3 (詳細エビデンス復元版)</div>
         <button class="btn-enlighten" onclick="document.getElementById('modal').style.display='flex'">【確認】販売制限の理由および確認業務の根拠</button>
     </div>
     
@@ -82,7 +83,7 @@
             <td>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <input type="number" id="totalAmount" min="1" placeholder="例: 48" style="width:120px;">
-                    <span id="amountStatus" style="font-size:12px; color:#555;"></span>
+                    <span id="amountStatus" style="font-size:12.5px; color:#555;"></span>
                 </div>
             </td>
         </tr>
@@ -111,7 +112,7 @@
         <div class="info-row"><span>一箱の消費日数（目安）:</span><span id="calcDays" class="info-value">-- 日分</span></div>
         <div class="info-row"><span>法令上の容量区分:</span><span id="volumeType" class="info-value">--</span></div>
         <div class="script-box" id="scriptBox"><div class="script-title">【対応手順】お声がけスクリプト</div><p id="scriptText" class="script-text">--</p></div>
-        <div class="alternative-box" id="altBox"><div class="alternative-title">【推奨】代替薬・トリアージ提案（販売謝絶時等）</div><p class="alternative-text" id="altText">--</p></div>
+        <div class="alternative-box" id="altBox"><div class="alternative-title">【特長・代替薬等】製品情報（トリアージ提案等）</div><p class="alternative-text" id="altText">--</p></div>
     </div>
 
     <div class="detail-panel" id="detailPanel">
@@ -133,7 +134,7 @@
                     <tr><td><strong>18歳未満</strong></td><td>小容量（1個）</td><td><span class="tag-red">必須（要身分証等）</span></td><td><span class="tag-red">必須</span></td><td>条件を満たせば販売可</td></tr>
                     <tr><td><strong>18歳以上</strong></td><td>小容量（1個）</td><td><span style="color:#777;">原則不要</span></td><td><span class="tag-red">必須</span></td><td>通常通り販売可</td></tr>
                 </table>
-                <p style="margin:6px 0 0; color:#C00000; font-weight:bold;">※【販売謝絶】18歳未満への「大容量製品」や「複数個（他薬・他店合算含む）」の販売は、理由を問わず一律禁止（販売不可）です。</p>
+                <p style="margin:8px 0 0; color:#C00000; font-weight:bold;">※【販売謝絶】18歳未満への「大容量製品」や「複数個（他薬・他店合算含む）」の販売は、理由を問わず一律禁止（販売不可）です。</p>
             </div>
         </details>
         
@@ -154,23 +155,48 @@
         </details>
 
         <details>
-            <summary>【医療エビデンス】過量服薬におけるタイムライン上の致死リスク</summary>
+            <summary>【潜在的懸念】法規制外で警戒すべき「無水カフェイン」「便秘薬OD」</summary>
             <div class="manual-content">
-                <strong>■ 無水カフェイン：初日の急性心毒性</strong><br>致死的な不整脈や痙攣を引き起こし、救急搬送中やICUに入ってすぐに亡くなるケースでは直接の死因となることが多いです。<br><br>
-                <strong>■ アセトアミノフェン：3日目以降の遅延性劇症肝不全</strong><br>数日間は無症状か軽微な胃腸症状であっても、時間経過的に引き返せない状況になってから致命的な劇症肝不全になる遅延性毒性が特徴的です。
+                指定濫用防止医薬品の対象8成分には非該当であっても、臨床現場や救急医療において深刻な乱用・健康被害が問題視されている以下の成分・品目については、店舗スタッフによる警戒および積極的なゲートキーパー対応が推奨されます。<br><br>
+                <strong>■ ① 無水カフェイン（エスタロンモカ等、総合風邪薬への配合も含む）</strong><br>
+                ・<strong>病態リスク：</strong>カフェインの大量摂取は、中枢神経系の過剰興奮および細胞内カルシウム濃度異常を引き起こし、重篤な頻脈、血圧低下、<strong>致死的な不整脈（心室細動等）や難治性痙攣</strong>をダイレクトに誘発します。<br>
+                ・<strong>臨床的特徴：</strong>毒性の発現が極めて速く、救急搬送中やICU到着直後における<strong>「発症初日の急性心停止」</strong>の直接死因となるケースが多発しており、実質的な致死リスクは極めて高い物質です。眠気覚まし錠剤等の複数購入や異常な頻度での購入には強い警戒が必要です。<br><br>
+                <strong>■ ② 便秘薬の悪用・過食嘔吐（コーラック、ビサコジル、センノシド等）</strong><br>
+                ・<strong>病態リスク：</strong>主に10代〜20代の摂食障害（過食嘔吐等）の背景から、体重の減量や摂食リセットを目的に何十錠も大量乱用されるケースが多発しています。<br>
+                ・<strong>臨床的特徴：</strong>慢性的な乱用により腸管神経が破壊されて自力排便が困難になる（無緊張性結腸）ほか、<strong>激しい下痢に伴う重度な低カリウム血症から致死的不整脈・突然死</strong>を招く危険性が婦人科・精神科領域で強く警鐘を鳴らされています。若いお客様による下剤の頻繁な大量購入時には、背景にあるリスクを意識した対応が求められます。
             </div>
         </details>
 
+        <details>
+            <summary>【医療エビデンス】過量服薬におけるタイムライン上の致死リスク</summary>
+            <div class="manual-content">
+                過量服用（OD）発生時、医療機関において最も警戒される致死のタイムラインと病態は以下の2層で構成されます。<br><br>
+                <strong>■ 初日の急性心毒性：無水カフェイン等</strong><br>
+                毒性の発現が極めて速く、致死的な不整脈や痙攣を引き起こし、救急搬送中やICU（集中治療室）に入ってすぐに亡くなるケースでは、直接の死因となることが大半を占めます。<br><br>
+                <strong>■ 3日目以降の遅延性劇症肝不全：アセトアミノフェン</strong><br>
+                服用後24〜48時間は無症状か軽微な胃腸症状のみであることが多く、危機感を抱きにくい特徴があります。しかし、時間経過的に引き返せない状況（毒性物質NAPQIの蓄積）になってから、3〜5日目にかけて致命的な「劇症肝不全」へと急速に悪化します。未成年・成人を問わず、アルコールの摂取は解毒機能を失わせるため、通常量・超過量を問わず肝障害リスクを著しく跳ね上げます。
+            </div>
+        </details>
+
+        <details>
+            <summary>【医療エビデンス】薬剤乱用頭痛（MOH）への進展リスク</summary>
+            <div class="manual-content">
+                ウレイド系（尿素系）鎮静成分を含む複合解熱鎮痛薬の慢性的な過量摂取は、難治性のMOH（Medication Overuse Headache）を誘発する強力なリスク因子です。<br><br>
+                <strong>・受容体ダウンレギュレーションと痛覚過敏：</strong>アリルイソプロピルアセチル尿素やカフェインの中枢抑制・興奮作用に脳が慢性的に曝露されると、痛覚閾値が低下し、本来の頭痛原因とは異なる「薬物離脱（血中濃度低下）」による反跳性頭痛が発現します。<br>
+                <strong>・負のフィードバックの形成：</strong>当事者は「頭痛の悪化」を「原疾患の増悪」と誤認し、痛みを恐れてさらに鎮痛薬の服用頻度・用量を増やすという悪循環（強迫的服薬行動）に陥ります。<br>
+                <strong>・MOH発症の境界線：</strong>国際頭痛分類（ICHD-3）に準じ、単一成分では月15日以上ですが、複合鎮痛薬においては「月に10日以上、3ヶ月を超えて定期的に服用」することで容易にMOH病態へと進展します。
+            </div>
+        </details>
         <div style="margin-top: 15px; background-color:#FFFFFF; padding: 12px; border: 1px solid #CCCCCC;">
-            <strong style="font-size:13px; color:#333333;">▼ スタッフ確認用リンク（法的根拠・対応マニュアル）</strong><br>
-            <ul style="margin: 8px 0 0 0; padding-left: 24px; font-size:12.5px;">
-                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank" style="color:#005A9E;">ゲートキーパーとしての薬剤師等の対応マニュアル</a></li>
-                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/content/11120000/001638681.pdf" target="_blank" style="color:#005A9E;">指定濫用防止医薬品の指定について（告示）</a></li>
-                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/content/11120000/001649558.pdf" target="_blank" style="color:#005A9E;">指定濫用防止医薬品販売等手順書モデル</a></li>
-                <li style="margin-bottom: 4px;"><a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank" style="color:#005A9E;">令和7年 薬機法等の一部改正について</a></li>
+            <strong style="font-size:13.5px; color:#333333;">▼ スタッフ確認用リンク（法的根拠・対応マニュアル）</strong><br>
+            <ul style="margin: 8px 0 0 0; padding-left: 24px; font-size:13px;">
+                <li style="margin-bottom: 5px;"><a href="https://www.mhlw.go.jp/content/001411097.pdf" target="_blank" style="color:#005A9E;">ゲートキーパーとしての薬剤師等の対応マニュアル</a></li>
+                <li style="margin-bottom: 5px;"><a href="https://www.mhlw.go.jp/content/11120000/001638681.pdf" target="_blank" style="color:#005A9E;">指定濫用防止医薬品の指定について（告示）</a></li>
+                <li style="margin-bottom: 5px;"><a href="https://www.mhlw.go.jp/content/11120000/001649558.pdf" target="_blank" style="color:#005A9E;">指定濫用防止医薬品販売等手順書モデル</a></li>
+                <li style="margin-bottom: 5px;"><a href="https://www.mhlw.go.jp/stf/newpage_58083.html" target="_blank" style="color:#005A9E;">令和7年 薬機法等の一部改正について</a></li>
             </ul>
         </div>
-        </div>
+    </div>
 </div>
 
 <div id="modal" class="modal-overlay">
