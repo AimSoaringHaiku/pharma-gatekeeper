@@ -1,103 +1,79 @@
-import csv
+import pandas as pd
 import json
+import glob
 import os
 
-csv_file_path = 'data.csv'
-template_html_path = 'test_7.html'
-output_html_path = 'index.html'
+def clean_val(val):
+    if pd.isna(val) or val == '-' or str(val).lower() == 'nan':
+        return ""
+    return str(val).strip()
 
-def build_html():
-    master_data = {}
+def main():
+    # CSVファイルを自動検知（ファイル名が変わっても対応可能に）
+    csv_files = glob.glob("*.csv")
+    if not csv_files:
+        print("❌ エラー: CSVファイルが見つかりません。")
+        return
     
-    try:
-        with open(csv_file_path, mode='r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
+    # 対象のCSVを読み込み（優先的に『共有用_OTC』を含むものを選択）
+    target_csv = next((f for f in csv_files if "共有用_OTC" in f), csv_files[0])
+    print(f"📂 読み取り中: {target_csv}")
+    
+    df = pd.read_csv(target_csv)
+    data_list = []
+    
+    for idx, row in df.iterrows():
+        # JSON文字列の安全なパース
+        ing_info, dos_info, add_info = {}, {}, {}
+        try: ing_info = json.loads(clean_val(row.get('成分情報_JSON', '{}')))
+        except: pass
+        try: dos_info = json.loads(clean_val(row.get('用法用量_JSON', '{}')))
+        except: pass
+        try: add_info = json.loads(clean_val(row.get('付加情報_JSON', '{}')))
+        except: pass
+
+        # エビデンス・補足文章の自動組み立て
+        item = {
+            "name": clean_val(row.get('製品名')),
+            "group": clean_val(row.get('薬効')) or "一般用医薬品",
+            "dailyDose": float(row.get('dailyDose', 1) or 1),
+            "categoryLimit": int(row.get('categoryLimit', 5) or 5),
+            "kubun": clean_val(row.get('指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)')),
+            "note": clean_val(row.get('注釈･補足等')),
             
-            for i, row in enumerate(reader):
-                product_name = row.get('製品名', '').strip()
-                if not product_name:
-                    continue
+            # CSVの新列「現場_代替薬提案」をセット
+            "alternative": clean_val(row.get('現場_代替薬提案')),
+            
+            "info": {
+                "overview": clean_val(row.get('製品の特長')),
+                "dosage_real": f"成人1日最大服用量: {row.get('dailyDose', '--')} (服用制限: {row.get('服用禁止', 'なし')})",
+                "maternity": clean_val(row.get('妊婦・授乳婦_専門家エビデンス')) or clean_val(row.get('妊婦・授乳婦注意')),
+                "doping_driving": clean_val(row.get('現場_運転目安補足')),
                 
-                key = f"med_{i}"
-                category_limit = 5 if "せき止め" in product_name else 7 
-                
-                # 1. 用法・用量（実態）
-                position_text = row.get('「包装規格と容量区分（実態）」希望する文言列', '').strip()
-                if not position_text:
-                    position_text = row.get('「包装規格と容量区分（実態）」現在の文言列', '').strip()
-                if not position_text:
-                    position_text = "パッケージの現物総量を確認し、計算結果に従って判定してください。"
+                # エビデンス全般や注意情報をまとめ
+                "professional_info": clean_val(row.get('現場_運転目安補足'))
+            }
+        }
+        data_list.append(item)
 
-                # 2. 妊婦・授乳婦
-                maternity_raw = row.get('妊婦・授乳婦注意', '').strip()
-                maternity_text = f"【OTC添付文書】{maternity_raw}" if maternity_raw else "添付文書の確認をおすすめします。"
-
-                # 3. ドーピング判定
-                ingredients = row.get('成分情報_JSON', '')
-                doping_text = "【規定】禁止物質非該当です。"
-                if any(x in ingredients for x in ["メチルエフェドリン", "プソイドエフェドリン", "エフェドリン", "マオウ", "麻黄"]):
-                    doping_text = "【規定】エフェドリン系・マオウ等を含有するため、スポーツ競技大会時は使用禁止です。"
-
-                # 4. 運転判定
-                add_info = row.get('付加情報_JSON', '')
-                driving_text = "【規定】服用後の乗物・機械類の運転操作は禁止されています。"
-                if "対象外" in row.get('指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)', ''):
-                    if "運転禁止" not in add_info:
-                        driving_text = "添付文書の「運転操作」に関する注意書きをご確認ください。"
-                if "運転禁止" in add_info:
-                    driving_text = "【規定】服用後の乗物・機械類の運転操作は禁止されています。"
-
-                # 5. 代替薬
-                alt_text = row.get('製品の特長', '').strip()
-                if not alt_text:
-                    alt_text = "代替案・特長のマスタ登録がありません。"
-
-                # 6. 【新設】専門家向け情報（Dify等の出力先）
-                pro_info = row.get('専門家情報', '').strip()
-                # 現在のCSVに「専門家情報」列がない場合は空文字になるため、HTML側でデフォルト文言が出ます
-
-                master_data[key] = {
-                    "name": product_name,
-                    "defaultAmount": int(row.get('max_package_amount', 0) or 0),
-                    "categoryLimit": category_limit,
-                    "dailyDose": float(row.get('dailyDose', 0) or 0),
-                    "kubun": row.get('指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)', '〇'),
-                    "group": "対象医薬品リスト",
-                    "note": row.get('注釈･補足等', ''),
-                    "alternative": alt_text,
-                    "info": {
-                        "position": position_text,
-                        "maternity": maternity_text,
-                        "doping": doping_text,
-                        "driving": driving_text,
-                        "professional_info": pro_info
-                    }
-                }
-    except Exception as e:
-        print(f"❌ CSVの読み込みエラー: {e}")
+    # テンプレートHTMLの読み込み
+    template_path = "template.html"
+    if not os.path.exists(template_path):
+        print("❌ エラー: template.html が見つかりません。")
         return
+        
+    with open(template_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
 
-    json_str = json.dumps(master_data, ensure_ascii=False, indent=4)
-    json_inner = json_str[1:-1] 
+    # ★修正ポイント：HTML側の変数名に合わせるため const medicineMaster = に変更！
+    json_data_str = json.dumps(data_list, ensure_ascii=False, indent=2)
+    final_html = html_content.replace("/* __DATA_PLACEHOLDER__ */", f"const medicineMaster = {json_data_str};")
 
-    try:
-        with open(template_html_path, mode='r', encoding='utf-8') as f:
-            html_content = f.read()
-    except Exception as e:
-        print(f"❌ テンプレートHTMLの読み込みエラー: {e}")
-        return
-
-    new_html_content = html_content.replace('// --- INSERT_DATA_HERE ---', json_inner)
-
-    try:
-        with open(output_html_path, mode='w', encoding='utf-8') as f:
-            f.write(new_html_content)
-        print(f"✅ 成功！ {len(master_data)} 品目のデータを挿入し、{output_html_path} を作成しました。")
-    except Exception as e:
-        print(f"❌ HTMLの保存エラー: {e}")
+    # index.html の出力
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(final_html)
+        
+    print(f"✅ 成功! {len(data_list)} 品目のデータを組み込んだ index.html を生成しました！")
 
 if __name__ == "__main__":
-    if not os.path.exists(csv_file_path):
-        print(f"❌ {csv_file_path} が見つかりません。アップロードしてください。")
-    else:
-        build_html()
+    main()
