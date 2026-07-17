@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>指定濫用防止医薬品 判定システム v6.7</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
     
     <style>
         body { font-family: "Meiryo UI", "Yu Gothic UI", sans-serif; background-color: #F3F2F1; color: #333333; margin: 0; padding: 15px; font-size: 14.5px; line-height: 1.6; }
@@ -164,26 +162,6 @@
     </div>
 
     <div class="manual-section">
-        <details>
-            <summary>【組織知】トランザクティブメモリー・関連図目次（マップ）</summary>
-            <div class="manual-content" style="text-align: center; background-color: #FFFFFF; padding: 15px;">
-                <div class="mermaid">
-                    graph TD
-                    A[現場の判定システム<br>index.html] -->|マスタ連携| B(指定濫用_マスタ管理<br>スプレッドシート)
-                    A -->|業務ルール準拠| C(指定濫用防止医薬品<br>販売業務ドキュメント)
-                    B -->|Dify経由で情報生成| D((専門家情報・エビデンス<br>AI自動生成フロー))
-                    D -.->|CSV出力| A
-                    C --> E[厚労省 告示・手順書モデル]
-                    C --> F[薬剤師等 対応マニュアル]
-                    
-                    style A fill:#217346,stroke:#1E6B40,stroke-width:2px,color:#fff
-                    style B fill:#F0F6FF,stroke:#2B579A,stroke-width:2px
-                    style C fill:#FFFAF0,stroke:#D83B01,stroke-width:2px
-                    style D fill:#F9F9F9,stroke:#555,stroke-dasharray: 5 5
-                </div>
-            </div>
-        </details>
-
         <details open>
             <summary>【瞬時の判別】成分およびブランド名からの、大まかな分類方法</summary>
             <div class="manual-content">
@@ -724,7 +702,7 @@
   "新ウリエースBT": {
     "name": "新ウリエースBT",
     "group": "一般用医薬品",
-    "dailyDose": 1.0,
+    "dailyDose": 0.0,
     "categoryLimit": 5,
     "kubun": "一般用検査薬",
     "note": "",
@@ -1241,7 +1219,7 @@
     const medSelect = document.getElementById('medicine');
     const groups = {};
     for (const [key, data] of Object.entries(medicineMaster)) {
-        const groupKey = data.group || data.薬効 || "その他";
+        const groupKey = data.group || data['薬効'] || "その他";
         if (!groups[groupKey]) {
             groups[groupKey] = document.createElement('optgroup');
             groups[groupKey].label = `【${groupKey}】`;
@@ -1249,7 +1227,7 @@
         }
         const option = document.createElement('option');
         option.value = key;
-        option.textContent = data.name || data.製品名 || key;
+        option.textContent = data.name || data['製品名'] || key;
         groups[groupKey].appendChild(option);
     }
 
@@ -1278,20 +1256,21 @@
         const medData = medicineMaster[selectedMedKey];
         if(!medData) return;
         
-        const dailyDose = medData.dailyDose || medData.1日最大服用量 || 1;
-        const categoryLimit = medData.categoryLimit || medData.制限日数 || 5;
+        // ★修正点：数字から始まる変数を [''] で囲んで文法エラーを完全に解消しました！
+        const dailyDose = medData.dailyDose || medData['1日最大服用量'] || 1;
+        const categoryLimit = medData.categoryLimit || medData['制限日数'] || 5;
         
         document.getElementById('medInfo').textContent = 
-            `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日 ｜ ${medData.note || medData.注釈･補足等 || ""}`;
+            `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日 ｜ ${medData.note || medData['注釈･補足等'] || ""}`;
 
-        document.getElementById('detailMedName').textContent = medData.name || medData.製品名 || "--";
+        document.getElementById('detailMedName').textContent = medData.name || medData['製品名'] || "--";
 
-        document.getElementById('detailOverview').innerHTML = medData.overview || (medData.info && medData.info.overview) || medData.製品の特長 || "--";
-        document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData.現場_代替薬提案 || "該当情報なし";
+        document.getElementById('detailOverview').innerHTML = medData.overview || (medData.info && medData.info.overview) || medData['製品の特長'] || "--";
+        document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData['現場_代替薬提案'] || "該当情報なし";
         document.getElementById('detailDosageReal').innerHTML = medData.dosage_real || (medData.info && medData.info.dosage_real) || `成人1日最大服用量: ${dailyDose}`;
-        document.getElementById('detailMaternity').innerHTML = medData.maternity || (medData.info && medData.info.maternity) || medData.evidence_preg || medData.妊婦・授乳婦_専門家エビデンス || "--";
-        document.getElementById('detailDopingDriving').innerHTML = medData.doping_driving || (medData.info && medData.info.doping_driving) || medData.evidence_pro || medData.現場_運転目安補足 || "--";
-        document.getElementById('detailProInfo').innerHTML = medData.professional_info || (medData.info && medData.info.professional_info) || medData.evidence_pro || medData.現場_運転目安補足 || "<span style='color:#555;'>現在のマスタには、この薬剤に関する特段の専門家向けエビデンスは登録されていません。</span>";
+        document.getElementById('detailMaternity').innerHTML = medData.maternity || (medData.info && medData.info.maternity) || medData.evidence_preg || medData['妊婦・授乳婦_専門家エビデンス'] || "--";
+        document.getElementById('detailDopingDriving').innerHTML = medData.doping_driving || (medData.info && medData.info.doping_driving) || medData.evidence_pro || medData['現場_運転目安補足'] || "--";
+        document.getElementById('detailProInfo').innerHTML = medData.professional_info || (medData.info && medData.info.professional_info) || medData.evidence_pro || medData['現場_運転目安補足'] || "<span style='color:#555;'>現在のマスタには、この薬剤に関する特段の専門家向けエビデンスは登録されていません。</span>";
 
         const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
         const age = document.getElementById('age').value;

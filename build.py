@@ -3,6 +3,23 @@ import json
 import glob
 import os
 
+# 数値変換エラー（空欄など）を安全に回避する関数
+def safe_float(val, default=1.0):
+    try:
+        import math
+        f = float(val)
+        return default if math.isnan(f) else f
+    except:
+        return default
+
+def safe_int(val, default=5):
+    try:
+        import math
+        i = float(val)
+        return default if math.isnan(i) else int(i)
+    except:
+        return default
+
 def clean_val(val):
     if pd.isna(val) or val == '-' or str(val).lower() == 'nan':
         return ""
@@ -28,8 +45,8 @@ def main():
         item = {
             "name": name,
             "group": clean_val(row.get('薬効')) or "一般用医薬品",
-            "dailyDose": float(row.get('dailyDose', 1) or 1),
-            "categoryLimit": int(row.get('categoryLimit', 5) or 5),
+            "dailyDose": safe_float(row.get('dailyDose'), 1.0),
+            "categoryLimit": safe_int(row.get('categoryLimit'), 5),
             "kubun": clean_val(row.get('指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)')),
             "note": clean_val(row.get('注釈･補足等')),
             "alternative": clean_val(row.get('現場_代替薬提案')),
