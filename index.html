@@ -1632,10 +1632,13 @@
         function parseEvidenceText(text) {
             const result = {
                 "妊婦・授乳婦": "",
-                "運転者": "",
-                "基礎疾患を有する方": "",
-                "12歳未満の小児": ""
+                "運転・操作": "",
+                "禁忌・受診勧奨": "",
+                "相互作用": "",
+                "濫用・MOH": "",
+                "ドーピング・毒性": ""
             };
+
             if (!text) return result;
 
             // 「・<b>見出し</b>：」で区切る
@@ -1676,43 +1679,40 @@
             // ============================================================
             // 専門家向けカード 描画ロジック
             // 【現在拾える情報】
-            //   ev-maternity      ← M列（妊婦・授乳婦_専門家エビデンス）直接表示
-            //   ev-driving        ← N列（現場_代替薬提案）パース「運転者」
-            //   ev-contraindication ← N列パース「基礎疾患を有する方」+「12歳未満の小児」
-            // 【まだ拾えない情報 → 次回Dify実行時にCSV列を追加して対応】
-            //   ev-interaction    ← 列未存在（現場_相互作用）
-            //   ev-moh            ← 列未存在（現場_濫用MOH）
-            //   ev-doping         ← 列未存在（現場_ドーピング）
+            //   ev-maternity      ← O列パース「妊婦・授乳婦」
+            //   ev-driving        ← O列パース「運転・操作」
+            //   ev-contraindication ← O列パース「禁忌・受診勧奨」
+            //   ev-interaction    ← O列パース「相互作用」
+            //   ev-moh            ← O列パース「濫用・MOH」
+            //   ev-doping         ← O列パース「ドーピング・毒性」
+            // 【補足】妊婦・授乳婦はM列（専門家エビデンス）を優先表示
             // ============================================================
 
-            // M列 → ev-maternity
+            const evRaw = medData['現場_運転目安補足']
+                || (medData.info && medData.info.doping_driving)
+                || "";
+            const ev = parseEvidenceText(evRaw);
+
+            // M列優先、なければO列パース結果
             const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
-                || (medData.info && medData.info.maternity) || "";
+                || (medData.info && medData.info.maternity)
+                || ev["妊婦・授乳婦"]
+                || "";
             document.getElementById('ev-maternity').innerHTML =
                 maternityEv ? maternityEv.replace(/\n/g, '<br>')
                     : "<span style='color:#888'>データなし</span>";
 
-            // N列をパース → ev-driving / ev-contraindication
-            const altRaw = medData['現場_代替薬提案'] || medData.alternative || "";
-            const ev2 = parseEvidenceText(altRaw);
-
-            document.getElementById('ev-driving').innerHTML =
-                ev2["運転者"] || ev2["運転・操作"]
-                || "<span style='color:#888'>データなし</span>";
-
-            document.getElementById('ev-contraindication').innerHTML =
-                [ev2["基礎疾患を有する方"], ev2["12歳未満の小児"]]
-                    .filter(Boolean).join('<br><br>')
-                || "<span style='color:#888'>データなし</span>";
-
-            // 未存在列 → 準備中表示
             const NA = "<span style='color:#aaa; font-size:12px'>次回Dify実行時に追加予定</span>";
+            document.getElementById('ev-driving').innerHTML =
+                ev["運転・操作"] || NA;
+            document.getElementById('ev-contraindication').innerHTML =
+                ev["禁忌・受診勧奨"] || NA;
             document.getElementById('ev-interaction').innerHTML =
-                medData['現場_相互作用'] || NA;
+                ev["相互作用"] || NA;
             document.getElementById('ev-moh').innerHTML =
-                medData['現場_濫用MOH'] || NA;
+                ev["濫用・MOH"] || NA;
             document.getElementById('ev-doping').innerHTML =
-                medData['現場_ドーピング'] || NA;
+                ev["ドーピング・毒性"] || NA;
 
             const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
             const age = document.getElementById('age').value;
