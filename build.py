@@ -50,6 +50,7 @@ def main():
             "kubun": clean_val(row.get('指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)')),
             "note": clean_val(row.get('注釈･補足等')),
             "alternative": clean_val(row.get('現場_代替薬提案')),
+            "matrix_json": clean_val(row.get('マトリックス_JSON')),
             "info": {
                 "overview": (clean_val(row.get('製品の特長')) + 
                              ("\n\n【シリーズ内位置づけ】\n" + clean_val(row.get('注釈･補足等')) 
