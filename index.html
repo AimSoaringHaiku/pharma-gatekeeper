@@ -435,9 +435,9 @@
 
         <div class="detail-panel" id="detailPanel">
             <div class="detail-panel-header">
-                <span>【専門家向け情報】<span id="detailMedName">製品名</span></span>
+                <span>【詳細情報】<span id="detailMedName">製品名</span></span>
                 <span
-                    style="font-size:11px; background:#FFFFFF; color:#2B579A; padding:2px 6px; border-radius:3px;">資格職専用</span>
+                    style="font-size:11px; background:#FFFFFF; color:#2B579A; padding:2px 6px; border-radius:3px;">注意点</span>
             </div>
             <div class="detail-grid">
                 <div class="detail-card card-full">
@@ -1670,8 +1670,13 @@
             const dailyDose = medData.dailyDose || medData['1日最大服用量'] || 1;
             const categoryLimit = medData.categoryLimit || medData['制限日数'] || 5;
 
+            // 修正前
+            // document.getElementById('medInfo').textContent =
+            //    `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日 ｜ ${medData.note || medData['注釈･補足等'] || ""}`;
+
+            // 修正後（L列の読み込みを削除）
             document.getElementById('medInfo').textContent =
-                `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日 ｜ ${medData.note || medData['注釈･補足等'] || ""}`;
+                `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日`;
 
             document.getElementById('detailMedName').textContent = medData.name || medData['製品名'] || "--";
 
