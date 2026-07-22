@@ -51,7 +51,9 @@ def main():
             "note": clean_val(row.get('注釈･補足等')),
             "alternative": clean_val(row.get('現場_代替薬提案')),
             "info": {
-                "overview": clean_val(row.get('製品の特長')),
+                "overview": (clean_val(row.get('製品の特長')) + 
+                             ("\n\n【シリーズ内位置づけ】\n" + clean_val(row.get('注釈･補足等')) 
+                              if clean_val(row.get('注釈･補足等')) else "")),
                 "dosage_real": f"成人1日最大服用量: {row.get('dailyDose', '--')} (服用制限: {row.get('服用禁止', 'なし')})",
                 "maternity": clean_val(row.get('妊婦・授乳婦_専門家エビデンス')) or clean_val(row.get('妊婦・授乳婦注意')),
                 "doping_driving": clean_val(row.get('現場_運転目安補足')),

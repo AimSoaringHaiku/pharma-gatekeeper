@@ -452,10 +452,6 @@
                     <div class="detail-card-title">【用法・用量（実態と容量区分の解説）】</div>
                     <div class="detail-card-body" id="detailDosageReal">--</div>
                 </div>
-                <div class="detail-card">
-                    <div class="detail-card-title">【妊婦・授乳婦情報】</div>
-                    <div class="detail-card-body" id="detailMaternity">--</div>
-                </div>
                 <div class="detail-card" id="card-maternity-ev">
                     <div class="detail-card-title">【妊婦・授乳婦】エビデンス</div>
                     <div class="detail-card-body" id="ev-maternity">--</div>
@@ -707,11 +703,9 @@
         function parseEvidenceText(text) {
             const result = {
                 "妊婦・授乳婦": "",
-                "運転・操作": "",
-                "禁忌・受診勧奨": "",
-                "相互作用": "",
-                "濫用・MOH": "",
-                "ドーピング・毒性": ""
+                "運転者": "",
+                "基礎疾患を有する方": "",
+                "12歳未満の小児": ""
             };
             if (!text) return result;
 
@@ -745,25 +739,51 @@
             document.getElementById('detailOverview').innerHTML = medData.overview || (medData.info && medData.info.overview) || medData['製品の特長'] || "--";
             document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData['現場_代替薬提案'] || "該当情報なし";
             document.getElementById('detailDosageReal').innerHTML = medData.dosage_real || (medData.info && medData.info.dosage_real) || `成人1日最大服用量: ${dailyDose}`;
-            document.getElementById('detailMaternity').innerHTML = medData.maternity || (medData.info && medData.info.maternity) || medData.evidence_preg || medData['妊婦・授乳婦_専門家エビデンス'] || "--";
             const evRaw = medData['現場_運転目安補足']
                 || (medData.info && medData.info.doping_driving)
                 || "";
             const ev = parseEvidenceText(evRaw);
 
-            // 妊婦欄：専用列があればそちら優先、なければパース結果
-            const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
-                || (medData.info && medData.info.maternity)
-                || ev["妊婦・授乳婦"]
-                || "--";
-            document.getElementById('detailMaternity').innerHTML = maternityEv;
+            // ============================================================
+            // 専門家向けカード 描画ロジック
+            // 【現在拾える情報】
+            //   ev-maternity      ← M列（妊婦・授乳婦_専門家エビデンス）直接表示
+            //   ev-driving        ← N列（現場_代替薬提案）パース「運転者」
+            //   ev-contraindication ← N列パース「基礎疾患を有する方」+「12歳未満の小児」
+            // 【まだ拾えない情報 → 次回Dify実行時にCSV列を追加して対応】
+            //   ev-interaction    ← 列未存在（現場_相互作用）
+            //   ev-moh            ← 列未存在（現場_濫用MOH）
+            //   ev-doping         ← 列未存在（現場_ドーピング）
+            // ============================================================
 
-            document.getElementById('ev-maternity').innerHTML = ev["妊婦・授乳婦"] || "<span style='color:#888'>データなし</span>";
-            document.getElementById('ev-driving').innerHTML = ev["運転・操作"] || "<span style='color:#888'>データなし</span>";
-            document.getElementById('ev-contraindication').innerHTML = ev["禁忌・受診勧奨"] || "<span style='color:#888'>データなし</span>";
-            document.getElementById('ev-interaction').innerHTML = ev["相互作用"] || "<span style='color:#888'>データなし</span>";
-            document.getElementById('ev-moh').innerHTML = ev["濫用・MOH"] || "<span style='color:#888'>データなし</span>";
-            document.getElementById('ev-doping').innerHTML = ev["ドーピング・毒性"] || "<span style='color:#888'>データなし</span>";
+            // M列 → ev-maternity
+            const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
+                || (medData.info && medData.info.maternity) || "";
+            document.getElementById('ev-maternity').innerHTML =
+                maternityEv ? maternityEv.replace(/\n/g, '<br>')
+                    : "<span style='color:#888'>データなし</span>";
+
+            // N列をパース → ev-driving / ev-contraindication
+            const altRaw = medData['現場_代替薬提案'] || medData.alternative || "";
+            const ev = parseEvidenceText(altRaw);
+
+            document.getElementById('ev-driving').innerHTML =
+                ev["運転者"] || ev["運転・操作"]
+                || "<span style='color:#888'>データなし</span>";
+
+            document.getElementById('ev-contraindication').innerHTML =
+                [ev["基礎疾患を有する方"], ev["12歳未満の小児"]]
+                    .filter(Boolean).join('<br><br>')
+                || "<span style='color:#888'>データなし</span>";
+
+            // 未存在列 → 準備中表示
+            const NA = "<span style='color:#aaa; font-size:12px'>次回Dify実行時に追加予定</span>";
+            document.getElementById('ev-interaction').innerHTML =
+                medData['現場_相互作用'] || NA;
+            document.getElementById('ev-moh').innerHTML =
+                medData['現場_濫用MOH'] || NA;
+            document.getElementById('ev-doping').innerHTML =
+                medData['現場_ドーピング'] || NA;
 
             const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
             const age = document.getElementById('age').value;
