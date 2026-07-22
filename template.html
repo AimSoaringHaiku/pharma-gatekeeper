@@ -742,6 +742,7 @@
             document.getElementById('detailOverview').innerHTML = medData.overview || (medData.info && medData.info.overview) || medData['製品の特長'] || "--";
             document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData['現場_代替薬提案'] || "該当情報なし";
             document.getElementById('detailDosageReal').innerHTML = medData.dosage_real || (medData.info && medData.info.dosage_real) || `成人1日最大服用量: ${dailyDose}`;
+            // 1回目でデータを取得・パースして「ev」に入れているため、これで準備OKです
             const evRaw = medData['現場_運転目安補足']
                 || (medData.info && medData.info.doping_driving)
                 || "";
@@ -759,10 +760,7 @@
             // 【補足】妊婦・授乳婦はM列（専門家エビデンス）を優先表示
             // ============================================================
 
-            const evRaw = medData['現場_運転目安補足']
-                || (medData.info && medData.info.doping_driving)
-                || "";
-            const ev = parseEvidenceText(evRaw);
+            // ❌ ここにあった2回目の「const evRaw = ...」「const ev = ...」の3行は削除しました
 
             // M列優先、なければO列パース結果
             const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
