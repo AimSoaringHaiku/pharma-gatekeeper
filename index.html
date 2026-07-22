@@ -1675,7 +1675,9 @@
 
             document.getElementById('detailMedName').textContent = medData.name || medData['製品名'] || "--";
 
-            document.getElementById('detailOverview').innerHTML = medData.overview || (medData.info && medData.info.overview) || medData['製品の特長'] || "--";
+            const overviewRaw = medData.overview || (medData.info && medData.info.overview) || medData['製品の特長'] || "--";
+            document.getElementById('detailOverview').innerHTML = overviewRaw.replace(/\n/g, '<br>');
+
             document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData['現場_代替薬提案'] || "該当情報なし";
             document.getElementById('detailDosageReal').innerHTML = medData.dosage_real || (medData.info && medData.info.dosage_real) || `成人1日最大服用量: ${dailyDose}`;
             // 1回目でデータを取得・パースして「ev」に入れているため、これで準備OKです
