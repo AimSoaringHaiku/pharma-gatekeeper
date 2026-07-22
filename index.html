@@ -1675,8 +1675,47 @@
 
             document.getElementById('detailMedName').textContent = medData.name || medData['製品名'] || "--";
 
-            const overviewRaw = medData.overview || (medData.info && medData.info.overview) || medData['製品の特長'] || "--";
-            document.getElementById('detailOverview').innerHTML = overviewRaw.replace(/\n/g, '<br>');
+            // --- 修正ここから ---
+            let overviewText = (medData.info && medData.info.overview) || medData.overview || medData['製品の特長'] || "";
+            const noteText = medData.note || medData['注釈･補足等'] || "";
+
+            // 「シリーズ内位置づけ」のキーワードが含まれているか（build.pyで合体済みか）で判定
+            if (overviewText.includes("【シリーズ内位置づけ】")) {
+                let parts = overviewText.split("【シリーズ内位置づけ】");
+                let mainFeature = parts[0].trim().replace(/\n/g, '<br>');
+                let seriesNote = parts[1].trim().replace(/\n/g, '<br>');
+
+                document.getElementById('detailOverview').innerHTML = `
+                    ${mainFeature}
+                    <details style="margin-top: 8px; background: #F9F9F9; border: 1px solid #E1DFDD; padding: 6px 12px; border-radius: 4px;">
+                        <summary style="font-weight: bold; color: #2B579A; cursor: pointer; font-size: 13px; outline: none;">
+                            ＋ 【シリーズ内位置づけ・補足】を表示
+                        </summary>
+                        <div style="margin-top: 8px; font-size: 13px; color: #333; border-top: 1px dotted #CCCCCC; padding-top: 8px;">
+                            ${seriesNote}
+                        </div>
+                    </details>
+                `;
+            } else if (noteText && !overviewText.includes(noteText)) {
+                // CSVからL列単体で取得できた場合の予備ルート
+                let mainFeature = overviewText.replace(/\n/g, '<br>');
+                let cleanNote = noteText.replace(/\n/g, '<br>');
+                document.getElementById('detailOverview').innerHTML = `
+                    ${mainFeature}
+                    <details style="margin-top: 8px; background: #F9F9F9; border: 1px solid #E1DFDD; padding: 6px 12px; border-radius: 4px;">
+                        <summary style="font-weight: bold; color: #2B579A; cursor: pointer; font-size: 13px; outline: none;">
+                            ＋ 【シリーズ内位置づけ・補足】を表示
+                        </summary>
+                        <div style="margin-top: 8px; font-size: 13px; color: #333; border-top: 1px dotted #CCCCCC; padding-top: 8px;">
+                            ${cleanNote}
+                        </div>
+                    </details>
+                `;
+            } else {
+                // 補足情報がない製品は通常通り表示
+                document.getElementById('detailOverview').innerHTML = overviewText ? overviewText.replace(/\n/g, '<br>') : "--";
+            }
+            // --- 修正ここまで ---
 
             document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData['現場_代替薬提案'] || "該当情報なし";
             document.getElementById('detailDosageReal').innerHTML = medData.dosage_real || (medData.info && medData.info.dosage_real) || `成人1日最大服用量: ${dailyDose}`;
