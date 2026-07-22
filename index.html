@@ -1694,14 +1694,14 @@
 
             // N列をパース → ev-driving / ev-contraindication
             const altRaw = medData['現場_代替薬提案'] || medData.alternative || "";
-            const ev = parseEvidenceText(altRaw);
+            const ev2 = parseEvidenceText(altRaw);
 
             document.getElementById('ev-driving').innerHTML =
-                ev["運転者"] || ev["運転・操作"]
+                ev2["運転者"] || ev2["運転・操作"]
                 || "<span style='color:#888'>データなし</span>";
 
             document.getElementById('ev-contraindication').innerHTML =
-                [ev["基礎疾患を有する方"], ev["12歳未満の小児"]]
+                [ev2["基礎疾患を有する方"], ev2["12歳未満の小児"]]
                     .filter(Boolean).join('<br><br>')
                 || "<span style='color:#888'>データなし</span>";
 
