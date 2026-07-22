@@ -1641,15 +1641,22 @@
 
             if (!text) return result;
 
-            // 「・<b>見出し</b>：」で区切る
-            const regex = /[・･]<b>(.*?)<\/b>[：:]([\s\S]*?)(?=[・･]<b>|$)/g;
+            // 成分名（グアイフェネシン等）の <b> では止まらず、
+            // 「6つの大項目」のキーワードが来た時だけを区切りとして認識するよう改良
+            const keys = Object.keys(result);
+            const pattern = new RegExp(
+                `[・･]<b>(${keys.join('|')})<\\/b>[：:](([\\s\\S]*?))(?=[・･]<b>(?:${keys.join('|')})<\\/b>|$)`,
+                'g'
+            );
+
             let match;
-            while ((match = regex.exec(text)) !== null) {
+            while ((match = pattern.exec(text)) !== null) {
                 const title = match[1].trim();
-                const content = match[2].trim();
-                Object.keys(result).forEach(key => {
-                    if (title.includes(key)) result[key] = content;
-                });
+                // 見出し直下の余計な改行(<br>)をお掃除して格納
+                const content = match[2].trim().replace(/^<br>\s*/i, '');
+                if (result.hasOwnProperty(title)) {
+                    result[title] = content;
+                }
             }
             return result;
         }
