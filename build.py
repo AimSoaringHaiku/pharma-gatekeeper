@@ -31,7 +31,9 @@ def main():
         print("❌ エラー: CSVファイルが見つかりません。")
         return
     
-    target_csv = next((f for f in csv_files if "共有用_OTC" in f), csv_files[0])
+    target_csv = next((f for f in csv_files if f == "data.csv"), 
+             next((f for f in csv_files if "共有用_OTC" in f), csv_files[0]))
+
     print(f"📂 読み取り中: {target_csv}")
     
     df = pd.read_csv(target_csv)
