@@ -1721,33 +1721,58 @@
 
         function renderMatrixCards(jsonStr) {
             const BADGE = {
-                "〇": "<span style='color:#217346; font-weight:bold; background:#DFF6DD; padding:1px 6px; border-radius:2px;'>〇</span>",
-                "△": "<span style='color:#8A6D3B; font-weight:bold; background:#FFF4CE; padding:1px 6px; border-radius:2px;'>△</span>",
-                "✕": "<span style='color:#C00000; font-weight:bold; background:#FDE7E9; padding:1px 6px; border-radius:2px;'>✕</span>",
-                "ー": "<span style='color:#888; padding:1px 6px;'>ー</span>"
+                "〇": "<span style='color:#217346;font-weight:bold;background:#DFF6DD;padding:1px 8px;border-radius:2px;'>〇</span>",
+                "△": "<span style='color:#8A6D3B;font-weight:bold;background:#FFF4CE;padding:1px 8px;border-radius:2px;'>△</span>",
+                "✕": "<span style='color:#C00000;font-weight:bold;background:#FDE7E9;padding:1px 8px;border-radius:2px;'>✕</span>",
+                "ー": "<span style='color:#888;padding:1px 8px;'>ー</span>"
+            };
+            const CAT_SHORT = {
+                "妊婦・授乳婦": "妊婦",
+                "運転・操作": "運転",
+                "禁忌・受診勧奨": "禁忌",
+                "相互作用": "相互",
+                "濫用・MOH": "濫用",
+                "ドーピング・毒性": "WADA"
             };
 
             if (!jsonStr) return null;
             let parsed;
             try { parsed = JSON.parse(jsonStr); } catch (e) { return null; }
-
             const matrix = parsed["成分マトリックス"];
-            if (!matrix) return null;
+            if (!matrix || matrix.length === 0) return null;
 
-            const cats = ["妊婦・授乳婦", "運転・操作", "禁忌・受診勧奨", "相互作用", "濫用・MOH", "ドーピング・毒性"];
+            const cats = Object.keys(CAT_SHORT);
 
-            // カテゴリ別に成分をまとめてHTMLを返す
-            const result = {};
+            // ① サマリーテーブル
+            let tableHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
+        <thead><tr style="background:#F3F2F1;">
+            <th style="border:1px solid #CCC;padding:5px 8px;text-align:left;min-width:120px;">成分名</th>`;
+            cats.forEach(cat => {
+                tableHtml += `<th style="border:1px solid #CCC;padding:5px 4px;text-align:center;white-space:nowrap;">${CAT_SHORT[cat]}</th>`;
+            });
+            tableHtml += `</tr></thead><tbody>`;
+
+            matrix.forEach(ing => {
+                tableHtml += `<tr><td style="border:1px solid #CCC;padding:5px 8px;font-weight:bold;font-size:11.5px;">${ing["成分名"]}</td>`;
+                cats.forEach(cat => {
+                    const cell = ing[cat];
+                    const badge = cell ? (BADGE[cell["判定"]] || BADGE["ー"]) : BADGE["ー"];
+                    tableHtml += `<td style="border:1px solid #CCC;padding:4px;text-align:center;">${badge}</td>`;
+                });
+                tableHtml += `</tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+
+            // ② カテゴリ別詳細（折りたたみ）
+            const catDetail = {};
             cats.forEach(cat => {
                 const lines = matrix
-                    .filter(ing => ing[cat])
-                    .map(ing => {
-                        const badge = BADGE[ing[cat]["判定"]] || BADGE["ー"];
-                        return `<b>${ing["成分名"]}</b>：${badge} ${ing[cat]["備考"]}`;
-                    });
-                result[cat] = lines.join('<br><br>') || null;
+                    .filter(ing => ing[cat] && ing[cat]["備考"])
+                    .map(ing => `<b>${ing["成分名"]}</b>：${BADGE[ing[cat]["判定"]] || BADGE["ー"]} ${ing[cat]["備考"]}`);
+                catDetail[cat] = lines.join('<br><br>') || null;
             });
-            return result;
+
+            return { table: tableHtml, detail: catDetail };
         }
 
         function calculate() {
@@ -1835,28 +1860,53 @@
             const matrix = renderMatrixCards(matrixJSON);
 
             if (matrix) {
-                // GAS生成のマトリックスJSONがある場合
+                // 妊婦欄はM列優先
                 const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
-                    || (medData.info && medData.info.maternity)
-                    || matrix["妊婦・授乳婦"]
-                    || "";
-                document.getElementById('ev-maternity').innerHTML =
-                    maternityEv ? maternityEv.replace(/\n/g, '<br>') : NA;
-                document.getElementById('ev-driving').innerHTML = matrix["運転・操作"] || NA;
-                document.getElementById('ev-contraindication').innerHTML = matrix["禁忌・受診勧奨"] || NA;
-                document.getElementById('ev-interaction').innerHTML = matrix["相互作用"] || NA;
-                document.getElementById('ev-moh').innerHTML = matrix["濫用・MOH"] || NA;
-                document.getElementById('ev-doping').innerHTML = matrix["ドーピング・毒性"] || NA;
+                    || (medData.info && medData.info.maternity) || "";
+
+                // サマリーテーブルをev-maternityカードの上に注入
+                const tableCard = document.getElementById('card-maternity-ev');
+                let tableInserted = document.getElementById('matrix-summary-table');
+                if (!tableInserted) {
+                    tableInserted = document.createElement('div');
+                    tableInserted.id = 'matrix-summary-table';
+                    tableInserted.className = 'detail-card card-full';
+                    tableInserted.innerHTML = `
+            <div class="detail-card-title">【成分別 安全性サマリー】妊婦・運転・禁忌・相互・濫用・WADA</div>
+            <div class="detail-card-body" id="matrix-table-body"></div>
+        `;
+                    tableCard.parentNode.insertBefore(tableInserted, tableCard);
+                }
+                document.getElementById('matrix-table-body').innerHTML = matrix.table;
+
+                // 各カードに詳細（折りたたみ）で表示
+                function setCard(id, catKey) {
+                    const content = (catKey === "妊婦・授乳婦" && maternityEv)
+                        ? maternityEv.replace(/\n/g, '<br>')
+                        : (matrix.detail[catKey] || NA);
+                    document.getElementById(id).innerHTML = content
+                        ? `<details><summary style="cursor:pointer;color:#2B579A;font-size:12px;">▶ 詳細を表示</summary><div style="margin-top:8px;">${content}</div></details>`
+                        : NA;
+                }
+                setCard('ev-maternity', '妊婦・授乳婦');
+                setCard('ev-driving', '運転・操作');
+                setCard('ev-contraindication', '禁忌・受診勧奨');
+                setCard('ev-interaction', '相互作用');
+                setCard('ev-moh', '濫用・MOH');
+                setCard('ev-doping', 'ドーピング・毒性');
+
             } else {
-                // フォールバック：O列パース
+                // フォールバック（既存のO列パース）
+                // matrix-summary-tableが残っていたら非表示
+                const prev = document.getElementById('matrix-summary-table');
+                if (prev) prev.style.display = 'none';
+
                 const evRaw = medData['現場_運転目安補足']
-                    || (medData.info && medData.info.doping_driving)
-                    || "";
+                    || (medData.info && medData.info.doping_driving) || "";
                 const ev = parseEvidenceText(evRaw);
                 const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
                     || (medData.info && medData.info.maternity)
-                    || ev["妊婦・授乳婦"]
-                    || "";
+                    || ev["妊婦・授乳婦"] || "";
                 document.getElementById('ev-maternity').innerHTML =
                     maternityEv ? maternityEv.replace(/\n/g, '<br>') : NA;
                 document.getElementById('ev-driving').innerHTML = ev["運転・操作"] || NA;
