@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>指定濫用防止医薬品 判定システム v6.7</title>
-    <meta name="build-date" content="2026/07/24 17:05">
+    <meta name="build-date" content="2026/07/24 17:15">
 
     <style>
         body {
@@ -382,7 +382,7 @@
 
         <div
             style="display: flex; justify-content: flex-end; align-items: center; padding: 6px 12px; background-color: #E1DFDD; border-bottom: 1px solid #CCCCCC; font-size: 13px; color: #333;">
-            <span>最終データ更新: <strong style="color: #C00000;">2026/07/24 17:05</strong></span>
+            <span>最終データ更新: <strong style="color: #C00000;">2026/07/24 17:15</strong></span>
             <button onclick="forceReload()"
                 style="margin-left: 15px; padding: 4px 10px; cursor: pointer; background-color: #FFFFFF; border: 1px solid #A6A6A6; border-radius: 3px; font-weight: bold; color: #217346; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                 🔄 最新データに強制更新
@@ -1863,6 +1863,17 @@
             const medData = medicineMaster[selectedMedKey];
             if (!medData) return;
 
+            // ★ KEGGリンクボタンの表示切り替え
+            const keggBtn = document.getElementById('keggLinkBtn');
+            if (keggBtn) {
+                if (medData.kegg_url && medData.kegg_url.startsWith('http')) {
+                    keggBtn.href = medData.kegg_url;
+                    keggBtn.style.display = 'inline-block';
+                } else {
+                    keggBtn.style.display = 'none';
+                }
+            }
+
             const dailyDose = medData.dailyDose || medData['1日最大服用量'] || 1;
             const categoryLimit = medData.categoryLimit || medData['制限日数'] || 5;
 
@@ -2035,17 +2046,6 @@
                     statusEl.textContent = "【販売可】購入状況の確認必須";
                     statusEl.className = "result-status status-ok";
                     scriptTextEl.innerHTML = "「商品お預かりいたします。法令により、直近で他店にて同種の医薬品をご購入されていないか確認させていただいております。」";
-                }
-            }
-
-            // ★ KEGGリンクボタンの表示切り替え
-            const keggBtn = document.getElementById('keggLinkBtn');
-            if (keggBtn) {
-                if (medData.kegg_url && medData.kegg_url.startsWith('http')) {
-                    keggBtn.href = medData.kegg_url;
-                    keggBtn.style.display = 'inline-block';
-                } else {
-                    keggBtn.style.display = 'none';
                 }
             }
         }

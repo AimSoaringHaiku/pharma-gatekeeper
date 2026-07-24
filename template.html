@@ -876,6 +876,17 @@
             const medData = medicineMaster[selectedMedKey];
             if (!medData) return;
 
+            // ★ KEGGリンクボタンの表示切り替え
+            const keggBtn = document.getElementById('keggLinkBtn');
+            if (keggBtn) {
+                if (medData.kegg_url && medData.kegg_url.startsWith('http')) {
+                    keggBtn.href = medData.kegg_url;
+                    keggBtn.style.display = 'inline-block';
+                } else {
+                    keggBtn.style.display = 'none';
+                }
+            }
+
             const dailyDose = medData.dailyDose || medData['1日最大服用量'] || 1;
             const categoryLimit = medData.categoryLimit || medData['制限日数'] || 5;
 
@@ -1048,17 +1059,6 @@
                     statusEl.textContent = "【販売可】購入状況の確認必須";
                     statusEl.className = "result-status status-ok";
                     scriptTextEl.innerHTML = "「商品お預かりいたします。法令により、直近で他店にて同種の医薬品をご購入されていないか確認させていただいております。」";
-                }
-            }
-
-            // ★ KEGGリンクボタンの表示切り替え
-            const keggBtn = document.getElementById('keggLinkBtn');
-            if (keggBtn) {
-                if (medData.kegg_url && medData.kegg_url.startsWith('http')) {
-                    keggBtn.href = medData.kegg_url;
-                    keggBtn.style.display = 'inline-block';
-                } else {
-                    keggBtn.style.display = 'none';
                 }
             }
         }
