@@ -30,10 +30,19 @@ def main():
         # JSON文字列を安全に保持
         matrix_json_str = clean_val(row.get("マトリックス_JSON"))
         
+        # categoryLimitの取得（付加情報_JSONから取得）
+        try:
+            _fukainfo = json.loads(clean_val(row.get("付加情報_JSON", "{}")))
+            cat_limit = int(_fukainfo.get("category_limit", 7))
+            if cat_limit not in [5, 7]:
+                cat_limit = 7
+        except:
+            cat_limit = 7        
+
         medicine_master[key] = {
             "name": key,
             "dailyDose": daily_dose,
-            "categoryLimit": 5 if "せき" in key or "コデイン" in clean_val(row.get("対象成分含有フラグ")) else 7,
+            "categoryLimit": cat_limit,
             "kubun": clean_val(row.get("指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)", "〇")),
             "overview": clean_val(row.get("製品の特長")),
             "note": clean_val(row.get("注釈･補足等")),
