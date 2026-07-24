@@ -517,6 +517,50 @@
             </details>
 
             <details>
+                <summary>【授乳婦指導早見表】実践4ステップ（直前授乳・時間回避・搾乳破棄・代替薬）</summary>
+                <div class="manual-content">
+                    <strong>■ 臨床上のトリアージ原則（Hale's L分類・成育医療センター基準準拠）</strong><br>
+                    「市販薬を飲んだら授乳を止める」という一律の指導は育児の破綻を招きます。成分の動態に基づき、以下の4ステップで実践的な指導を行ってください。<br><br>
+                    <table class="rule-table left-align">
+                        <tr>
+                            <th style="width:18%; text-align:center;">臨床判定</th>
+                            <th style="width:47%; text-align:center;">授乳の具体策（服薬指導・タイミング）</th>
+                            <th style="width:35%; text-align:center;">対象となる主要OTC成分の例</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; font-weight:bold; background:#DFF6DD; color:#217346;">🟢
+                                通常授乳可<br>（直前授乳）</td>
+                            <td><strong>制限なし。気になる場合は「服薬直前の授乳」を推奨。</strong><br>母乳への移行量は極めて微量であり、乳児への影響はまずありません。血中濃度ピーク前（飲む直前）の授乳でさらに安全性が高まります。
+                            </td>
+                            <td>・アセトアミノフェン<br>・イブプロフェン<br>・無水カフェイン（通常量）<br>・カルボシステイン／葛根湯</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; font-weight:bold; background:#FFF4CE; color:#8A6D3B;">🟡
+                                ピーク回避<br>（時間を空ける）</td>
+                            <td><strong>「服薬直前に授乳」し、その後「2〜4時間は授乳回避」。</strong><br>母乳中の薬物濃度がピークになる時間帯（最高血中濃度到達から約2〜3時間）を避けることで、安全に育児継続が可能です。
+                            </td>
+                            <td>・デキストロメトルファン<br>・dl-メチルエフェドリン<br>・ジフェンヒドラミン（短期）</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; font-weight:bold; background:#FDE7E9; color:#C00000;">🔴
+                                搾乳破棄<br>（Pump & Dump）</td>
+                            <td><strong>服用中は直接の授乳を中止し、定期的に「搾乳して破棄」。</strong><br>半減期が長い、または乳児の傾眠リスクが高い成分です。服薬後「半減期×3〜4時間」が経過するまではミルクで代替してください。
+                            </td>
+                            <td>・クロルフェニラミン（長期）<br>・プロメタジン<br>・ブロモバレリル尿素</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center; font-weight:bold; background:#333333; color:#FFFFFF;">⛔
+                                代替薬提案<br>（原則回避）</td>
+                            <td><strong>授乳中の服用は避け、安全な成分・処方薬への変更を最優先。</strong><br>母体内でモルヒネ等に代謝され、乳児に重篤な呼吸抑制や中毒症状を起こすリスクがあるため、販売を謝絶し代替案を提示します。
+                            </td>
+                            <td>・<strong>コデインリン酸塩</strong><br>・<strong>ジヒドロコデインリン酸塩</strong><br><span
+                                    style="font-size:11px; color:#FFA500;">※非麻薬性鎮咳薬やアセトアミノフェン等へ変更提案</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+
+            <details>
                 <summary>【早見表】正しい販売ルールのまとめ（小容量1個・大容量の対応）</summary>
                 <div class="manual-content">
                     <table class="rule-table">
@@ -659,7 +703,6 @@
     </div>
 
     <script>
-        // Pythonスクリプトがここにデータを挿入します
         /* __DATA_PLACEHOLDER__ */
         if (typeof medicineMaster === "undefined") {
             window.medicineMaster = {};
@@ -712,8 +755,6 @@
 
             if (!text) return result;
 
-            // 成分名（グアイフェネシン等）の <b> では止まらず、
-            // 「6つの大項目」のキーワードが来た時だけを区切りとして認識するよう改良
             const keys = Object.keys(result);
             const pattern = new RegExp(
                 `[・･]<b>(${keys.join('|')})<\\/b>[：:](([\\s\\S]*?))(?=[・･]<b>(?:${keys.join('|')})<\\/b>|$)`,
@@ -723,7 +764,6 @@
             let match;
             while ((match = pattern.exec(text)) !== null) {
                 const title = match[1].trim();
-                // 見出し直下の余計な改行(<br>)をお掃除して格納
                 const content = match[2].trim().replace(/^<br>\s*/i, '');
                 if (result.hasOwnProperty(title)) {
                     result[title] = content;
@@ -732,15 +772,21 @@
             return result;
         }
 
+        // ★★★ 2. 「7列構造」＆「要注意 / 慎重 / －」へのリニューアル描画関数 ★★★
         function renderMatrixCards(jsonStr) {
             const BADGE = {
-                "〇": "<span style='color:#217346;font-weight:bold;background:#DFF6DD;padding:1px 8px;border-radius:2px;'>〇</span>",
-                "△": "<span style='color:#8A6D3B;font-weight:bold;background:#FFF4CE;padding:1px 8px;border-radius:2px;'>△</span>",
-                "✕": "<span style='color:#C00000;font-weight:bold;background:#FDE7E9;padding:1px 8px;border-radius:2px;'>✕</span>",
-                "ー": "<span style='color:#888;padding:1px 8px;'>ー</span>"
+                "✕": "<span style='color:#C00000;font-weight:bold;background:#FDE7E9;padding:2px 6px;border-radius:3px;font-size:11px;'>要注意</span>",
+                "△": "<span style='color:#8A6D3B;font-weight:bold;background:#FFF4CE;padding:2px 6px;border-radius:3px;font-size:11px;'>慎重</span>",
+                "〇": "<span style='color:#217346;font-weight:bold;background:#DFF6DD;padding:2px 8px;border-radius:3px;font-size:11px;'>－</span>",
+                "ー": "<span style='color:#777777;padding:2px 8px;font-size:11px;'>－</span>",
+                "要注意": "<span style='color:#C00000;font-weight:bold;background:#FDE7E9;padding:2px 6px;border-radius:3px;font-size:11px;'>要注意</span>",
+                "慎重": "<span style='color:#8A6D3B;font-weight:bold;background:#FFF4CE;padding:2px 6px;border-radius:3px;font-size:11px;'>慎重</span>",
+                "－": "<span style='color:#777777;padding:2px 8px;font-size:11px;'>－</span>"
             };
+
             const CAT_SHORT = {
-                "妊婦・授乳婦": "妊婦",
+                "妊娠": "妊娠",
+                "授乳": "授乳",
                 "運転・操作": "運転",
                 "禁忌・受診勧奨": "禁忌",
                 "相互作用": "相互",
@@ -756,32 +802,43 @@
 
             const cats = Object.keys(CAT_SHORT);
 
-            // ① サマリーテーブル
+            // ① サマリーテーブル（7列マトリックス描画）
             let tableHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
-        <thead><tr style="background:#F3F2F1;">
-            <th style="border:1px solid #CCC;padding:5px 8px;text-align:left;min-width:120px;">成分名</th>`;
+                <thead><tr style="background:#F3F2F1;">
+                    <th style="border:1px solid #CCC;padding:6px 8px;text-align:left;min-width:110px;">成分名</th>`;
             cats.forEach(cat => {
-                tableHtml += `<th style="border:1px solid #CCC;padding:5px 4px;text-align:center;white-space:nowrap;">${CAT_SHORT[cat]}</th>`;
+                tableHtml += `<th style="border:1px solid #CCC;padding:6px 4px;text-align:center;white-space:nowrap;">${CAT_SHORT[cat]}</th>`;
             });
             tableHtml += `</tr></thead><tbody>`;
 
             matrix.forEach(ing => {
-                tableHtml += `<tr><td style="border:1px solid #CCC;padding:5px 8px;font-weight:bold;font-size:11.5px;">${ing["成分名"]}</td>`;
+                tableHtml += `<tr><td style="border:1px solid #CCC;padding:6px 8px;font-weight:bold;font-size:11.5px;">${ing["成分名"]}</td>`;
                 cats.forEach(cat => {
-                    const cell = ing[cat];
-                    const badge = cell ? (BADGE[cell["判定"]] || BADGE["ー"]) : BADGE["ー"];
+                    let cell = ing[cat];
+                    // 「妊娠」「授乳」が旧データ（妊婦・授乳婦）にしかない場合の自動分離フォールバック
+                    if (!cell && (cat === "妊娠" || cat === "授乳")) {
+                        cell = ing["妊婦・授乳婦"];
+                    }
+                    const badgeStr = cell ? cell["判定"] : "ー";
+                    const badge = BADGE[badgeStr] || BADGE["ー"];
                     tableHtml += `<td style="border:1px solid #CCC;padding:4px;text-align:center;">${badge}</td>`;
                 });
                 tableHtml += `</tr>`;
             });
             tableHtml += `</tbody></table>`;
 
-            // ② カテゴリ別詳細（折りたたみ）
+            // ② カテゴリ別詳細
             const catDetail = {};
             cats.forEach(cat => {
                 const lines = matrix
-                    .filter(ing => ing[cat] && ing[cat]["備考"])
-                    .map(ing => `<b>${ing["成分名"]}</b>：${BADGE[ing[cat]["判定"]] || BADGE["ー"]} ${ing[cat]["備考"]}`);
+                    .filter(ing => {
+                        let cell = ing[cat] || ((cat === "妊娠" || cat === "授乳") ? ing["妊婦・授乳婦"] : null);
+                        return cell && cell["備考"];
+                    })
+                    .map(ing => {
+                        let cell = ing[cat] || ((cat === "妊娠" || cat === "授乳") ? ing["妊婦・授乳婦"] : null);
+                        return `<b>${ing["成分名"]}</b>：${BADGE[cell["判定"]] || BADGE["ー"]} ${cell["備考"]}`;
+                    });
                 catDetail[cat] = lines.join('<br><br>') || null;
             });
 
@@ -793,25 +850,17 @@
             const medData = medicineMaster[selectedMedKey];
             if (!medData) return;
 
-            // ★修正点：数字から始まる変数を [''] で囲んで文法エラーを完全に解消しました！
             const dailyDose = medData.dailyDose || medData['1日最大服用量'] || 1;
             const categoryLimit = medData.categoryLimit || medData['制限日数'] || 5;
 
-            // 修正前
-            // document.getElementById('medInfo').textContent =
-            //    `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日 ｜ ${medData.note || medData['注釈･補足等'] || ""}`;
-
-            // 修正後（L列の読み込みを削除）
             document.getElementById('medInfo').textContent =
                 `【管理上の注意点】 最大1日用量: ${dailyDose} ／ 基準日数: ${categoryLimit}日`;
 
             document.getElementById('detailMedName').textContent = medData.name || medData['製品名'] || "--";
 
-            // --- 修正ここから ---
             let overviewText = (medData.info && medData.info.overview) || medData.overview || medData['製品の特長'] || "";
             const noteText = medData.note || medData['注釈･補足等'] || "";
 
-            // 「シリーズ内位置づけ」のキーワードが含まれているか（build.pyで合体済みか）で判定
             if (overviewText.includes("【シリーズ内位置づけ】")) {
                 let parts = overviewText.split("【シリーズ内位置づけ】");
                 let mainFeature = parts[0].trim().replace(/\n/g, '<br>');
@@ -829,7 +878,6 @@
                     </details>
                 `;
             } else if (noteText && !overviewText.includes(noteText)) {
-                // CSVからL列単体で取得できた場合の予備ルート
                 let mainFeature = overviewText.replace(/\n/g, '<br>');
                 let cleanNote = noteText.replace(/\n/g, '<br>');
                 document.getElementById('detailOverview').innerHTML = `
@@ -844,40 +892,35 @@
                     </details>
                 `;
             } else {
-                // 補足情報がない製品は通常通り表示
                 document.getElementById('detailOverview').innerHTML = overviewText ? overviewText.replace(/\n/g, '<br>') : "--";
             }
-            // --- 修正ここまで ---
 
             document.getElementById('detailAlternative').innerHTML = medData.alternative || medData.evidence_alt || medData['現場_代替薬提案'] || "該当情報なし";
             document.getElementById('detailDosageReal').innerHTML = medData.dosage_real || (medData.info && medData.info.dosage_real) || `成人1日最大服用量: ${dailyDose}`;
-            // 1回目でデータを取得・パースして「ev」に入れているため、これで準備OKです
-            const evRaw = medData['現場_運転目安補足']
-                || (medData.info && medData.info.doping_driving)
-                || "";
+
+            const evRaw = medData['現場_運転目安補足'] || (medData.info && medData.info.doping_driving) || "";
             const ev = parseEvidenceText(evRaw);
 
-            // ============================================================
-            // 専門家向けカード 描画ロジック
-            // 【優先順位】マトリックスJSON（GAS生成）> O列パース > M列
-            // 【現在拾える情報】
-            //   ev-maternity      ← マトリックスJSON or M列優先 or O列パース「妊婦・授乳婦」
-            //   ev-driving        ← マトリックスJSON or O列パース「運転・操作」
-            //   ev-contraindication ← マトリックスJSON or O列パース「禁忌・受診勧奨」
-            //   ev-interaction    ← マトリックスJSON or O列パース「相互作用」
-            //   ev-moh            ← マトリックスJSON or O列パース「濫用・MOH」
-            //   ev-doping         ← マトリックスJSON or O列パース「ドーピング・毒性」
-            // ============================================================
+            // ★★★ 3. 実務上の運転目安時間（Playwright/Python自動収集データ）の注入 ★★★
+            let drivingHeaderHtml = "";
+            if (medData.driving_guide) {
+                const badgeColor = medData.driving_guide.includes("制限なし") ? "#217346" : "#C00000";
+                const badgeBg = medData.driving_guide.includes("制限なし") ? "#DFF6DD" : "#FDE7E9";
+                drivingHeaderHtml = `
+                    <div style="background:${badgeBg}; border-left:4px solid ${badgeColor}; padding:8px 10px; margin-bottom:10px; font-size:13px;">
+                        <strong style="color:${badgeColor};">🚗 実務上の運転目安：${medData.driving_guide}</strong><br>
+                        <span style="font-size:11.5px; color:#555;">［根拠］${medData.driving_basis || "ー"} (半減期: ${medData.half_life ? medData.half_life + "h" : "不明"})</span>
+                    </div>
+                `;
+            }
+
             const NA = "<span style='color:#aaa; font-size:12px'>次回更新時に追加予定</span>";
             const matrixJSON = medData['マトリックス_JSON'] || medData.matrix_json || "";
             const matrix = renderMatrixCards(matrixJSON);
 
             if (matrix) {
-                // 妊婦欄はM列優先
-                const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
-                    || (medData.info && medData.info.maternity) || "";
+                const maternityEv = medData['妊婦・授乳婦_専門家エビデンス'] || (medData.info && medData.info.maternity) || "";
 
-                // サマリーテーブルをev-maternityカードの上に注入
                 const tableCard = document.getElementById('card-maternity-ev');
                 let tableInserted = document.getElementById('matrix-summary-table');
                 if (!tableInserted) {
@@ -885,44 +928,36 @@
                     tableInserted.id = 'matrix-summary-table';
                     tableInserted.className = 'detail-card card-full';
                     tableInserted.innerHTML = `
-            <div class="detail-card-title">【成分別 安全性サマリー】妊婦・運転・禁忌・相互・濫用・WADA</div>
-            <div class="detail-card-body" id="matrix-table-body"></div>
-        `;
+                        <div class="detail-card-title">【成分別 安全性サマリー】妊娠・授乳・運転・禁忌・相互・濫用・WADA</div>
+                        <div class="detail-card-body" id="matrix-table-body"></div>
+                    `;
                     tableCard.parentNode.insertBefore(tableInserted, tableCard);
                 }
                 document.getElementById('matrix-table-body').innerHTML = matrix.table;
 
-                // 各カードに詳細（折りたたみ）で表示
-                function setCard(id, catKey) {
+                function setCard(id, catKey, extraHeader = "") {
                     const content = (catKey === "妊婦・授乳婦" && maternityEv)
                         ? maternityEv.replace(/\n/g, '<br>')
                         : (matrix.detail[catKey] || NA);
-                    document.getElementById(id).innerHTML = content
+                    document.getElementById(id).innerHTML = extraHeader + (content
                         ? `<details><summary style="cursor:pointer;color:#2B579A;font-size:12px;">▶ 詳細を表示</summary><div style="margin-top:8px;">${content}</div></details>`
-                        : NA;
+                        : NA);
                 }
                 setCard('ev-maternity', '妊婦・授乳婦');
-                setCard('ev-driving', '運転・操作');
+                // 運転カードのトップに実務目安時間をドッキング
+                setCard('ev-driving', '運転・操作', drivingHeaderHtml);
                 setCard('ev-contraindication', '禁忌・受診勧奨');
                 setCard('ev-interaction', '相互作用');
                 setCard('ev-moh', '濫用・MOH');
                 setCard('ev-doping', 'ドーピング・毒性');
 
             } else {
-                // フォールバック（既存のO列パース）
-                // matrix-summary-tableが残っていたら非表示
                 const prev = document.getElementById('matrix-summary-table');
                 if (prev) prev.style.display = 'none';
 
-                const evRaw = medData['現場_運転目安補足']
-                    || (medData.info && medData.info.doping_driving) || "";
-                const ev = parseEvidenceText(evRaw);
-                const maternityEv = medData['妊婦・授乳婦_専門家エビデンス']
-                    || (medData.info && medData.info.maternity)
-                    || ev["妊婦・授乳婦"] || "";
-                document.getElementById('ev-maternity').innerHTML =
-                    maternityEv ? maternityEv.replace(/\n/g, '<br>') : NA;
-                document.getElementById('ev-driving').innerHTML = ev["運転・操作"] || NA;
+                const maternityEv = medData['妊婦・授乳婦_専門家エビデンス'] || (medData.info && medData.info.maternity) || ev["妊婦・授乳婦"] || "";
+                document.getElementById('ev-maternity').innerHTML = maternityEv ? maternityEv.replace(/\n/g, '<br>') : NA;
+                document.getElementById('ev-driving').innerHTML = drivingHeaderHtml + (ev["運転・操作"] || NA);
                 document.getElementById('ev-contraindication').innerHTML = ev["禁忌・受診勧奨"] || NA;
                 document.getElementById('ev-interaction').innerHTML = ev["相互作用"] || NA;
                 document.getElementById('ev-moh').innerHTML = ev["濫用・MOH"] || NA;
