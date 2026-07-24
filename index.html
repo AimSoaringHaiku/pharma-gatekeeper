@@ -374,8 +374,9 @@
     <div class="container">
         <div class="header-area">
             <div class="header-title">指定濫用防止医薬品 判定システム v6.7 (情報構造最適化版)</div>
+            <!-- ★ボタン名称を患者さん向けに差し替え -->
             <button class="btn-enlighten"
-                onclick="document.getElementById('modal').style.display='flex'">【確認】免責事項・販売制限の理由</button>
+                onclick="document.getElementById('modal').style.display='flex'">【患者さんへ】確認のお願いと理由</button>
         </div>
 
         <table class="filter-table">
@@ -438,7 +439,7 @@
                 style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <span>【詳細情報】<span id="detailMedName">製品名</span></span>
-                    <!-- ★ 1. KEGG公式添付文書へのボタン（新設） -->
+                    <!-- ★タスク3：KEGG公式添付文書へのボタン -->
                     <a id="keggLinkBtn" href="#" target="_blank"
                         style="display:none; background:#FFFFFF; color:#2B579A; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:4px; text-decoration:none; border:1px solid #2B579A; box-shadow:0 1px 2px rgba(0,0,0,0.1);">📖
                         公式添付文書を確認 (KEGG)</a>
@@ -446,16 +447,6 @@
                 <span
                     style="font-size:11px; background:#FFFFFF; color:#2B579A; padding:2px 6px; border-radius:3px;">注意点</span>
             </div>
-
-            <!-- ★ 2. 判定ルールの公式注釈（新設：枠外の信頼性担保） -->
-            <div
-                style="background:#EBF3FC; padding:8px 14px; font-size:12px; color:#2B579A; border-bottom:1px solid #2B579A; line-height:1.5;">
-                <strong>■ 判定記号の定義：</strong>
-                【<span style="color:#C00000; font-weight:bold;">要注意</span>】添付文書上、運転禁止・併用禁忌等の明確な制限があるもの。
-                【<span style="color:#8A6D3B; font-weight:bold;">慎重</span>】連用や体質により注意が必要なもの、または授乳時間を空ける等の配慮が望ましいもの。
-                【<span style="color:#777; font-weight:bold;">－</span>】特筆すべき制限・有害事象の報告がないもの。
-            </div>
-
             <div class="detail-grid">
                 <div class="detail-card card-full">
                     <div class="detail-card-title">【製品概要・シリーズ内位置づけ】</div>
@@ -494,6 +485,14 @@
                     <div class="detail-card-body" id="ev-doping">--</div>
                 </div>
             </div>
+        </div>
+
+        <!-- ★タスク1：表の下に配置する判定記号の定義（透かし文字風） -->
+        <div style="margin: 4px 18px 14px; padding: 4px 8px; font-size: 11.5px; color: #666666; line-height: 1.5;">
+            <strong>■ 判定記号の定義：</strong>
+            【<span style="color:#C00000; font-weight:bold;">要注意</span>】添付文書上、運転禁止・併用禁忌等の明確な制限があるもの。
+            【<span style="color:#8A6D3B; font-weight:bold;">慎重</span>】連用や体質により注意が必要なもの、または授乳時間を空ける等の配慮が望ましいもの。
+            【<span style="color:#666666; font-weight:bold;">－</span>】特筆すべき制限・有害事象の報告がないもの。
         </div>
 
         <div class="manual-section">
@@ -697,11 +696,6 @@
         <div class="modal-content">
             <h3>免責事項および販売制限の理由・確認業務の根拠</h3>
             <p>医薬品の販売に際し、「販売個数や容量の確認」、「ご購入理由のお伺い」など、ご面倒をおかけしております。</p>
-
-            <div class="modal-highlight">
-                <strong>【免責事項：電子辞書（非医療機器）としての位置づけ】</strong><br>
-                本システムは、入力された情報に基づく個別具体的な医療判断・診断・処方監査を行うプログラム医療機器（SaMD）ではありません。事前に登録されたマスタ情報（成分、制限規定等）を表示する「電子辞書（非医療機器）としてのリストの羅列」に過ぎず、最終的な販売可否や服薬指導の判断は、現場の薬剤師・登録販売者の専門的知見に基づいて実施してください。
-            </div>
 
             <div class="modal-highlight">
                 <strong>「個人の問題ではなく、社会構造的な問題として」</strong><br>
@@ -1905,7 +1899,7 @@
             const evRaw = medData['現場_運転目安補足'] || (medData.info && medData.info.doping_driving) || "";
             const ev = parseEvidenceText(evRaw);
 
-            // ★★★ 3. 実務上の運転目安時間（Playwright/Python自動収集データ）の注入 ★★★
+            // ★★★ ここから差し替え：実務上の運転目安時間と「最遅排泄成分」の注釈メモ ★★★
             let drivingHeaderHtml = "";
             if (medData.driving_guide) {
                 const badgeColor = medData.driving_guide.includes("制限なし") ? "#217346" : "#C00000";
@@ -1913,10 +1907,12 @@
                 drivingHeaderHtml = `
                     <div style="background:${badgeBg}; border-left:4px solid ${badgeColor}; padding:8px 10px; margin-bottom:10px; font-size:13px;">
                         <strong style="color:${badgeColor};">🚗 実務上の運転目安：${medData.driving_guide}</strong><br>
-                        <span style="font-size:11.5px; color:#555;">［根拠］${medData.driving_basis || "ー"} (半減期: ${medData.half_life ? medData.half_life + "h" : "不明"})</span>
+                        <span style="font-size:11.5px; color:#555;">［安全基準の根拠］${medData.driving_basis || "ー"} (排泄半減期: ${medData.half_life || "--"}h)</span><br>
+                        <span style="font-size:11px; color:#666; display:block; margin-top:3px;">※お薬に含まれる複数の成分のうち、最も体内から排泄されるのが遅い『最遅排泄成分』を自動選択して安全基準としています。</span>
                     </div>
                 `;
             }
+            // ★★★ 差し替えここまで ★★★
 
             const NA = "<span style='color:#aaa; font-size:12px'>次回更新時に追加予定</span>";
             const matrixJSON = medData['マトリックス_JSON'] || medData.matrix_json || "";
@@ -1948,7 +1944,7 @@
                         : NA);
                 }
                 setCard('ev-maternity', '妊婦・授乳婦');
-                // 運転カードのトップに実務目安時間をドッキング
+                // ★タスク済：ここで作ったばかりの drivingHeaderHtml を渡すので確実に画面のカード頭に合体します！
                 setCard('ev-driving', '運転・操作', drivingHeaderHtml);
                 setCard('ev-contraindication', '禁忌・受診勧奨');
                 setCard('ev-interaction', '相互作用');
@@ -1956,11 +1952,13 @@
                 setCard('ev-doping', 'ドーピング・毒性');
 
             } else {
+                // (matrixがない場合のフォールバック側の処理も念のため変更)
                 const prev = document.getElementById('matrix-summary-table');
                 if (prev) prev.style.display = 'none';
 
                 const maternityEv = medData['妊婦・授乳婦_専門家エビデンス'] || (medData.info && medData.info.maternity) || ev["妊婦・授乳婦"] || "";
                 document.getElementById('ev-maternity').innerHTML = maternityEv ? maternityEv.replace(/\n/g, '<br>') : NA;
+                // ★ここでも合体させる
                 document.getElementById('ev-driving').innerHTML = drivingHeaderHtml + (ev["運転・操作"] || NA);
                 document.getElementById('ev-contraindication').innerHTML = ev["禁忌・受診勧奨"] || NA;
                 document.getElementById('ev-interaction').innerHTML = ev["相互作用"] || NA;
