@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>指定濫用防止医薬品 判定システム v6.7</title>
+    <meta name="build-date" content="2026/07/24 17:05">
 
     <style>
         body {
@@ -378,6 +379,20 @@
             <button class="btn-enlighten"
                 onclick="document.getElementById('modal').style.display='flex'">【患者さんへ】確認のお願いと理由</button>
         </div>
+
+        <div
+            style="display: flex; justify-content: flex-end; align-items: center; padding: 6px 12px; background-color: #E1DFDD; border-bottom: 1px solid #CCCCCC; font-size: 13px; color: #333;">
+            <span>最終データ更新: <strong style="color: #C00000;">2026/07/24 17:05</strong></span>
+            <button onclick="forceReload()"
+                style="margin-left: 15px; padding: 4px 10px; cursor: pointer; background-color: #FFFFFF; border: 1px solid #A6A6A6; border-radius: 3px; font-weight: bold; color: #217346; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                🔄 最新データに強制更新
+            </button>
+        </div>
+        <script>
+            function forceReload() {
+                window.location.href = window.location.href.split('?')[0] + '?v=' + new Date().getTime();
+            }
+        </script>
 
         <table class="filter-table">
             <tr>

@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import math
+from datetime import datetime, timezone, timedelta
 
 def clean_val(val):
     """NaNやfloatの非数を安全に空文字や文字列に変換する"""
@@ -68,6 +69,11 @@ def main():
         
     final_html = html_content.replace("/* __DATA_PLACEHOLDER__ */", js_data_str)
     
+    # ★ 追加：ビルド日時を生成して __BUILD_DATE__ を置換
+    jst = timezone(timedelta(hours=9))
+    build_date = datetime.now(jst).strftime("%Y/%m/%d %H:%M")
+    final_html = final_html.replace("__BUILD_DATE__", build_date)
+
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
         
