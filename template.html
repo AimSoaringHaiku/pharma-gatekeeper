@@ -434,11 +434,28 @@
         </div>
 
         <div class="detail-panel" id="detailPanel">
-            <div class="detail-panel-header">
-                <span>【詳細情報】<span id="detailMedName">製品名</span></span>
+            <div class="detail-panel-header"
+                style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span>【詳細情報】<span id="detailMedName">製品名</span></span>
+                    <!-- ★ 1. KEGG公式添付文書へのボタン（新設） -->
+                    <a id="keggLinkBtn" href="#" target="_blank"
+                        style="display:none; background:#FFFFFF; color:#2B579A; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:4px; text-decoration:none; border:1px solid #2B579A; box-shadow:0 1px 2px rgba(0,0,0,0.1);">📖
+                        公式添付文書を確認 (KEGG)</a>
+                </div>
                 <span
                     style="font-size:11px; background:#FFFFFF; color:#2B579A; padding:2px 6px; border-radius:3px;">注意点</span>
             </div>
+
+            <!-- ★ 2. 判定ルールの公式注釈（新設：枠外の信頼性担保） -->
+            <div
+                style="background:#EBF3FC; padding:8px 14px; font-size:12px; color:#2B579A; border-bottom:1px solid #2B579A; line-height:1.5;">
+                <strong>■ 判定記号の定義：</strong>
+                【<span style="color:#C00000; font-weight:bold;">要注意</span>】添付文書上、運転禁止・併用禁忌等の明確な制限があるもの。
+                【<span style="color:#8A6D3B; font-weight:bold;">慎重</span>】連用や体質により注意が必要なもの、または授乳時間を空ける等の配慮が望ましいもの。
+                【<span style="color:#777; font-weight:bold;">－</span>】特筆すべき制限・有害事象の報告がないもの。
+            </div>
+
             <div class="detail-grid">
                 <div class="detail-card card-full">
                     <div class="detail-card-title">【製品概要・シリーズ内位置づけ】</div>
@@ -1018,6 +1035,17 @@
                     statusEl.textContent = "【販売可】購入状況の確認必須";
                     statusEl.className = "result-status status-ok";
                     scriptTextEl.innerHTML = "「商品お預かりいたします。法令により、直近で他店にて同種の医薬品をご購入されていないか確認させていただいております。」";
+                }
+            }
+
+            // ★ KEGGリンクボタンの表示切り替え
+            const keggBtn = document.getElementById('keggLinkBtn');
+            if (keggBtn) {
+                if (medData.kegg_url && medData.kegg_url.startsWith('http')) {
+                    keggBtn.href = medData.kegg_url;
+                    keggBtn.style.display = 'inline-block';
+                } else {
+                    keggBtn.style.display = 'none';
                 }
             }
         }

@@ -45,7 +45,8 @@ def main():
             # ★ 新規追加：運転目安時間のデータ連携
             "half_life": clean_val(row.get("半減期_h")),
             "driving_guide": clean_val(row.get("運転目安_h")),
-            "driving_basis": clean_val(row.get("運転目安_根拠"))
+            "driving_basis": clean_val(row.get("運転目安_根拠")),
+            "kegg_url": clean_val(row.get("KEGG_URL"))
         }
     
     # 2. JSオブジェクト文字列化
