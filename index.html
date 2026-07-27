@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>指定濫用防止医薬品 判定システム v6.7</title>
-    <meta name="build-date" content="2026/07/24 17:59">
+    <meta name="build-date" content="2026/07/27 15:09">
 
     <style>
         body {
@@ -382,7 +382,7 @@
 
         <div
             style="display: flex; justify-content: flex-end; align-items: center; padding: 6px 12px; background-color: #E1DFDD; border-bottom: 1px solid #CCCCCC; font-size: 13px; color: #333;">
-            <span>最終データ更新: <strong style="color: #C00000;">2026/07/24 17:59</strong></span>
+            <span>最終データ更新: <strong style="color: #C00000;">2026/07/27 15:09</strong></span>
             <button onclick="forceReload()"
                 style="margin-left: 15px; padding: 4px 10px; cursor: pointer; background-color: #FFFFFF; border: 1px solid #A6A6A6; border-radius: 3px; font-weight: bold; color: #217346; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                 🔄 最新データに強制更新
@@ -511,6 +511,69 @@
         </div>
 
         <div class="manual-section">
+
+            <!-- === 【ここから追加：HTML_0727_02】 === -->
+            <div id="dynamicKnowledgeSection" style="margin-bottom: 15px;"></div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    fetchApprovedKnowledge();
+                });
+
+                function fetchApprovedKnowledge() {
+                    // ★後ほどデプロイする GAS のウェブアプリURLをここに記入します
+                    const apiUrl = "https://script.google.com/macros/s/【後でデプロイするGASのID】/exec";
+
+                    fetch(apiUrl)
+                        .then(response => response.json())
+                        .then(res => {
+                            if (res.status === "success" && res.data.length > 0) {
+                                renderKnowledge(res.data);
+                            }
+                        })
+                        .catch(err => console.warn("ナレッジ読み込みスキップ:", err));
+                }
+
+                function renderKnowledge(knowledgeList) {
+                    const container = document.getElementById("dynamicKnowledgeSection");
+                    if (!container) return;
+
+                    let html = `
+                    <details open style="border: 2px solid #D83B01; background-color: #FFF9F5; border-radius: 4px; padding: 2px;">
+                        <summary style="background-color: #FDE7E9; color: #C00000; font-weight: bold; padding: 8px 12px; cursor: pointer; font-size: 13.5px;">
+                            💡 【最新・現場ナレッジ】販売謝絶・声がけの成功事例（${knowledgeList.length}件）
+                        </summary>
+                        <div class="manual-content" style="padding: 10px 14px; background: #FFF;">
+                            <p style="font-size:11.5px; color:#666; margin-top:0; border-bottom: 1px solid #EEE; padding-bottom: 6px;">
+                                ※現場から寄せられ、本部・学術チームが承認した実際の声がけ事例やトリアージ知見です。
+                            </p>
+                `;
+
+                    knowledgeList.reverse().forEach((item, index) => {
+                        const cleanContent = item.content.replace(/\n/g, "<br>");
+                        const badgeColor = item.type.includes("謝絶") ? "#C00000" : "#2B579A";
+
+                        html += `
+                        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #CCC;">
+                            <div style="font-size: 12.5px; font-weight: bold; color: #333; margin-bottom: 4px;">
+                                <span style="background:${badgeColor}; color:#FFF; font-size:11px; padding:2px 6px; border-radius:3px; margin-right:6px;">
+                                    ${item.medName || "全般"}
+                                </span>
+                                事例 #${knowledgeList.length - index}
+                            </div>
+                            <div style="font-size: 13px; color: #444; line-height: 1.6; padding-left: 4px;">
+                                ${cleanContent}
+                            </div>
+                        </div>
+                    `;
+                    });
+
+                    html += `</div></details>`;
+                    container.innerHTML = html;
+                }
+            </script>
+            <!-- === 【ここまで追加：HTML_0727_02】 === -->
+
             <details open>
                 <summary>【瞬時の判別】成分およびブランド名からの、大まかな分類方法</summary>
                 <div class="manual-content">
@@ -674,6 +737,36 @@
             <div style="margin-top: 15px; background-color:#FFFFFF; padding: 12px; border: 1px solid #CCCCCC;">
                 <strong style="font-size:13.5px; color:#333333;">▼ スタッフ確認用リンク（マスタ・法的根拠・対応マニュアル）</strong><br>
                 <ul style="margin: 8px 0 0 0; padding-left: 24px; font-size:13px; line-height: 1.6;">
+
+                    <!-- === 【ここから追加：HTML_0727_01】 === -->
+                    <li
+                        style="margin-bottom: 12px; background: #FFF9F5; border: 1px solid #D83B01; padding: 8px 12px; border-radius: 4px; list-style-type: none; margin-left: -24px;">
+                        <a href="#" onclick="openDedicatedFeedback(); return false;"
+                            style="color:#D83B01; font-weight:bold; font-size: 13.5px; text-decoration: underline;">
+                            📢 【専用窓口】現場フィードバック・情報訂正・追加リクエスト
+                        </a><br>
+                        <span style="font-size:11.5px; color:#555555; display:inline-block; margin-top:3px;">
+                            表示中の品目に関するマスタ誤り、未登録品の追加、現場での謝絶事例などをご報告ください。（※クリック時、現在選択中の薬名が自動入力されます）
+                        </span>
+                    </li>
+
+                    <script>
+                        function openDedicatedFeedback() {
+                            const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf7A1Hz3jx1FpkuV-3V7X69qNcNLJao2o-G0K6HbnbrYFlOqA/viewform";
+                            const medSelect = document.getElementById('medicine');
+                            const selectedMedName = medSelect ? medSelect.value : "";
+
+                            // 抽出された実物ID entry.2137132923 を指定
+                            const params = new URLSearchParams({
+                                "usp": "pp_url",
+                                "entry.2137132923": selectedMedName
+                            });
+
+                            window.open(`${baseUrl}?${params.toString()}`, '_blank');
+                        }
+                    </script>
+                    <!-- === 【ここまで追加：HTML_0727_01】 === -->
+
                     <li style="margin-bottom: 8px;"><a
                             href="https://docs.google.com/document/d/1Pt5R7FvQTVQeS3rh6z8XE3DsCXTgsRLqiAtcPMSzuiY/edit?usp=sharing"
                             target="_blank" style="color:#D83B01; font-weight:bold;">指定濫用防止医薬品：販売業務ドキュメント（Google
