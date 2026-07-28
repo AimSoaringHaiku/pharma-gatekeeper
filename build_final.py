@@ -128,11 +128,15 @@ def main():
         elif series_part:
             hidden_ribbon_text = series_part
 
+    # ★ kubunの正規化：CSVの表記ゆれ（対象外/×等）を統一
+        _kubun_raw = clean_val(row.get("指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)", "〇"))
+        _kubun_normalized = "×" if _kubun_raw in ["対象外", "×", "x", "X", "対象外(*)", "対象外（*）"] else "〇"
+
         medicine_master[key] = {
             "name": key,
             "dailyDose": daily_dose,
             "categoryLimit": cat_limit,
-            "kubun": clean_val(row.get("指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)", "〇")),
+            "kubun": _kubun_normalized,
             "overview": overview_str,        # ← ★ 表で普段見える場所：スッキリと製品の特長のみ！
             "note": hidden_ribbon_text,      # ← ★ リボンの中に隠す場所：L列注意事項＋シリーズ詳しい知識！
             "alternative": remove_cite_noise(clean_val(row.get("現場_代替薬提案"))),
