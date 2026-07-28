@@ -128,9 +128,19 @@ def main():
         elif series_part:
             hidden_ribbon_text = series_part
 
-    # ★ kubunの正規化：CSVの表記ゆれ（対象外/×等）を統一
+        # ★ kubunの正規化：「△」は法的に対象外（×）扱いにしつつ、後段で薬学的警告を付与
         _kubun_raw = clean_val(row.get("指定濫用(＊：同ﾌﾞﾗﾝﾄﾞ内に対象含む)", "〇"))
-        _kubun_normalized = "×" if _kubun_raw in ["対象外", "×", "x", "X", "対象外(*)", "対象外（*）"] else "〇"
+        if _kubun_raw in ["対象外", "＊対象外", "×", "x", "X", "対象外(*)", "対象外（*）"]:
+            _kubun_normalized = "×"
+        elif _kubun_raw == "△":
+            _kubun_normalized = "×"  # 法的な販売制限は対象外扱い（通常販売可）
+        else:
+            _kubun_normalized = "〇"
+
+        # ★「△」品目専用の警告文をリボンの先頭へ強制挿入
+        if _kubun_raw == "△":
+            warning = "⚠️【法的規制対象外だが薬学的要注意】中枢抑制作用があり、アルコール・ベンゾジアゼピン系との併用や過量摂取で重篤な呼吸抑制・昏睡のリスクがあります。頻回購入時は特に注意してください。\n\n"
+            hidden_ribbon_text = warning + hidden_ribbon_text
 
         medicine_master[key] = {
             "name": key,
@@ -138,7 +148,7 @@ def main():
             "categoryLimit": cat_limit,
             "kubun": _kubun_normalized,
             "overview": overview_str,        # ← ★ 表で普段見える場所：スッキリと製品の特長のみ！
-            "note": hidden_ribbon_text,      # ← ★ リボンの中に隠す場所：L列注意事項＋シリーズ詳しい知識！
+            "note": hidden_ribbon_text,      # ← ★ リボンの中に隠す場所：L列注意事項＋シリーズ詳しい知識（△は警告文先頭）！
             "alternative": remove_cite_noise(clean_val(row.get("現場_代替薬提案"))),
             "dosage_real": f"成人1日最大服用量: {daily_dose}",
             "現場_運転目安補足": remove_cite_noise(clean_val(row.get("現場_運転目安補足"))),
