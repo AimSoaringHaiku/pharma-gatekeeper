@@ -3,7 +3,7 @@ import re
 import os
 
 # =========================================================
-# # 1. 現場実務 & 薬理に完全対応したキーワード定義
+# 1. 現場実務 & 薬理に完全対応したキーワード定義
 # =========================================================
 INDEX_KEYWORDS = {
     # 【成分：あ行】
@@ -63,6 +63,9 @@ def convert_txt_to_dictionary(input_path, output_path):
     body_lines = []
     index_map = {kw: [] for kw in INDEX_KEYWORDS.keys()}
     
+    # ★ 変更点1-A: 各セクションの文字数カウント用辞書を追加
+    section_char_count = {}
+    
     current_section_title = "冒頭"
     current_anchor = "top"
     in_table = False
@@ -101,7 +104,7 @@ def convert_txt_to_dictionary(input_path, output_path):
             continue
 
         # 2. 大見出し (##) の検出: 第○章、付録、作業報告等
-        h2_match = re.match(r'^(?:\s*)?(第[0-9]+章:.*|第[0-9]+章：.*|【付録】.*|【エクセル作業報告】.*|【法改正の重要ポイントまとめ】.*|【未実施】.*|【重要:過量服薬における.*)', line)
+        h2_match = re.match(r'^(?:\s*)?(第[0-9]+章:.*|第[0-9]+章：.*|【付録】.*|【エクセル作業報告】.*|【法改正の重要ポイントまとめ】.*|【未実施】.*|【重要:過量服薬における.*|【拡張案】.*)', line)
         if h2_match:
             if in_table:
                 in_table = False
@@ -111,7 +114,9 @@ def convert_txt_to_dictionary(input_path, output_path):
             anchor = f"sec-{sec_count}"
             current_section_title = title
             current_anchor = anchor
-            toc_lines.append(f"- **[{title}](#{anchor})**")
+            
+            # ★ 変更点2-A: 文字列でなくタプル(種別, タイトル, アンカー)で保持
+            toc_lines.append(("h2", title, anchor))
             body_lines.append(f'\n---\n<a id="{anchor}"></a>\n## {title}\n')
             continue
 
@@ -127,14 +132,15 @@ def convert_txt_to_dictionary(input_path, output_path):
             current_section_title = title
             current_anchor = anchor
             
-            # 目次へは構造の主要なものだけインデント追加
-            if re.match(r'^[0-9]+-[0-9]+\.', title) or title.startswith("(") or title.startswith("（"):
-                toc_lines.append(f"  - [{title}](#{anchor})")
-            else:
-                toc_lines.append(f"- [{title}](#{anchor})")
+            # ★ 変更点2-B: インデント有無を判定してタプルで保持
+            indent = "h3-indent" if (re.match(r'^[0-9]+-[0-9]+\.', title) or title.startswith("(") or title.startswith("（")) else "h3"
+            toc_lines.append((indent, title, anchor))
                 
             body_lines.append(f'\n<a id="{anchor}"></a>\n### {title}\n')
             continue
+
+        # --- ここに来た行は「本文」または「表データ」なので文字数をカウントする ---
+        section_char_count[current_anchor] = section_char_count.get(current_anchor, 0) + len(line)
 
         # 4. タブ区切りデータ (表・マトリクス) のスマートパース
         if '\t' in raw_line:
@@ -192,6 +198,20 @@ def convert_txt_to_dictionary(input_path, output_path):
             index_lines.append(f"- **{kw}** : *(本文内該当なし)*")
 
     # =========================================================
+    # ★ 変更点2-C: 目次(toc)の文字列化（文字数と薄いフラグの付与）
+    # =========================================================
+    toc_str_lines = []
+    for kind, title, anchor in toc_lines:
+        cnt = section_char_count.get(anchor, 0)
+        flag = " ⚠️薄い" if cnt < 150 else ""
+        if kind == "h2":
+            toc_str_lines.append(f"- **[{title}](#{anchor})** `{cnt}字`{flag}")
+        elif kind == "h3-indent":
+            toc_str_lines.append(f"  - [{title}](#{anchor}) `{cnt}字`{flag}")
+        else:
+            toc_str_lines.append(f"- [{title}](#{anchor}) `{cnt}字`{flag}")
+
+    # =========================================================
     # 最終Markdownの合成と保存
     # =========================================================
     final_output = (
@@ -199,7 +219,7 @@ def convert_txt_to_dictionary(input_path, output_path):
         + "> **【利用ガイド】** 本書は現場の薬剤師・登録販売者が店頭でのアセスメントや受診勧奨、トリアージに用いる電子辞書です。 "
         + "目次や巻末索引のリンクをクリックすることで、必要なエビデンスや対応スクリプトへ瞬時にジャンプできます。\n\n"
         + "## 🔍 【全体構造・目次】\n"
-        + "\n".join(toc_lines) + "\n\n"
+        + "\n".join(toc_str_lines) + "\n\n"
         + "- **[⬇️ 巻末キーワード逆引き索引へジャンプ](#index-top)**\n\n"
         + "---\n"
         + "".join(body_lines)
