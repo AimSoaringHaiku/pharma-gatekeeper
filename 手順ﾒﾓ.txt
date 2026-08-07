@@ -1,0 +1,35 @@
+■python ai_content_router.py
+
+【環境】Vertex AI API を「オン」にする
+Google Cloud では、課金事故を防ぐためにすべてのAI機能が最初は「オフ」になっています。これをオンにする必要があります。
+ターミナルに以下のURLの <あなたのプロジェクトID> 部分を書き換えたものをコピーし、ブラウザで開いてください。
+Plaintext
+https://console.developers.google.com/apis/api/aiplatform.googleapis.com/overview?project=<あなたのプロジェクトID>
+画面が開いたら、青い「有効にする (Enable)」ボタンをクリックします。
+
+【セット】スクリプト（ai_content_router.py）内のモデル指定をテスト用の軽量版に変更します。
+model='gemini-2.5-flash'
+	テスト中に1回数十円のコストが毎回かかるのはもったいないため、まずは超高速・低コストなモデルで動くか確認します。
+	スクリプト内の model='gemini-2.5-pro' を model='gemini-2.5-flash' に一時的に書き換え
+raw_memo.txt に上記のテキストを保存します。
+ターミナルで $ python ai_content_router.py を実行します。
+生成された ai_routed_dictionary.md を開き、第2章の中に組み込まれているか確認
+　出力された ai_routed_dictionary.md をVS Codeのプレビュー機能でサッと開き、既存の目次ツリーの正しい場所に配置されているか、フォーマット崩れがないかをチェック
+
+0806
+1. ai_content_router.py（実験用プロトタイプ）
+役割: テキストを読み込んで、直接「Markdown形式のテキストファイル（見出し＋本文）」として出力する。
+位置づけ: 「AIが文脈を読んで目次の適切な場所に配置できるか？」を確認するための初期の実験用スクリプトです。
+弱点: そのままMarkdownにしてしまうため、あとから「やっぱりこの見出しは別の場所に移動しよう」といったシステム的な管理や、Webアプリ（HTML）への変換が難しくなります。
+
+2. atomic_pipeline_v2.py（本番パイプラインの心臓部）
+役割: ご提示いただいた [ 2. 統治パイプライン ] を担う本命のスクリプトです。テキストを意味の塊（アトム）に分割し、AIに「どの目次（ID）に属するか」「新設すべきか」を判断させ、構造化されたJSONデータベース (structured_knowledge_db.json) を作成します。
+位置づけ: ただのテキストデータを、システムで扱いやすい「知識のブロック（JSON）」に変換する超重要なフェーズです。
+強み:目次ツリー（toc_tree.json）をAIが動的に成長させることができます。
+データがJSONで保存されるため、次のステップ（dictionary_builder_v2.py）で、2ペインの美しいHTMLに変換したり、アプリに組み込んだりするのが非常に簡単になります。
+途中でエラーが起きても、処理済みのデータはスキップして再開できる堅牢な作りになっています。
+
+今後の進め方
+これからは、より高度なことができる atomic_pipeline_v2.py をメインで使っていきます。ai_content_router.py はお役御免となります。
+【現在のステップ】まずは、ご提示いただいた4500行のテキスト（またはその一部のテストデータ）を atomic_pipeline_v2.py に読み込ませて、AIに「動的な目次ツリー（toc_tree.json）」と「構造化された知識DB（structured_knowledge_db.json）」を作らせるフェーズです。
+準備がよろしければ、ADC（またはAPIキー）が通っている状態で、python atomic_pipeline_v2.py
