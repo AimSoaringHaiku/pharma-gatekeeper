@@ -1,14 +1,606 @@
 {
   "sec-1": {
     "title": "第1章: なぜルールが厳しくなったのか？（法改正の背景）",
-    "children": []
+    "children": [
+      "7dc80f09c29b0aa1f3cc27a4fae47b12",
+      "326e723563964e27bf308179088a15ab",
+      "90640954e90f104a26d273d435d16014",
+      "7edfea012229331c89c382919dda8a57",
+      "abb38017862e4e770ba2c4d054a4ad78",
+      "79e61b70cf1f17a509d2f74fe1a2a48e",
+      "e3fbac551a060ca76b1c8806a4473c66",
+      "366c0282f626b17a3478592e7a2d1d14"
+    ]
   },
   "sec-2": {
     "title": "第2章: 販売ルールの基本（誰に・何を・いくつ売れるか）",
-    "children": []
+    "children": [
+      "3c6d708bd12804330c60e6ba49e98ac7",
+      "5110280f681ffc3c53e4629175583fe5",
+      "7a690db34adbb93d014b292d384d057b",
+      "2ca52ad3b1838d0ffad0c5bc8528d486"
+    ]
   },
   "sec-3": {
     "title": "第3章: 具体的なレジ対応と「お声がけ」スクリプト",
-    "children": []
+    "children": [
+      "396880a6f7c68b1aad5f7f19e8961794",
+      "6c12425a120a343b621b0cd9f6dae0a2"
+    ]
+  },
+  "sec-empty-content": {
+    "title": "解析対象テキストなし",
+    "children": [
+      "64d21d0f64417192ecb51535e35bbb6d",
+      "f24a3dcf5b0dc1e40a5bbec58f6353c2"
+    ]
+  },
+  "sec-4": {
+    "title": "第4章: 現場向けアクション早見表（確認事項と対応）",
+    "children": [
+      "826a1d5c96bff49e1bfd03ee6322a68c",
+      "8a82fd182644ccb48760bdf4bb630d1e",
+      "de8d037ed947ca1d806ab896b28eae50",
+      "b8c669f0697d336feb4b1285c515bbf9",
+      "ee47e826e85a2c064eadee1d8ef698ed",
+      "07f15543365538408206c908b05236ce",
+      "a65d3ad143e68d14fb0a562ed4d1594e",
+      "df6177604757591b8ba37f9e52887c56"
+    ]
+  },
+  "sec-5": {
+    "title": "第5章: 命を守る「ゲートキーパー」としての役割",
+    "children": [
+      "4e5e653629ca864887966dd69e1d134a",
+      "7292c2b74350c99b9d09780e7b0ffd55",
+      "6f616e5853a39387b3e0fa9913ceff7a"
+    ]
+  },
+  "sec-drug-abuse-prevention-guide": {
+    "title": "薬物濫用防止：ゲートキーパーとしての接客対応フロー",
+    "children": [
+      "eb81ead4dc2bc7ffb37dc49dcd2080da",
+      "8fae5478199daa9699a59ecc4ae54ccc",
+      "bafa2ac34d0921d27406360f2d71a174",
+      "296fc483f9c21363c344807b71f94f4b",
+      "c7de3722638fdecec8eb3f0b3412ef4b",
+      "91c239ca45275a008dc74a3fea9b2d34",
+      "e057d10fff8f6a933806923655a90c7a"
+    ]
+  },
+  "sec-appendix-qa": {
+    "title": "付録: よくある質問（Q&A）",
+    "children": [
+      "90f6df493e564e40a540292020fb62b8"
+    ]
+  },
+  "sec-master-system-implementation": {
+    "title": "第X章: 指定濫用防止医薬品対応：社内マスタデータ整備とシステム実装",
+    "children": [
+      "deda4ef0d980c0687154553d0f070521",
+      "1b19965e6915b547f03c0b7f3b3c1e82"
+    ]
+  },
+  "sec-designated-drug-sales-rules": {
+    "title": "指定濫用防止医薬品：法改正に基づく販売ルールの詳細",
+    "children": [
+      "237ffd021cd565d29ba09af8d176a19d",
+      "f6bd319d7ad546c6c72dacb3ef9f72a5",
+      "14d1a233121b323f51bae8c3546ba1ac",
+      "40e2b11e45d176d737501e57f14cdcd1",
+      "a2f145af8912eb5de7d01e654e58fd02",
+      "31b8ed04464fa203608fe0271ba84969",
+      "4de64971e65694dd1eec34e7c6718923",
+      "30d773edbc7892ca35ec94c378da5c54",
+      "a2b5214b5277752300a5f6210b797366"
+    ]
+  },
+  "sec-doc-structure-optimization": {
+    "title": "ドキュメント構成の最適化と役割分担",
+    "children": [
+      "5ce537740013ae1d47b4202023c27821",
+      "783166624dadecd52c064f06d25503f4",
+      "c11c8061a52407aa9bf232a74f39d245"
+    ]
+  },
+  "sec-old-guidelines-sales-examples": {
+    "title": "旧制度における濫用等のおそれのある医薬品の販売ガイドラインと実例",
+    "children": [
+      "da233f8bf3c7a9baa9d6b6ba666773bf"
+    ]
+  },
+  "sec-otc-product-knowledge": {
+    "title": "第6章: OTC医薬品製品知識：主要風邪薬の選択基準と特徴",
+    "children": [
+      "d2d0aaf5efe8080c369c6f4a8aca3623",
+      "cc160a9d5380211bad16d0d12a5c12ba",
+      "d805a9f42ad2a52ad86c4f32880414eb",
+      "62f04b8eec1df8c20b8de9eb63809956",
+      "a3d7e4abb3c3487c51cbefa55026e891",
+      "9933bdef430e90146ae54d52f89ea80f",
+      "c0350b18b10761d99c031b63ac623e92",
+      "c4b969c60e7b6f53cda7768edc630a0d",
+      "249a2b6716e85c73daeafe41b5b1be8b",
+      "828b913de7c4d91db94f8136af5a7292",
+      "20c36e8d9f6b928a6883248ec87b4708",
+      "5527f8137b23848791330cbb0cd7f739",
+      "1440a98fdb2566efda6f9530234c5310",
+      "8bb96810a0203ac21f3730fd779cc861",
+      "cdbcbf32dfc4a66ccc987776e8c14266",
+      "2db381f18d93ac069472294074410d82",
+      "6dee5a10a7e51e1a626ac252e2a7f166",
+      "46ff145b942c1b3d0f792cb0187a8d50",
+      "9e18f9fea3e4e6638f88ca1be46b47d1",
+      "af8603887c1a9d12d4c9f900340f7bc8",
+      "ae04b76224e71138a7a6e1dceb824af7",
+      "9c841e1d972e0f2fce56519126a125ee",
+      "c3bceb138686b390c771dc5d4aaefef6",
+      "00b4b4756b5ad6db362d041297dede8c",
+      "16f53afbfc15dc5881bb08aa3d818b0d",
+      "54484bff50a0d1657e75818be48f5d75",
+      "f650f4c197cfc1c3d554c90bbde5a130"
+    ]
+  },
+  "sec-references": {
+    "title": "参考資料・情報源",
+    "children": [
+      "2b7aa5b29ec53fc1de201a23e48815d4",
+      "a039bbabdb94d3b17e5dd7207ff2534c",
+      "0f83f6d832ceba14e3dbaca47f8a10e9",
+      "8255654409eb55f5579d287f0c44660c",
+      "35307f312d88bd28ce1643825d2ce67e",
+      "6f5aee7e53788030f5761925cf875753",
+      "a256750013250db04a1c049be5519d2a",
+      "26a84c27cdf9c45593ad2e130f62ed56",
+      "c94c58b1b910949b042c86dea25e0243",
+      "d11a9c34925b300ea10e2603500f81f1",
+      "a8c8883c68cd20552d012cd3085f8052",
+      "6a52f5a6f9691281b3c11547cb5084ef",
+      "5925b3af9de08dc980a21daac1dda52f",
+      "b932b5d36af50aab6919e2900a969ddb",
+      "3bf32ca8ddcd649f5d8578f97566618f",
+      "b7e206437a00884975c9688b1785c4d6",
+      "2b6140f11c05601b8fd2fb8cdfdca55a",
+      "145f4da28f62e874b131cc883bec02db",
+      "fde1fa9ca69068ddfea0e78815f56311",
+      "f2ed5ff3e70eabcc3397524bb2d5a718",
+      "65ebf79c2d8e507e671001d4bd2a024a",
+      "de4f3f2ebfe00377a479cff4c65d42ba",
+      "edfb0c65d3fa6e90f68e680f5370bfc5",
+      "5edea5301e58a1cbd249cf1c3dbb08dc",
+      "186a0cbd0146caaf8d5f3886a37fc94e",
+      "3f06398be06410c2b2a8b7fb2303b250",
+      "3ec5a9f25ba2016c338bf74e22420264",
+      "4145bcbb800887ea84c93839053532ec",
+      "6abd3b3b7b6e9c521a88ed228264e444",
+      "c7b6336ef69375f59a54bdbf8f8c4992"
+    ]
+  },
+  "sec-designated-drug-criteria-example": {
+    "title": "規制対象医薬品の選定基準：ジフェンヒドラミンとプロメタジンの事例",
+    "children": [
+      "48da37282218a4f9da1e4e62900962a1",
+      "4c9a60e052f70b6c46627b66ac9f25b1",
+      "f5ad40fb364b1b406db98de95b954c85",
+      "61b646b0b4af46cc29bd21b7b6d76275",
+      "98229bbf4dd6d86ebe8deb10d2b91707",
+      "8ff149a23323395e373110a88b1e7698",
+      "5553bfe3e71b9ec5b5ef566d5e81fe01",
+      "a7cca2b5fae53bedbff2ff4acbe03ee9",
+      "c722b4786402b8e7e26e7ef1c402dbff",
+      "c7003a40704c4756f297bcac8f669f57",
+      "18336e08eb554e298114fe763334e53a",
+      "1e245eab2cc199f14c3a80a5d2ef831c",
+      "183666f437adc351540479969bd84f8f",
+      "91bdd8b06d29287fb8070aded7466fff",
+      "ce6b461a506adb3a729835a690a69d60",
+      "78cda9ba32e4229879837563f1d07532",
+      "86140c03f002a29f22e077ea676a51b9",
+      "e37f68d84895d2e300c446178b1badcf",
+      "0072111165d8e6355e7b811e19b560ab",
+      "db5f54eb26e876cb335720b19d1ded78",
+      "23698b07cb9e7c2072aba3b5a33d4a2e",
+      "74bab4d50f081302badefc22c4a47a24",
+      "ea9d7203d6c2a4bd6c4ecb147ed1a376"
+    ]
+  },
+  "sec-abuse-prone-otc-products": {
+    "title": "濫用等のおそれのある一般用医薬品：製品事例と特徴",
+    "children": [
+      "8777652fb8b1a3e8a912b56a34c834e9",
+      "071e10067ff231acbd8ea2c5445b4202",
+      "6412d1db7a36c7d46bde59a44e8c5acb",
+      "cd2450003c25e6d82c6e1081ca99d958",
+      "d3c701230b2fc609771bab52c9ebb989",
+      "1a73bb13af25b2e91790be0839679b21",
+      "a76452bec2e64cf97585dd0c5f1e4c5a",
+      "131d635fc6ed35e5c78458debce542aa",
+      "68f938c4f0d0268c9ce4a18e87fb6fd3",
+      "346a66f1684d433f19994f68f403b464",
+      "abd6bb75099f1f5b554b6d2436302716",
+      "fd30ef56e69b496d9cb58f76ce72a669",
+      "e54cdf0ff294a576c5ca2f9a9df38eec",
+      "c4e36751845a06787b234d4ee23f8a21",
+      "ef0b15b9c94dd69a0616840c7cb05519",
+      "e190227165d365bcdd6fe621d0ec3245",
+      "8bdb2ec08c2f841615c3a53d09aaf7e4",
+      "7bcf182730f1620ede0137e87bc8494f",
+      "919c859cce6009e0e5f800e81fc2627a",
+      "6feb0796a4d2d0b8f38189818b77f6a5",
+      "eac358fdafcf1d9065fd7931531550a5",
+      "419b5115b21e6339889540cad8850c08"
+    ]
+  },
+  "sec-unregulated-abuse-risk-drugs": {
+    "title": "専門家が警鐘を鳴らす、未規制の濫用リスク医薬品",
+    "children": [
+      "8d48e8253ceb22a19d3fb5f7bc3bd568",
+      "fe8a5d5aac0a8619766c491fe9ad8a2c"
+    ]
+  },
+  "sec-hidden-otc-risks": {
+    "title": "OTC医薬品の隠れたリスク：見落とされがちな3大ブランド",
+    "children": [
+      "5a09485b30c539c2c15b58b70313889b"
+    ]
+  },
+  "sec-aap-overdose-risks": {
+    "title": "アセトアミノフェン（AAP）過剰摂取の隠れたリスクと販売時の案内方法",
+    "children": [
+      "ca9a44de6106cb763a97ded757285bae",
+      "9818928981d3b325a94de8c742268082",
+      "085d456aa2e279a30ea5f2707697266e",
+      "531a01ca8539534766eecf6b86d51a03",
+      "4bb82d7e9c3218f510314f1e385fb77c",
+      "45e47c2338344c1071c9a80e5f47b416",
+      "6339984ac3527347517b14deea5011b5"
+    ]
+  },
+  "sec-communication-refinement": {
+    "title": "効果的な情報伝達のための文言設計：顧客・スタッフ向け",
+    "children": [
+      "3f909156854475cda0c459a983de65d7",
+      "9de791d28bbe5895505d061eee8cb02c",
+      "762fbd5aef27fcd8a8e15141399b113f",
+      "54b954103fa283da3ff0cf105eb0a3c0"
+    ]
+  },
+  "sec-otc-safety-design": {
+    "title": "OTC医薬品の安全性と製品設計：配合基準とメーカーの役割",
+    "children": [
+      "620bcb0c6fad8f4054993c226c0f5f65",
+      "95c67b3a902c7db0b98e4aaded1df539",
+      "980f90b5afa5bd05a38368cba9ba2118"
+    ]
+  },
+  "sec-otc-od-death-causes": {
+    "title": "市販薬オーバードーズ（OD）による死亡原因：急性・遅延性リスクと成分別解説",
+    "children": [
+      "93720ba3b74155c862e0eb9ba512d52e",
+      "a5ffbf2834a9312ee0b8e3304ab8b15d",
+      "7a58202551edf8039e6e223b85dc11ac",
+      "f84596db3a1965329998d0c4f42c72a6",
+      "617b118bd5e459edc6e9190eb82a625f",
+      "408f257d0132d2492d997f0b8107da84",
+      "0e034a983ed2a8490062e134473ceb6e",
+      "df46c1fcefc5f126316efb5d1c3c1164",
+      "f72ecda6509044f1529e402c332e1f6e",
+      "259b1d5e32eaccec8dcc6aec1c5b6dc3",
+      "83930741958643af8dc0b96a73160697",
+      "81c693d651133a9eead435d9e99afd24"
+    ]
+  },
+  "sec-overdose-financial-legal-risks": {
+    "title": "過量服薬（オーバードーズ）の法的・経済的リスクと販売制限の意義",
+    "children": [
+      "88d231609b067a416874ede95e51ff2e",
+      "3280df53a96d4c694da9778fe6431a20",
+      "0c5f0026c82e767778f7824288a83413",
+      "c7e77fcd10a45b32440ee65025c6c04e",
+      "50637696a6cda903cf727895c8602462",
+      "4d37273183dbbd0dee44da1d49ea836c",
+      "06a49cbd7a28a424cd9e1aec8cbc9c93",
+      "1fc85bd231deab1acd5171d5561109a8",
+      "4d4d68112e098c0e473fe54130843bcf"
+    ]
+  },
+  "sec-overdose-rationale-education": {
+    "title": "オーバードーズ防止の「物差し」概念とシステム・スタッフ教育への応用",
+    "children": [
+      "52ba615bace10d018b8b2da6f9e19eb7"
+    ]
+  },
+  "sec-pregnancy-lactation-drug-handling": {
+    "title": "妊婦・授乳婦への医薬品販売：抗コリン薬（ブスコパン）の取り扱いと判断基準",
+    "children": [
+      "2e25d9783e205ceaf2f019453769067e",
+      "6ab0734db43173612946787d444f72a1",
+      "a165924c82b4a0d15f0030954d39bd12",
+      "30ff0d2ad5ac9dd5aba71bcaf18b71fc",
+      "69de25d3bb740c2641769299a0238d1c",
+      "235e0f85132c1a93880e1885884efe59",
+      "43f59bc06e4341631c3aa3fc5c7a1279",
+      "4fd06d65ea04471924120959ab10ba7c"
+    ]
+  },
+  "sec-otc-driving-restrictions": {
+    "title": "運転に影響を及ぼすOTC医薬品：販売時の注意と顧客案内",
+    "children": [
+      "76f372e8955b3f608a8bd508a81c40a6",
+      "219ca0107c6e072f981a093d45c4dd5b",
+      "4f39aa7a24bdb086d2b85addb07b6092",
+      "25a36f613419fbed26c1b28554c28afb",
+      "4b4a1386fd6bf7f4eb39ca90261513c3",
+      "f24610dbba48cc93f9dbe17461fbb18a",
+      "e13b460ea6dd0dd4da7edbe65da7d01d",
+      "6c34d08e2b0721cb0c1f31bb31792ab0"
+    ]
+  },
+  "sec-otc-sales-manual-tips": {
+    "title": "マニュアル・システム設計における特定OTC医薬品の販売注意点",
+    "children": [
+      "e2a7e8906640b26f700c2111abd37bcf"
+    ]
+  },
+  "sec-anticholinergic-scale-concept": {
+    "title": "抗コリン作用の評価とリスク管理：抗コリンスケールの概念と活用",
+    "children": [
+      "9b8b1e45f0d4959d9436e2ba369f7945",
+      "a2190194b5acefef944a66c9057d27d8",
+      "3d0d59e38dc46e509ed1e71f465dd2f7",
+      "5e4711b65672863b970305b8add7c774",
+      "175c954a3bc86b481279d775ed501fcb",
+      "bd8391bac7562d393ebda41d3302fa1b",
+      "4655b1f22582c4d83a58a47acf71dc40",
+      "fd29f4a066082a468bce8d5bd4c0e1f2",
+      "d80ff182dfb478941e6afdf307c3c028",
+      "5281b47eab5032d33b8b06c98c7e8291",
+      "edecc141031fb922e83f5a70951e1b3d",
+      "ef888e604832b78fd01a7e8a3547ba0b",
+      "d71c318aca28025936dc4ede5ffad4e4"
+    ]
+  },
+  "sec-otc-disease-specific-risks": {
+    "title": "特定疾患とOTC医薬品：喘息・不整脈患者への抗コリン薬・抗ヒスタミン薬の販売における注意点",
+    "children": [
+      "806b5d9c936532e21b638fa14f0fabe8",
+      "431de28c1666335e15ef6eab1606cfab",
+      "16093ab34c1b1cfa903c06916c589276",
+      "ecca908484e1299385626547eb9346a8",
+      "efcadce90464444dfa0738fb89dcdfc8"
+    ]
+  },
+  "sec-otc-rx-abuse-matrix": {
+    "title": "濫用等のおそれのあるOTC成分と医療用医薬品の関連性：薬剤師向けマトリックス",
+    "children": [
+      "d858e5240e6e114391ce41a7b2c41231",
+      "36597873c6c42fa1a2a0b678f9a105ab",
+      "1bd75423e83846876247049624801ef1"
+    ]
+  },
+  "sec-abuse-doping-overlap": {
+    "title": "指定濫用防止医薬品とアンチ・ドーピング対象成分の重複",
+    "children": [
+      "043b0a7d5dc4358b86d7fc4bf3727899",
+      "0d3cdf11a94051423d3249a552a0d8e0",
+      "5d0bce890e7549a6632ca1da2b2702bb"
+    ]
+  },
+  "sec-otc-efficacy-exceptions": {
+    "title": "スイッチOTC医薬品の効能・効果：例外と変遷",
+    "children": [
+      "836ece19009a8d8e8f4d9a31574c316f"
+    ]
+  },
+  "sec-caffeine-sugar-risk": {
+    "title": "特定の複合摂取による健康リスクのメカニズム：カフェインと糖スパイクの事例",
+    "children": [
+      "798a96502398bf67c663adf1d092f90f",
+      "5b5a7ed5d7cdae2a75d2c72883893589",
+      "797aa45fe77dc45c2446d8df2ebd99f7",
+      "1ac5c9972726597b0e7e6381e98a3a47"
+    ]
+  },
+  "sec-teenage-migraine-otc-abuse": {
+    "title": "10代の片頭痛と市販薬の濫用リスク：トリプタンOTC化への課題",
+    "children": [
+      "906209460b549a79b452ef685e389f89",
+      "2bbe47ff680cf7e6fdf4b105d74f9e4a",
+      "0d8983dd7ea0ab228392be5e6810079f",
+      "3593b28d7a5c6172682a7862c13c85e2"
+    ]
+  },
+  "sec-otc-approval-paradox": {
+    "title": "OTC医薬品承認制度の矛盾と背景：歴史的経緯と構造的問題",
+    "children": [
+      "533bb4bbfa9f21d50665e30328126bda",
+      "70bf75ca04245cdd53159207b98291a9"
+    ]
+  },
+  "sec-abuse-pharmacology-foundation": {
+    "title": "第X章: 濫用等のおそれのある医薬品：医療安全と薬理学的基礎",
+    "children": [
+      "563c8b6aa1dead4683bd8880a335fc8a",
+      "4564309894a4965b0727cacdb3cc7856",
+      "54b55b48bce1d3d95fb30154f3cb7cc5",
+      "6c90ec188182ddd0b5a6152b8391fd63"
+    ]
+  },
+  "sec-infant-drug-guidelines": {
+    "title": "乳幼児への医薬品使用ガイドライン：歴史と変遷",
+    "children": [
+      "4814cf10a860222b165a52671cbb0f84",
+      "9e4e4c5a49e00a55835bc716e0202d3e",
+      "b24d6098a4c3a1f5bd83f40ce9297704"
+    ]
+  },
+  "sec-document-version-status": {
+    "title": "ドキュメントのバージョン情報と共有状況（内部メモ）",
+    "children": [
+      "6093d00f38a0ebcad44b1b1e1f7783c0",
+      "acede05c7c4f556027ca01d2ba9caa6c"
+    ]
+  },
+  "sec-international-drug-rules": {
+    "title": "海外渡航時の医薬品規制：アリルイソプロピルアセチル尿素を事例として",
+    "children": [
+      "aa7cc952bbf4dd7e3a675e97591baaef",
+      "4d12351a90e5007655c6e45da27c56a3",
+      "daf61b1b810a570d39f1b95ace8df6d0",
+      "98c987c0838ef1e6e14a622127ea71b4",
+      "643fef5896963f6aa4b99019f0104402",
+      "6fb65e9ca82875496533f88d0e942d65",
+      "57b9a90a545ebd23d940d3e5db1e113e",
+      "5ed0e50f64e65a46d8eed37d9f2ea6fa",
+      "00c7b8566ef22f2608510e3fb9fe142c",
+      "7c44fd0944ec6a8a345d373a94d7db10",
+      "8e879e4c20563ad90549fd86260923da",
+      "4a3bba5b8e7175b3b79329b1f76e5af1",
+      "a64ae1dda2c7719c57501d68448e3563",
+      "4d4d0c47240d2df48afbf9a3be7c75f3",
+      "d660796e9d5a404fc50fd015a9fe41d0",
+      "479575ec5b4e5b168be8dbab169fe909",
+      "46b1a9bf23fbda621f69e9d5af4a3965"
+    ]
+  },
+  "sec-otc-switch-ramelteon": {
+    "title": "主要OTCスイッチ事例：ラメルテオン（ロゼレム）の市販化と睡眠薬市場への影響",
+    "children": [
+      "11a25fee6b38c5fb0625aea1ec4510fa",
+      "a89376f944a55a708d6667a81912c6cc",
+      "5f803afda0811020c4ce8f569a18b57b",
+      "fa07b36ede936593fac637fbcbce4740",
+      "9017f7751104c4649e1de2008e8a60ee"
+    ]
+  },
+  "sec-travel-jetlag-otc-usage": {
+    "title": "旅行時の時差ボケ対策：OTC医薬品（ラメルテオン）の活用法",
+    "children": [
+      "fa96722688e1b179aa2d3b57926b1861"
+    ]
+  },
+  "sec-otc-switch-trends-rules": {
+    "title": "スイッチOTC医薬品の最新動向と法改正に基づく販売ルール",
+    "children": [
+      "7d8e2c8ad6c4ccbe1869802e4cde0a04",
+      "b423d2ead89bf496c70d4f897a965c42",
+      "06eb60d5fb4f8c683ebe67b2edd7d8ab"
+    ]
+  },
+  "sec-reiwai-legal-status": {
+    "title": "零売と健康増進支援薬局：制度の法的課題と将来展望",
+    "children": [
+      "9d705fefa52f331a60c282fc8ba46efc",
+      "4f99c3a93058b4eb4294d002eedd9cbe",
+      "71b0f97fe5b3fe90fe316a35b3237037",
+      "6ac5b6225612d887feba43f8e196853d"
+    ]
+  },
+  "sec-jak-inhibitor-pharmacology": {
+    "title": "JAK阻害薬の薬理作用と安全性：外用製剤の特性も踏まえて",
+    "children": [
+      "cfbcbfecfc6ba7ddeb5058ee27a0fccd",
+      "83e22aac68ae11296b42202fd3115076",
+      "f21f26ba267fcfdab1f513bcfa59a6a5",
+      "74f1088f6cb04bf6b5c16dcc880f36ec",
+      "07575f586d1da6cc8d7515d898415235"
+    ]
+  },
+  "sec-transdermal-dds-mechanism": {
+    "title": "医薬品の吸収メカニズム：外用剤の皮膚浸透技術（DDS）",
+    "children": [
+      "327c256de982849cff54a36a737e7493"
+    ]
+  },
+  "sec-wound-care-misconceptions": {
+    "title": "適切な傷治療と市販消毒薬の誤解",
+    "children": [
+      "6648eef7504d9855ddc6a4132f0733c8"
+    ]
+  },
+  "sec-immune-wound-pharmacology-matrix": {
+    "title": "免疫制御と創傷ケアの薬理学的理解：上流下流マトリクス",
+    "children": [
+      "9fa8734e7eedf00ff65392f33dc6fdd7"
+    ]
+  },
+  "sec-alcohol-sensitive-topical-painkillers": {
+    "title": "特定の患者層への医薬品選択：アルコール過敏症と外用鎮痛剤",
+    "children": [
+      "6d48d4b0aa628ce48769fc2fbe10ce3b",
+      "fc5db9a6a14e7c4da363261e8a24e5e7"
+    ]
+  },
+  "sec-dermatology-drug-use-clinical-judgment": {
+    "title": "皮膚疾患における医薬品の適正使用と臨床判断",
+    "children": [
+      "336d40b9ae327af3b7fb58e6ae71b3eb",
+      "ab52ec11cf651730f8fedc4011314b7e",
+      "d29b0a8542ddb478549916af915aad15",
+      "dbf3396fcf6fad55d5672009e8450c2a",
+      "ea553f1c73127373c38ac6077725b207",
+      "e56b5d2c301d32d782fa755456ba59e4",
+      "213ea8728462a06074dffac8559297ff",
+      "a46d359cf38bd1b8e2224f20c479c1f7",
+      "3acd0e4f02f2915ed9ddf3ba7f57f589",
+      "1cb74dce8c5d7451baef8aaa9428622f",
+      "453db630cab522251bb624ebb6c47749",
+      "8e6313f414a3e41f6253929d71b1e86a",
+      "8bab4030c065ad7b89751b0694b303d6",
+      "a3d4e81aa8ab7af11600ac3d173923bb",
+      "d1e992664f35c99fdfd1ecb9edad9de1",
+      "e6f09eb9da686e5af5e1e85a38890137",
+      "0349807c9cc2ed44553968babbb2752b",
+      "8f05170f675c2646592aa355fbc78aea",
+      "bf25e5857908ece34a2ea7e89445f8ef",
+      "3b4d305b30d016b8fb5316880945be1a"
+    ]
+  },
+  "sec-steroid-clinical-judgment": {
+    "title": "強力な医薬品の適正使用：ステロイドの短期投与におけるリスクと臨床判断",
+    "children": [
+      "a4ba733279acfbc29b93889b90ca043c",
+      "06dc8eca0cbd267d59bd8082aa583b6f",
+      "7424cd894069fc35f96c4ca5f397f9ba"
+    ]
+  },
+  "sec-steroid-antibiotic-combo-strategy": {
+    "title": "ステロイドと抗菌薬の併用療法：臨床戦略と薬理学的根拠",
+    "children": [
+      "3e692d272cf966696b9cb74e0f0e9633"
+    ]
+  },
+  "sec-sleep-dopamine-neuroscience": {
+    "title": "睡眠リズムとドパミン機能：脳科学的アプローチ",
+    "children": [
+      "f6753dbb9d44a452dc041422beda5cf9",
+      "a00fcefc0342b1756955fd23fdb4dac5",
+      "747bd2f83e19c331ab7562e376550491",
+      "9deabc9a35595367a1090e71df2f522c",
+      "ed4e4afe2c54ab021ca25da2fe867422"
+    ]
+  },
+  "sec-drug-pk-absorption": {
+    "title": "医薬品の薬物動態学：吸収と食事の影響",
+    "children": [
+      "c30e008b421dddb62c20bd2182ad3829",
+      "3f9815240774652085c42a215f6571a6",
+      "4adbc7a6666de6450c06d9e78b9a210c",
+      "6275a75f75e0dd22f82698a0d6789ce6",
+      "0c2b4a5cfc1260fdf462b86c5610b605",
+      "f6a3a2dcbb55cbe2269fe3325bd09486",
+      "90f57675cfaad37c304a7c3c9b5cd32b",
+      "01a861fbae71f93fdef811e76fa9ce7c",
+      "c520dc3b5ee1d2242fbb0f5aaa24ad62",
+      "c9bff40afad8b31c2aefa60fd5e4874e",
+      "fb6accf3c29a908ec67a16ced2d26ed5",
+      "b18c19dfc0beab4f04f6cbed2f316ea0"
+    ]
+  },
+  "sec-excluded-similar-substances": {
+    "title": "医薬品分類における対象外・類似物質の定義",
+    "children": [
+      "3fef1fa106796073b93554e53ddc188b"
+    ]
   }
 }

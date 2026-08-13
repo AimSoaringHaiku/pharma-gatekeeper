@@ -39,3 +39,4 @@ git reset --hard は、「過去のセーブ地点まで、書きかけのコー
 ここが凄い：ブランチ（枝分かれ）の状況が、文字のアート（線画）でツリー状に表示されます。チーム開発ではこれが必須になります。
 
 python dictionary_builder_v2.py
+python atomic_pipeline_v2.py

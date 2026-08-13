@@ -48,3 +48,6 @@ data_updated.csv→package_verification.csv　grouped_package_chart_filtered.png
 
 python3 validation_pkg_chart.py
 package_verification.csv→atomic_card_table.png　atomic_card_line.png 
+
+0813
+python3 sync_package_judgment_to_excel.py
