@@ -42,7 +42,10 @@ raw_memo.txt に上記のテキストを保存します。
 	新：atomic_pipeline_v2.py→「動的な目次ツリー（toc_tree.json）」と「構造化された知識DB（structured_knowledge_db.json）」
 　テキストを意味の塊（アトム）に分割し、AIに「どの目次（ID）に属するか」「新設すべきか」を判断させ、構造化されたJSONデータベース を作成。目次ツリーをAIが動的に成長
 structured_knowledge_db.json　→json_to_html.py　→viewer.html
-
+python json_to_tree_html.py　→tree_viewer.html
+検索特化（五十音順）＆テトリスブロック型の『薬剤別 包装ブロック早見表』
+	python3 validation_tetris_pkg_chart.py　→tetris_card_table.png　テスト版
+	python3 validation_pkg_chart.py　→ atomic_card_table_center.png
 
 0807
 python3 pkg_chart.py
@@ -52,4 +55,7 @@ python3 validation_pkg_chart.py
 package_verification.csv→atomic_card_table.png　atomic_card_line.png 
 
 0813
-python3 sync_package_judgment_to_excel.py
+python3 sync_package_judgment_to_excel.py→対象外も判定してしまう
+python3 validate_package_judgment.py　→package_judgment_validation_report.csv
+　　中間：python3 normalize_package_product_names.py→otc_master_updates_abuse_prevention_normalized.csv
+python3 validate_package_judgment_v2.py →package_judgment_validation_report_v2.csv

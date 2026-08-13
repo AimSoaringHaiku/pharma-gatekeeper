@@ -15,6 +15,7 @@ df["days"] = pd.to_numeric(df["days"])
 # 2. データ加工 (Intermediate)
 # ==========================================
 processed_data = []
+
 for name, group in df.groupby("product"):
     valid_rows = group[group["days"] > 0]
     if len(valid_rows) == 0:
@@ -43,7 +44,7 @@ for name, group in df.groupby("product"):
     else:
         limit_amount_str = f"{round(limit_amount, 1)}{unit}"
 
-    # パッケージの振り分け
+    # パッケージの振り分け（包装が小さい順にソートしておく）
     sorted_group = group.sort_values("days")
     small_pkgs = []
     large_pkgs = []
@@ -66,7 +67,8 @@ for name, group in df.groupby("product"):
 # 3. データマート化とソート (Marts)
 # ==========================================
 mart_df = pd.DataFrame(processed_data)
-# 検索性を高めるため、製品名でソート（昇順：ア〜ワ順）
+
+# ★検索性を高めるため、製品名でソート（昇順：ア〜ワ順）
 mart_df = mart_df.sort_values(by="product", ascending=True).reset_index(drop=True)
 
 # ==========================================
@@ -86,7 +88,7 @@ ax.axis("off")
 header_y = len(mart_df) + 0.2
 ax.text(0.2, header_y, "薬剤名 (検索順)", fontsize=11, fontweight="bold", ha="left", va="bottom")
 ax.text(3.5, header_y, "1日量", fontsize=11, fontweight="bold", ha="center", va="bottom")
-ax.text(center_x, header_y, "容量境界", fontsize=11, fontweight="bold", ha="center", va="bottom", color="#444444")
+ax.text(center_x, header_y, "境界線", fontsize=11, fontweight="bold", ha="center", va="bottom", color="#444444")
 ax.hlines(header_y - 0.2, 0, 15, colors="black", linewidth=1.5)
 
 # 各薬剤の行を描画
@@ -114,6 +116,7 @@ for i, row in mart_df.iterrows():
     # 小包装（白ブロック）: 境界線から「左」へ積む
     # --------------------------------------
     small_pkgs = row["small_pkgs"]
+    # 境界に近い方（大きい包装）から左へ配置していく
     for j, pkg in enumerate(reversed(small_pkgs)): 
         block_x = center_x - 0.8 - (j * 1.1)
         ax.text(block_x, y, pkg, fontsize=9, ha="center", va="center",
@@ -123,6 +126,7 @@ for i, row in mart_df.iterrows():
     # 大包装（グレーブロック）: 境界線から「右」へ積む
     # --------------------------------------
     large_pkgs = row["large_pkgs"]
+    # 境界に近い方（小さい包装）から右へ配置していく
     for j, pkg in enumerate(large_pkgs): 
         block_x = center_x + 0.8 + (j * 1.1)
         ax.text(block_x, y, pkg, fontsize=9, ha="center", va="center",
@@ -134,9 +138,7 @@ for i, row in mart_df.iterrows():
 # タイトル
 ax.text(7.5, len(mart_df) + 1.2, "薬剤別 包装ブロック早見表", fontsize=16, fontweight="bold", ha="center", va="bottom")
 
-# 凡例的な説明
-ax.text(0.2, -0.6, "白：適正包装（小容量）  グレー：要注意包装（大容量）", fontsize=10, color="#555555", ha="left", va="center")
-
+# 余白をなくして保存
 plt.tight_layout()
-plt.savefig("atomic_card_table_center.png", dpi=200, bbox_inches="tight")
-print("完了：atomic_card_table_center.png を生成しました")
+plt.savefig("tetris_card_table.png", dpi=200, bbox_inches="tight")
+print("完了：tetris_card_table.png を生成しました")
