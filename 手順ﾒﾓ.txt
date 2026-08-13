@@ -41,6 +41,8 @@ raw_memo.txt に上記のテキストを保存します。
 　 テキスト(raw_memo.txt)を読み込んで、直接「Markdown形式のテキストファイル（見出し＋本文）」として出力する。
 	新：atomic_pipeline_v2.py→「動的な目次ツリー（toc_tree.json）」と「構造化された知識DB（structured_knowledge_db.json）」
 　テキストを意味の塊（アトム）に分割し、AIに「どの目次（ID）に属するか」「新設すべきか」を判断させ、構造化されたJSONデータベース を作成。目次ツリーをAIが動的に成長
+structured_knowledge_db.json　→json_to_html.py　→viewer.html
+
 
 0807
 python3 pkg_chart.py
