@@ -33,3 +33,18 @@ raw_memo.txt に上記のテキストを保存します。
 これからは、より高度なことができる atomic_pipeline_v2.py をメインで使っていきます。ai_content_router.py はお役御免となります。
 【現在のステップ】まずは、ご提示いただいた4500行のテキスト（またはその一部のテストデータ）を atomic_pipeline_v2.py に読み込ませて、AIに「動的な目次ツリー（toc_tree.json）」と「構造化された知識DB（structured_knowledge_db.json）」を作らせるフェーズです。
 準備がよろしければ、ADC（またはAPIキー）が通っている状態で、python atomic_pipeline_v2.py
+---
+
+ルート1：python build_final.py　data_updated.csv　template.html　からindex.html
+ドキュメントアトミック：
+	旧：ai_content_router.py→ ai_routed_dictionary.md 
+　 テキスト(raw_memo.txt)を読み込んで、直接「Markdown形式のテキストファイル（見出し＋本文）」として出力する。
+	新：atomic_pipeline_v2.py→「動的な目次ツリー（toc_tree.json）」と「構造化された知識DB（structured_knowledge_db.json）」
+　テキストを意味の塊（アトム）に分割し、AIに「どの目次（ID）に属するか」「新設すべきか」を判断させ、構造化されたJSONデータベース を作成。目次ツリーをAIが動的に成長
+
+0807
+python3 pkg_chart.py
+data_updated.csv→package_verification.csv　grouped_package_chart_filtered.png
+
+python3 validation_pkg_chart.py
+package_verification.csv→atomic_card_table.png　atomic_card_line.png 

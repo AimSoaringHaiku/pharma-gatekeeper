@@ -52,10 +52,11 @@ def process_chunk_with_llm(client, chunk_text, toc_tree, max_retries=3):
         "categories": ["カテゴリ1", "カテゴリ2"]
       }},
       "routing": {{
-        "decision": "create_new", 
-        "target_parent_id": "sec-1",
-        "new_heading_title": "新設する場合のみ具体的な見出しを記述（existingの場合は空文字）",
-        "reason_for_structure": "なぜその構造（既存への配置、または新設）が最適と判断したか、理由を記述"
+        "decision": "create_new または existing", 
+        "target_parent_id": "existingの場合は、配置する既存のセクションID（例: sec-1）。create_newの場合は空文字",
+        "new_section_id": "create_newの場合のみ、重複しない新しいIDを自作して記述（例: sec-4）。existingの場合は空文字",
+        "new_section_title": "create_newの場合のみ、具体的な新しい見出しを記述。existingの場合は空文字",
+        "reason_for_structure": "なぜその構造が最適と判断したか理由"
       }}
     }}
     """
@@ -112,12 +113,14 @@ def load_or_create_toc(toc_file_path):
         return initial_toc
 
 def main():
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        print("エラー: 'GEMINI_API_KEY' が設定されていません。")
-        return
+    # 💡 【完全版】 Vertex AI（Google Cloud）の無制限レーンを使用
+    print("🚀 Vertex AI (Google Cloud) 経由でGeminiクライアントを初期化します...")
+    client = genai.Client(
+        vertexai=True,
+        project="project-efa0947e-f31b-4065-a5e",
+        location="us-central1"
+    )
 
-    client = genai.Client(api_key=api_key)
     memo_dir = "my_memos"
     output_db_file = "structured_knowledge_db.json"
     toc_file_path = "toc_tree.json"
@@ -141,7 +144,7 @@ def main():
         try:
             with open(output_db_file, "r", encoding="utf-8") as f:
                 database = json.load(f)
-            print(f"既存のデータベースを読み込みました。現在の保存件数: {len(database)}件")
+            print(f"📦 既存のデータベースを読み込みました。現在の保存件数: {len(database)}件")
         except Exception:
             database = []
 
@@ -163,7 +166,7 @@ def main():
             if c_id in processed_ids:
                 continue
 
-            print(f"[{file_name}] チャンク [{idx}/{total_chunks_in_file}] を処理中...")
+            print(f"🔄 [{file_name}] チャンク [{idx}/{total_chunks_in_file}] を処理中...")
             
             # AIに目次ツリーを渡してルーティングを委ねる
             structured_data = process_chunk_with_llm(client, chunk, toc_tree)
@@ -177,24 +180,54 @@ def main():
                 
                 structured_data["tags"]["verified"] = False
                 structured_data["tags"]["source_type"] = "LLM生成(未検証)"
+
+# 💡 【完全版】 LLMの判定を目次ツリーにガッチャンコする処理
+                routing_info = structured_data.get("routing", {})
+                decision = routing_info.get("decision", "unknown")
+                target_id = routing_info.get("target_parent_id") # 既存セクションのIDを取得
+                
+                if decision == "create_new":
+                    new_sec_id = routing_info.get("new_section_id")
+                    new_sec_title = routing_info.get("new_section_title")
+                    
+                    if new_sec_id and new_sec_title:
+                        # 辞書型で初期構造を作成し、最初の子要素としてこのデータIDを格納
+                        toc_tree[new_sec_id] = {
+                            "title": new_sec_title,
+                            "children": [c_id]
+                        }
+                        print(f"   🌱 目次ツリーが自動拡張されました: [{new_sec_id}] {new_sec_title}")
+                
+                elif decision == "existing" and target_id:
+                    # 💡 【重要追加】指定された既存の章の「children」にデータIDを追記
+                    if target_id in toc_tree:
+                        toc_tree[target_id]["children"].append(c_id)
+                        print(f"   📌 既存セクション [{target_id}] の配下にマッピングしました")
+                    else:
+                        # 万が一LLMが存在しない謎のIDを返してきた場合の救済措置（セーフティ）
+                        toc_tree["sec-1"]["children"].append(c_id)
+                        print(f"   ⚠️ 指定ID [{target_id}] が見つからないため、第1章に救済配置しました")
                 
                 database.append(structured_data)
                 processed_ids.add(c_id)
 
-                # 1件成功するたびに即時書き出し保存（途中停止に対応）
+                # 💡 【完全版】 本体と目次ツリーの「ダブル即時保存」
                 with open(output_db_file, "w", encoding="utf-8") as f:
                     json.dump(database, f, ensure_ascii=False, indent=2)
                 
-                print(f"  -> ルーティング判定: {structured_data.get('routing', {}).get('decision')} (保存完了)")
+                with open(toc_file_path, "w", encoding="utf-8") as f:
+                    json.dump(toc_tree, f, ensure_ascii=False, indent=2)
+                
+                print(f"   ✨ ルーティング [{decision}] で保存完了！ (現在のDB総件数: {len(database)}件)")
             else:
                 print("\n❌ 連続してAPIエラーが発生したため、処理を安全に停止します。")
                 return
 
-            # APIのレート制限（無料枠）を考慮したウェイト
-            time.sleep(4.5)
+            # 💡 【完全版】 Vertex AIの高速レーン用のウェイト（4.5秒 → 0.5秒）
+            time.sleep(0.5)
 
     print("\n" + "="*50)
-    print(f"すべての処理が正常に完了しました！ 成果物ファイル: {output_db_file}")
+    print(f"🎉 すべての処理が正常に完了しました！ 成果物ファイル: {output_db_file}")
 
 if __name__ == "__main__":
     main()
