@@ -73,3 +73,5 @@ package_verification.csv →python3 audit_package_capacity.py > audit_report.txt
 validation_pkg_chart_v5.py→改　atomic card table v6 =python3 vpc_v6.py
 　→python3 vpc_v8.py　　　
 python3 cheat_sheet_page2.py　→python3 cheat_sheet_page2_v2.py
+　ｸﾛｰﾄﾞ　　→python3 cheat_sheet_page2_v3.py　→生成atomic_card_table_v8_page2_v2.png
+　GEMINI　→python3 vpc_v8_page2.py　→生成 atomic_card_table_v8_page2.png
