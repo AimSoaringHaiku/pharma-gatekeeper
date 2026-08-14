@@ -64,3 +64,7 @@ python3 extract_package_data_with_confusing.py　→package_verification.csv　c
 1.　data_updated.csv　→python3 extract_package_data_v2.py　→package_verification.csv
 	v4は package_verification.csv に kubun と note が入っていることが前提
 2.　data_updated.csv　→package_verification.csv　→python3 validation_pkg_chart_v4.py　→atomic_card_table_v4.png
+python3 validation_pkg_chart_v5.py
+
+package_verification.csv →python3 audit_package_capacity.py > audit_report.txt
+画像生成用のメインスクリプト（validation_pkg_chart_v5.py）を回す前の検証ステップ(指定対象の区別はしない、5日か7日かだけ)
