@@ -19,6 +19,9 @@ for _, row in raw_df.iterrows():
     if ingredients == "nan" or ingredients == "-":
         ingredients = "" 
 
+    # ここを追加：スプシの「dailyDose」列（またはそれに該当する1日量の列）を直接取得
+    daily_dose = row.get("dailyDose", 0)
+
     try:
         info_raw = row.get("付加情報_JSON", "{}")
 
@@ -37,7 +40,8 @@ for _, row in raw_df.iterrows():
                 "judgment": pkg.get("capacity_judgment", ""),
                 "limit": limit,
                 "note": note,             # ← ここにカンマが必要でした
-                "ingredients": ingredients
+                "ingredients": ingredients,
+                "daily_dose": daily_dose
             })
 
     except Exception:
@@ -53,7 +57,8 @@ columns = [
     "judgment",
     "limit",
     "note",           # ← ここにカンマが必要でした
-    "ingredients"
+    "ingredients",
+    "daily_dose"
 ]
 
 df = df.reindex(columns=columns)

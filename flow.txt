@@ -13,7 +13,7 @@ python build_final.py
 これでindex.htmlが生成されます。確認してよければ、
 bash
 git add .
-git commit -m "コメント"
+git commit -m "page2"
 git push
 
 もし書き換えを元に戻したくなった場合は、
