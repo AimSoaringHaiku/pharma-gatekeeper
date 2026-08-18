@@ -253,33 +253,32 @@ row_height = 2.48
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0
 flow_nodes = [
-    (["対象薬を", "レジで確認"], "#666666", "white"),
     (["18歳未満の疑い", "→身分証で氏名・", "年齢を確認"], BLUE, "#eef4fc"),
     (["小容量1個のみ", "購入？"], BLUE, "#eef4fc"),
     (["【いいえ】大容量/複数個", "→18歳未満は一律禁止", "18歳以上は理由確認"], RED, "#fdecea"),
     (["【はい】小容量1個", "→18歳未満は氏名+", "他店確認、以上は他店確認"], ORANGE, "#fff3e6"),
     (["条件を満たせば", "販売可"], GREEN, "#eaf5ea"),
 ]
-flow_top = 112.7
-flow_bottom = 63.5
+flow_top = 111.5
+flow_bottom = 64.5
 n = len(flow_nodes)
 flow_gap = (flow_top - flow_bottom) / (n - 1)
-flow_box_h = flow_gap - 1.7
+flow_box_h = flow_gap - 1.9
 prev_y = None
 for idx, (lines, edge_color, fill_color) in enumerate(flow_nodes):
     yc = flow_top - idx * flow_gap
     box = patches.FancyBboxPatch((FLOW_X - FLOW_HALF_W, yc - flow_box_h / 2), FLOW_HALF_W * 2, flow_box_h,
-                                  boxstyle="round,pad=0.25", linewidth=1.2, edgecolor=edge_color,
+                                  boxstyle="round,pad=0.3", linewidth=1.3, edgecolor=edge_color,
                                   facecolor=fill_color, zorder=3)
     ax.add_patch(box)
     n_lines = len(lines)
-    line_h = 1.35
+    line_h = 1.55
     start_y = yc + (n_lines - 1) * line_h / 2
     for li, line in enumerate(lines):
-        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=5.15, ha="center", va="center", color="#333333")
+        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=5.9, ha="center", va="center", color="#333333")
     if prev_y is not None:
-        ax.annotate("", xy=(FLOW_X, yc + flow_box_h / 2 + 0.15), xytext=(FLOW_X, prev_y - flow_box_h / 2 - 0.15),
-                    arrowprops=dict(arrowstyle="-|>", color="#999999", lw=1.1))
+        ax.annotate("", xy=(FLOW_X, yc + flow_box_h / 2 + 0.2), xytext=(FLOW_X, prev_y - flow_box_h / 2 - 0.2),
+                    arrowprops=dict(arrowstyle="-|>", color="#999999", lw=1.3))
     prev_y = yc
 
 for i, row in mart.iterrows():
@@ -400,7 +399,7 @@ DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・追加の安全確認（相談時の深掘り用/販売可否・判別は最上部を参照）",
+ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・クリニカルパール（相談時の深掘り用/販売可否・判別は最上部を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
 
@@ -432,25 +431,26 @@ for color, shape, tag, ingr in nursing_rows:
     y -= 1.51
 
 y -= 0.45
-ax.text(COL_NAME_X, y, "追加の安全確認:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 20.5, y, "●", fontsize=5.3, ha="left", va="center", color=RED)
-ax.text(COL_NAME_X + 21.5, y, "禁忌・重大リスク", fontsize=5.3, ha="left", va="center", color="#555555")
-ax.text(COL_NAME_X + 33.0, y, "●", fontsize=5.3, ha="left", va="center", color=ORANGE)
-ax.text(COL_NAME_X + 34.0, y, "相互作用・要注意", fontsize=5.3, ha="left", va="center", color="#555555")
-ax.text(COL_NAME_X + 45.5, y, "●", fontsize=5.3, ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 46.5, y, "知識として押さえる", fontsize=5.3, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X, y, "検討すべきクリニカルパール:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 28.5, y, "●", fontsize=5.3, ha="left", va="center", color=RED)
+ax.text(COL_NAME_X + 29.5, y, "禁忌・重大リスク", fontsize=5.3, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 41.0, y, "●", fontsize=5.3, ha="left", va="center", color=ORANGE)
+ax.text(COL_NAME_X + 42.0, y, "相互作用・要注意", fontsize=5.3, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 53.5, y, "●", fontsize=5.3, ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 54.5, y, "知識として押さえる", fontsize=5.3, ha="left", va="center", color="#555555")
 SAFETY_SUBJ_X = COL_NAME_X + 4.2
 SAFETY_DET_X = COL_NAME_X + 27.0
 safety_items = [
-    (RED, "ブロモバレリル尿素:", "長期乱用で臭素蓄積→歩行困難・幻覚等の慢性中毒リスク"),
-    (RED, "コデイン系:", "12歳未満は絶対禁忌(処方・市販薬とも一律禁止)"),
-    (RED, "DXM×SSRI:", "併用で中枢性セロトニン症候群のリスク(指定濫用で最も急性致死率が高い相互作用)"),
-    (RED, "妊婦・授乳婦:", "コデイン系(パブロン/ルル等)は妊娠後期禁忌→メジコン等単剤推奨。抗コリン薬(ブスコパン等)も妊婦不可・授乳中断要"),
-    (ORANGE, "解熱鎮痛薬アレルギー:", "ピリン疹はNSAIDs(ロキソプロフェン等)へ代替可。アスピリン喘息はNSAIDs全般に交差耐性(AAP単剤のみ可)"),
-    (ORANGE, "喘息・不整脈:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)に注意"),
-    (ORANGE, "相互作用:", "グレープフルーツジュースはDXMの血中濃度上昇、高脂肪食後はウレイド系(ブロモバレリル尿素等)の吸収促進、マクロライド系/アゾール系薬併用はQT延長・心室頻拍に注意"),
-    (BLUE, "年齢区分:", "用法上の「成人」＝15歳以上/濫用防止の規制＝18歳未満(16歳も規制対象)"),
-    (BLUE, "用法用量:", "規定量の遵守がメーカー設計の最大効果を安全に引き出す方法。自己判断の増量・組合せ調整は不要"),
+    (RED, "長期連用・依存が疑われたら:", "ブロモバレリル尿素による慢性臭素中毒(歩行困難・幻覚)を疑い、専門医への相談を促す"),
+    (RED, "12歳未満の子どもには:", "コデイン系(ジヒドロコデイン含む)は処方・市販とも絶対禁忌。他成分の咳止めを提案"),
+    (RED, "SSRI服用中と分かったら:", "DXM併用でセロトニン症候群(最も急性致死率が高い相互作用)のリスクを説明し慎重に対応"),
+    (RED, "妊娠後期・授乳中と分かったら:", "コデイン系(パブロン/ルル等)は禁忌、メジコン等単剤を提案。抗コリン薬も服用不可・授乳中断"),
+    (ORANGE, "アレルギー歴を聞いたら:", "ピリン疹ならNSAIDsへ代替可、アスピリン喘息ならNSAIDs全般NGでAAP単剤のみ提案"),
+    (ORANGE, "喘息・不整脈の既往を聞いたら:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)のリスクを説明"),
+    (ORANGE, "他の薬/飲食物との併用を聞かれたら:", "GFJはDXMの血中濃度上昇、高脂肪食後はウレイド系の吸収促進、マクロライド系/アゾール系薬はQT延長に注意"),
+    (BLUE, "16〜17歳が購入希望なら:", "薬用法上は成人量でも、濫用防止の年齢規制では18歳未満扱い→大容量は販売不可"),
+    (BLUE, "効果が弱いと相談されたら:", "規定量の遵守こそ最大効果を安全に引き出す方法と説明し、自己判断の増量は勧めない"),
+    (BLUE, "アンナカはなぜ対象外?と聞かれたら:", "お茶・コーヒー・エナジードリンク等にも大量に含まれ、医薬品だけの一律規制が非現実的なため(危険性は認識されているが対象外)"),
 ]
 y -= 1.35
 for i, (color, subj, detail) in enumerate(safety_items):
