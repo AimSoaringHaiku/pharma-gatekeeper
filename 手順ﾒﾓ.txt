@@ -75,3 +75,8 @@ validation_pkg_chart_v5.py→改　atomic card table v6 =python3 vpc_v6.py
 python3 cheat_sheet_page2.py　→python3 cheat_sheet_page2_v2.py
 　ｸﾛｰﾄﾞ　　→python3 cheat_sheet_page2_v3.py　→生成atomic_card_table_v8_page2_v2.png
 　GEMINI　→python3 vpc_v8_page2.py　→生成 atomic_card_table_v8_page2.png
+
+0818　クロード　vpc_v9_single_page.py
+GEMINI　　改　運転・ドーピング　python3 vpc_v9_single_page.py
+　「表面で問い、裏面で答える」UI設計　　表：python3 vpc_v11_front.py　→atomic_card_table_v11_front.png
+　　　　裏：python3 vpc_v11_back.py　→ atomic_card_table_v11_back_half.png
