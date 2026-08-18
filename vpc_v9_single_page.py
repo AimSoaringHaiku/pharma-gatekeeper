@@ -145,9 +145,10 @@ COL_NAME_X = 2.0
 COL_INGR_X = 28.0
 COL_DOSE_X = 48.0
 COL_MULT_X = 55.0
-COL_SMALL_X = 65.5
-COL_BOUND_X = 78.5
-COL_LARGE_X = 91.5
+COL_SMALL_X = 61.0
+COL_BOUND_X = 71.0
+COL_LARGE_X = 81.5
+FLOW_X = 92.5
 
 # --- タイトル ---
 current_y = LOGICAL_H - 1.7
@@ -232,6 +233,7 @@ ax.text(COL_MULT_X, current_y, "区分", fontweight="bold", fontsize=9.6, ha="ce
 ax.text(COL_SMALL_X, current_y, "小包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
 ax.text(COL_BOUND_X, current_y, "境界", fontweight="bold", fontsize=10.37, ha="center", va="center", color="#666666")
 ax.text(COL_LARGE_X, current_y, "大包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
+ax.text(FLOW_X, current_y, "レジ確認フロー", fontweight="bold", fontsize=8.3, ha="center", va="center", color="#666666")
 
 current_y -= 1.2
 ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量", fontsize=6.35, ha="left", va="center", color="#555555")
@@ -247,6 +249,38 @@ current_y -= 1.6
 
 main_rows = len(mart)
 row_height = 2.48
+
+# --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
+FLOW_HALF_W = 7.0
+flow_nodes = [
+    (["対象薬を", "レジで確認"], "#666666", "white"),
+    (["18歳未満の疑い", "→身分証で氏名・", "年齢を確認"], BLUE, "#eef4fc"),
+    (["小容量1個のみ", "購入？"], BLUE, "#eef4fc"),
+    (["【いいえ】大容量/複数個", "→18歳未満は一律禁止", "18歳以上は理由確認"], RED, "#fdecea"),
+    (["【はい】小容量1個", "→18歳未満は氏名+", "他店確認、以上は他店確認"], ORANGE, "#fff3e6"),
+    (["条件を満たせば", "販売可"], GREEN, "#eaf5ea"),
+]
+flow_top = 112.7
+flow_bottom = 63.5
+n = len(flow_nodes)
+flow_gap = (flow_top - flow_bottom) / (n - 1)
+flow_box_h = flow_gap - 1.7
+prev_y = None
+for idx, (lines, edge_color, fill_color) in enumerate(flow_nodes):
+    yc = flow_top - idx * flow_gap
+    box = patches.FancyBboxPatch((FLOW_X - FLOW_HALF_W, yc - flow_box_h / 2), FLOW_HALF_W * 2, flow_box_h,
+                                  boxstyle="round,pad=0.25", linewidth=1.2, edgecolor=edge_color,
+                                  facecolor=fill_color, zorder=3)
+    ax.add_patch(box)
+    n_lines = len(lines)
+    line_h = 1.35
+    start_y = yc + (n_lines - 1) * line_h / 2
+    for li, line in enumerate(lines):
+        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=5.15, ha="center", va="center", color="#333333")
+    if prev_y is not None:
+        ax.annotate("", xy=(FLOW_X, yc + flow_box_h / 2 + 0.15), xytext=(FLOW_X, prev_y - flow_box_h / 2 - 0.15),
+                    arrowprops=dict(arrowstyle="-|>", color="#999999", lw=1.1))
+    prev_y = yc
 
 for i, row in mart.iterrows():
     if i % 2 == 0:
