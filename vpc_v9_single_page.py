@@ -187,8 +187,7 @@ ax.text(COL_NAME_X + 12.0, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 current_y -= 1.45
-ax.text(COL_NAME_X + 12.0, current_y, "★表にない商品は", fontsize=6.5, fontweight="bold", ha="left", va="center", color=RED)
-ax.text(COL_NAME_X + 25.0, current_y, "判定アプリ(右下QR・★マーク)で確認", fontsize=6.5, fontweight="bold", ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 12.0, current_y, "表にない商品は判定アプリ(右下QR)で確認", fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.4
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
@@ -247,7 +246,7 @@ ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.55
+row_height = 2.48
 
 for i, row in mart.iterrows():
     if i % 2 == 0:
@@ -330,9 +329,6 @@ QR_X = 89.5
 
 qr1_top = detail_top - 0.2
 qr1_center_y = qr1_top - qr_size / 2
-ax.add_patch(patches.Rectangle((QR_X - qr_size/2 - 0.6, qr1_center_y - qr_size/2 - 0.6),
-                               qr_size + 1.2, qr_size + 1.2, fill=False, edgecolor=RED, linewidth=1.4, zorder=2))
-ax.text(QR_X - qr_size/2 - 0.9, qr1_center_y + qr_size/2 + 0.9, "★", fontsize=10, ha="center", va="center", color=RED, fontweight="bold")
 try:
     qr_img = mpimg.imread(QR_APP_PATH)
     ax.imshow(qr_img, extent=[QR_X - qr_size/2, QR_X + qr_size/2,
@@ -341,9 +337,9 @@ except Exception:
     ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr1_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
 qr1_y = qr1_center_y - qr_size/2 - 0.85
-ax.text(QR_X, qr1_y, "判定アプリ", fontsize=6.8, ha="center", va="top", color=RED, fontweight="bold")
+ax.text(QR_X, qr1_y, "判定アプリ", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
 qr1_y -= 1.05
-ax.text(QR_X, qr1_y, "(表にない商品はこちら)", fontsize=5.0, ha="center", va="top", color=RED)
+ax.text(QR_X, qr1_y, "(表にない商品はこちら)", fontsize=5.0, ha="center", va="top", color="#999999")
 qr1_y -= 0.85
 ax.text(QR_X, qr1_y, APP_URL.replace("https://", ""), fontsize=3.7, ha="center", va="top", color="#999999")
 
@@ -403,23 +399,33 @@ for color, shape, tag, ingr in nursing_rows:
 
 y -= 0.45
 ax.text(COL_NAME_X, y, "追加の安全確認:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-SAFETY_SUBJ_X = COL_NAME_X + 13.5
+ax.text(COL_NAME_X + 20.5, y, "●", fontsize=5.3, ha="left", va="center", color=RED)
+ax.text(COL_NAME_X + 21.5, y, "禁忌・重大リスク", fontsize=5.3, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 33.0, y, "●", fontsize=5.3, ha="left", va="center", color=ORANGE)
+ax.text(COL_NAME_X + 34.0, y, "相互作用・要注意", fontsize=5.3, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 45.5, y, "●", fontsize=5.3, ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 46.5, y, "知識として押さえる", fontsize=5.3, ha="left", va="center", color="#555555")
+SAFETY_SUBJ_X = COL_NAME_X + 4.2
 SAFETY_DET_X = COL_NAME_X + 27.0
 safety_items = [
-    ("解熱鎮痛薬アレルギー:", "ピリン疹はNSAIDs(ロキソプロフェン等)へ代替可。アスピリン喘息はNSAIDs全般に交差耐性(AAP単剤のみ可)"),
-    ("年齢区分:", "用法上の「成人」＝15歳以上/濫用防止の規制＝18歳未満(16歳も規制対象)"),
-    ("ブロモバレリル尿素:", "長期乱用で臭素蓄積→歩行困難・幻覚等の慢性中毒リスク"),
-    ("コデイン系:", "12歳未満は絶対禁忌(処方・市販薬とも一律禁止)"),
-    ("DXM×SSRI:", "併用で中枢性セロトニン症候群のリスク(指定濫用で最も急性致死率が高い相互作用)"),
-    ("妊婦・授乳婦:", "コデイン系(パブロン/ルル等)は妊娠後期禁忌→メジコン等単剤推奨。抗コリン薬(ブスコパン等)も妊婦不可・授乳中断要"),
-    ("用法用量:", "規定量の遵守がメーカー設計の最大効果を安全に引き出す方法。自己判断の増量・組合せ調整は不要"),
-    ("喘息・不整脈:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)に注意"),
-    ("相互作用:", "グレープフルーツジュースはDXMの血中濃度上昇、高脂肪食後はウレイド系(ブロモバレリル尿素等)の吸収促進、マクロライド系/アゾール系薬併用はQT延長・心室頻拍に注意"),
+    (RED, "ブロモバレリル尿素:", "長期乱用で臭素蓄積→歩行困難・幻覚等の慢性中毒リスク"),
+    (RED, "コデイン系:", "12歳未満は絶対禁忌(処方・市販薬とも一律禁止)"),
+    (RED, "DXM×SSRI:", "併用で中枢性セロトニン症候群のリスク(指定濫用で最も急性致死率が高い相互作用)"),
+    (RED, "妊婦・授乳婦:", "コデイン系(パブロン/ルル等)は妊娠後期禁忌→メジコン等単剤推奨。抗コリン薬(ブスコパン等)も妊婦不可・授乳中断要"),
+    (ORANGE, "解熱鎮痛薬アレルギー:", "ピリン疹はNSAIDs(ロキソプロフェン等)へ代替可。アスピリン喘息はNSAIDs全般に交差耐性(AAP単剤のみ可)"),
+    (ORANGE, "喘息・不整脈:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)に注意"),
+    (ORANGE, "相互作用:", "グレープフルーツジュースはDXMの血中濃度上昇、高脂肪食後はウレイド系(ブロモバレリル尿素等)の吸収促進、マクロライド系/アゾール系薬併用はQT延長・心室頻拍に注意"),
+    (BLUE, "年齢区分:", "用法上の「成人」＝15歳以上/濫用防止の規制＝18歳未満(16歳も規制対象)"),
+    (BLUE, "用法用量:", "規定量の遵守がメーカー設計の最大効果を安全に引き出す方法。自己判断の増量・組合せ調整は不要"),
 ]
-for subj, detail in safety_items:
-    ax.text(SAFETY_SUBJ_X, y, subj, fontsize=6.2, fontweight="bold", ha="left", va="center", color="#333333")
+y -= 1.35
+for i, (color, subj, detail) in enumerate(safety_items):
+    if i % 2 == 0:
+        ax.add_patch(patches.Rectangle((0, y - 0.57), LOGICAL_W, 1.14, facecolor="#fafafa", edgecolor="none"))
+    marker(ax, COL_NAME_X + 1.0, y, color, "circle", 0.4)
+    ax.text(SAFETY_SUBJ_X, y, subj, fontsize=6.2, fontweight="bold", ha="left", va="center", color=color)
     ax.text(SAFETY_DET_X, y, detail, fontsize=6.1, ha="left", va="center", color=GRAY)
-    y -= 1.3
+    y -= 1.14
 y -= 0.1
 
 y -= 0.25
