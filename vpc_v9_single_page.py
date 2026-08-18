@@ -16,7 +16,7 @@ FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf7A1Hz3jx1FpkuV-3V7X69qNcN
 TARGET_INGREDIENTS_LEGEND = (
     "指定8成分: エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/"
     "デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素　｜　"
-    "非対象（紛らわしい）: 生薬マオウ／無水カフェイン／プロメタジン等の抗ヒス／アリルイソプロピルアセチル尿素"
+    "非対象（紛らわしい）: 生薬マオウ/無水カフェイン/プロメタジン等の抗ヒス/アリルイソプロピルアセチル尿素"
 )
 
 GRAY = "#555555"
@@ -101,12 +101,12 @@ mart = pd.DataFrame(processed).sort_values("product").reset_index(drop=True)
 reference_df = df[df["kubun"].isin(["＊〇", "＊対象外", "△"])].copy()
 reference_rows = []
 CUSTOM_NOTES = {
-    "アレグラFX": "対比: FX(通常版)は対象外／プレミアムのみ血管収縮剤(プソイドエフェドリン)追加で該当。",
+    "アレグラFX": "対比: FX(通常版)は対象外/プレミアムのみ血管収縮剤(プソイドエフェドリン)追加で該当。",
     "コリホグス": "中枢抑制作用による呼吸抑制リスク。アルコール・ベンゾ系併用/ODに要注意。",
-    "トラベルミンR": "対比: R・ジュニア・ファミリー・「1」は対象外／無印(大人用)のみジフェンヒドラミン含有で該当。",
-    "ナロン錠": "対比: エースT・m等は対象外／ナロン錠・顆粒のみブロモバレリル尿素含有で該当。",
-    "新コンタック鼻炎Z": "対比: 鼻炎Zのみ対象外(唯一制限成分なし)／600プラス・かぜ総合等は該当。※セチリジンは妊婦禁忌。",
-    "新ルルAゴールドDXα": "対比: のど飴・トローチ(部外品)は対象外／内服かぜ薬・メディカルドロップは該当。",
+    "トラベルミンR": "対比: R・ジュニア・ファミリー・「1」は対象外/無印(大人用)のみジフェンヒドラミン含有で該当。",
+    "ナロン錠": "対比: エースT・m等は対象外/ナロン錠・顆粒のみブロモバレリル尿素含有で該当。",
+    "新コンタック鼻炎Z": "対比: 鼻炎Zのみ対象外(唯一制限成分なし)/600プラス・かぜ総合等は該当。※セチリジンは妊婦禁忌。",
+    "新ルルAゴールドDXα": "対比: のど飴・トローチ(部外品)は対象外/内服かぜ薬・メディカルドロップは該当。",
     "葛根湯エキス錠S「コタロー」": "対比: 葛根湯・小青竜湯等の漢方製剤は対象外(マオウは化学成分外で規制対象外)。",
 }
 for product, group in reference_df.groupby("product", sort=True):
@@ -154,17 +154,13 @@ current_y = LOGICAL_H - 1.7
 ax.text(LOGICAL_W / 2, current_y, "薬剤別 包装区分 早見表", fontsize=18.91, fontweight="bold", ha="center", va="center")
 today_str = datetime.date.today().strftime("%Y/%m/%d")
 ax.text(LOGICAL_W, current_y + 1.4, f"作成日: {today_str}", fontsize=7.93, ha="right", va="center", color="#888888")
-
-current_y -= 2.32
-ax.text(LOGICAL_W / 2, current_y,
-        "※本表はAIを用いて作成した試作品です。実使用前に最新の公式情報(添付文書・KEGG等)をご確認ください。",
-        fontsize=6.71, ha="center", va="center", color="#888888")
+ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最新の公式情報(添付文書等)を確認",
+        fontsize=4.6, ha="right", va="center", color="#999999")
 
 # --- 使い方・販売可否（①を年齢規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう最上部に配置） ---
-current_y -= 1.6
+current_y -= 1.55
 ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
-ax.text(LOGICAL_W / 2, current_y, "【使い方】この表だけで販売可否を判断できます", fontsize=8.6, fontweight="bold", ha="center", va="center", color=BLUE)
-current_y -= 1.68
+current_y -= 0.15
 ax.text(COL_NAME_X, current_y, "① 18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売謝絶）",
@@ -181,9 +177,9 @@ ax.text(COL_NAME_X + 12.0, current_y,
         fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "④ 商品の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装／大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬／", fontsize=6.6, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬/", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 56.8, current_y, "×5", fontsize=7.2, fontweight="bold", ha="left", va="center", color=ORANGE)
 ax.text(COL_NAME_X + 58.8, current_y, "＝それ以外）", fontsize=6.6, ha="left", va="center", color="#333333")
 current_y -= 1.35
@@ -193,7 +189,7 @@ ax.text(COL_NAME_X + 12.0, current_y,
 current_y -= 1.4
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
-        "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可／身分証の提示を拒否された→年齢確認不能のため販売不可",
+        "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示を拒否された→年齢確認不能のため販売不可",
         fontsize=6.0, ha="left", va="center", color="#333333")
 current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
@@ -219,7 +215,7 @@ ax.text(COL_NAME_X + 9.9, current_y,
 current_y -= 1.4
 marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(紛らわしい)＝生薬マオウ／無水カフェイン／プロメタジン等の他の抗ヒス／アリルイソプロピルアセチル尿素",
+        "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
         fontsize=5.9, ha="left", va="center", color=GRAY)
 current_y -= 1.45
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
@@ -235,9 +231,9 @@ ax.text(COL_BOUND_X, current_y, "境界", fontweight="bold", fontsize=10.37, ha=
 ax.text(COL_LARGE_X, current_y, "大包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
 
 current_y -= 1.3
-ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可／大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量　｜　", fontsize=6.35, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量　｜　", fontsize=6.35, ha="left", va="center", color="#555555")
 ax.text(COL_NAME_X + 63.5, current_y, "×7", fontsize=6.9, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 65.5, current_y, "＝かぜ薬等／", fontsize=6.35, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 65.5, current_y, "＝かぜ薬等/", fontsize=6.35, ha="left", va="center", color="#555555")
 ax.text(COL_NAME_X + 75.5, current_y, "×5", fontsize=6.9, fontweight="bold", ha="left", va="center", color=ORANGE)
 ax.text(COL_NAME_X + 77.5, current_y, "＝それ以外", fontsize=6.35, ha="left", va="center", color="#555555")
 
@@ -259,9 +255,9 @@ for i, row in mart.iterrows():
 
     if row["ingredients"]:
         clean_ingr = re.sub(r'(塩酸塩|リン酸塩|硫酸塩|臭化水素酸塩|マレイン酸塩|酒石酸塩|フマル酸塩)', '', row["ingredients"])
-        if len(clean_ingr) > 12:
-            clean_ingr = clean_ingr[:12] + "…"
-        ax.text(COL_INGR_X, current_y, clean_ingr, fontsize=6.48, ha="left", va="center", color="#666666")
+        if len(clean_ingr) > 26:
+            clean_ingr = clean_ingr[:26] + "…"
+        ax.text(COL_INGR_X, current_y, clean_ingr, fontsize=5.8, ha="left", va="center", color="#666666")
     else:
         ax.text(COL_INGR_X, current_y, "-", fontsize=7.93, ha="left", va="center", color="#aaaaaa")
 
@@ -287,7 +283,7 @@ for i, row in mart.iterrows():
 
 current_y -= 1.35
 ax.text(COL_NAME_X, current_y,
-        "※＝カプレット表記（ベンザブロック◯◯／末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
+        "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
         fontsize=6.1, ha="left", va="center", color="#888888")
 
 # --- 判定注意・参考（マトリックス） ---
@@ -364,7 +360,7 @@ DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・追加の安全確認（相談時の深掘り用／販売可否・判別は最上部を参照）",
+ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・追加の安全確認（相談時の深掘り用/販売可否・判別は最上部を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
 
@@ -400,13 +396,19 @@ ax.text(COL_NAME_X, y, "追加の安全確認:", fontsize=7.07, fontweight="bold
 ax.text(COL_NAME_X + 13.5, y, "禁忌確認(アスピリン喘息・ライ症候群等)も指定第2類医薬品として要説明",
         fontsize=6.1, ha="left", va="center", color=GRAY)
 y -= 1.3
-ax.text(COL_NAME_X + 13.5, y, "年齢の混同注意: 用法上の「成人」＝15歳以上／濫用防止の年齢規制＝18歳未満(16歳も規制対象)",
+ax.text(COL_NAME_X + 13.5, y, "年齢の混同注意: 用法上の「成人」＝15歳以上/濫用防止の年齢規制＝18歳未満(16歳も規制対象)",
         fontsize=6.1, ha="left", va="center", color=GRAY)
 y -= 1.3
 ax.text(COL_NAME_X + 13.5, y, "ブロモバレリル尿素は長期乱用で臭素蓄積→歩行困難・幻覚等の慢性臭素中毒リスク",
         fontsize=6.1, ha="left", va="center", color=GRAY)
 y -= 1.3
 ax.text(COL_NAME_X + 13.5, y, "妊娠後期はコデイン系(パブロン/ルル等)禁忌、メジコン等単剤を推奨。抗コリン薬(ブスコパン等)は妊婦服用不可・授乳中も中断要",
+        fontsize=6.1, ha="left", va="center", color=GRAY)
+y -= 1.3
+ax.text(COL_NAME_X + 13.5, y, "規定量(1回2錠等)の遵守がメーカー設計の最大効果を安全に引き出す方法。自己判断の増量・組合せ調整は不要",
+        fontsize=6.1, ha="left", va="center", color=GRAY)
+y -= 1.3
+ax.text(COL_NAME_X + 13.5, y, "喘息の方は抗コリン作用で痰が粘稠化し発作誘発の恐れ、不整脈の方は頻脈・QT延長のリスクがあるため抗ヒスタミン薬に注意",
         fontsize=6.1, ha="left", va="center", color=GRAY)
 y -= 1.4
 
@@ -416,7 +418,7 @@ ax.text(COL_NAME_X, y,
         fontsize=6.1, ha="left", va="center", color=LGRAY)
 y -= 0.85
 ax.text(COL_NAME_X, y,
-        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」・厚生労働大臣が定める数量（告示）／JSMI「指定濫用防止医薬品の販売制度について」／兵庫県 薬務課 制度改正資料",
+        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」・厚生労働大臣が定める数量（告示）/JSMI「指定濫用防止医薬品の販売制度について」/兵庫県 薬務課 制度改正資料",
         fontsize=4.8, ha="left", va="center", color="#aaaaaa")
 
 plt.savefig(OUTPUT_PNG, dpi=300)
