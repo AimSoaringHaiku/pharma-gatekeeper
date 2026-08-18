@@ -246,7 +246,7 @@ ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.84
 
 main_rows = len(mart)
-row_height = 2.83
+row_height = 2.76
 
 for i, row in mart.iterrows():
     if i % 2 == 0:
@@ -312,7 +312,7 @@ if ref_rows > 0:
         ax.text(28.0, current_y, row["status_text"], fontsize=8.42, fontweight="bold", ha="center", va="center", color=row["status_color"])
         note_color = RED if row["note"].startswith("対比") else GRAY
         ax.text(41.0, current_y, row["note"], fontsize=7.34, ha="left", va="center", color=note_color)
-        current_y -= 2.54
+        current_y -= 2.44
 
 current_y -= 0.65
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.7)
@@ -364,7 +364,7 @@ DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導（相談時の深掘り用／販売可否・判別は最上部を参照）",
+ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・追加の安全確認（相談時の深掘り用／販売可否・判別は最上部を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
 
@@ -372,10 +372,13 @@ y -= 1.84
 ax.text(COL_NAME_X, y, "過量服薬リスク:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, y, "初日=急性心毒性(無水カフェイン等)で致死性不整脈。3日目以降=劇症肝不全(アセトアミノフェン)が急速進行",
         fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 1.62
+y -= 1.5
+ax.text(COL_NAME_X + 12.0, y, "(NSAIDsは服用後すぐ胃痛等の自覚症状が出るが、AAPは無症状のまま進行するため特に注意)",
+        fontsize=6.0, ha="left", va="center", color=LGRAY)
+y -= 1.5
 ax.text(COL_NAME_X + 12.0, y, "月10日超・3ヶ月超の定期服用は薬剤乱用頭痛(MOH)に進展しやすい",
         fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 2.05
+y -= 2.0
 
 # F. 授乳婦指導（色マーカー4段）
 ax.text(COL_NAME_X, y, "授乳婦指導:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
@@ -392,11 +395,26 @@ for color, shape, tag, ingr in nursing_rows:
     ax.text(COL_NAME_X + 16.0, y, ingr, fontsize=6.35, ha="left", va="center", color=GRAY)
     y -= 1.51
 
-y -= 0.32
+y -= 0.45
+ax.text(COL_NAME_X, y, "追加の安全確認:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 13.5, y, "禁忌確認(アスピリン喘息・ライ症候群等)も指定第2類医薬品として要説明",
+        fontsize=6.1, ha="left", va="center", color=GRAY)
+y -= 1.3
+ax.text(COL_NAME_X + 13.5, y, "年齢の混同注意: 用法上の「成人」＝15歳以上／濫用防止の年齢規制＝18歳未満(16歳も規制対象)",
+        fontsize=6.1, ha="left", va="center", color=GRAY)
+y -= 1.3
+ax.text(COL_NAME_X + 13.5, y, "ブロモバレリル尿素は長期乱用で臭素蓄積→歩行困難・幻覚等の慢性臭素中毒リスク",
+        fontsize=6.1, ha="left", va="center", color=GRAY)
+y -= 1.3
+ax.text(COL_NAME_X + 13.5, y, "妊娠後期はコデイン系(パブロン/ルル等)禁忌、メジコン等単剤を推奨。抗コリン薬(ブスコパン等)は妊婦服用不可・授乳中も中断要",
+        fontsize=6.1, ha="left", va="center", color=GRAY)
+y -= 1.4
+
+y -= 0.25
 ax.text(COL_NAME_X, y,
         "免責: 過去に用法用量超過の自己判断服用で重篤な健康被害が生じた事例を踏まえた確認です。意図的な過量服薬は保証・救済制度の対象外です。",
         fontsize=6.1, ha="left", va="center", color=LGRAY)
-y -= 1.05
+y -= 0.85
 ax.text(COL_NAME_X, y,
         "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」・厚生労働大臣が定める数量（告示）／JSMI「指定濫用防止医薬品の販売制度について」／兵庫県 薬務課 制度改正資料",
         fontsize=4.8, ha="left", va="center", color="#aaaaaa")
