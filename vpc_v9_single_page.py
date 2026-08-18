@@ -160,26 +160,64 @@ ax.text(LOGICAL_W / 2, current_y,
         "※本表はAIを用いて作成した試作品です。実使用前に最新の公式情報(添付文書・KEGG等)をご確認ください。",
         fontsize=6.71, ha="center", va="center", color="#888888")
 
-# --- 使い方・販売可否（ルール未経験者でもこの1枚だけで可否判断できるよう最上部に配置） ---
-current_y -= 1.75
-ax.hlines(current_y + 0.9, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
-ax.text(LOGICAL_W / 2, current_y,
-        "【使い方】①下表で商品名を検索し「小包装／大包装」を確認 → ②購入者の年齢を確認 → ③下の可否表に従う",
-        fontsize=8.1, fontweight="bold", ha="center", va="center", color=BLUE)
-current_y -= 1.78
-ax.text(COL_NAME_X, current_y, "販売可否:", fontsize=7.6, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 9.5, current_y,
-        "18歳未満・小容量1個＝氏名年齢確認＋他店購入状況確認が必須で条件付き販売可／18歳以上・小容量1個＝他店購入状況確認のみ必須で通常販売可",
-        fontsize=6.5, ha="left", va="center", color=GRAY)
-current_y -= 1.58
-ax.text(COL_NAME_X + 9.5, current_y, "※大容量・複数個の18歳未満への販売は理由を問わず一律禁止（販売謝絶）",
-        fontsize=6.9, ha="left", va="center", color=RED, fontweight="bold")
+# --- 使い方・販売可否（①を年齢規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう最上部に配置） ---
+current_y -= 1.6
+ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
+ax.text(LOGICAL_W / 2, current_y, "【使い方】この表だけで販売可否を判断できます", fontsize=8.6, fontweight="bold", ha="center", va="center", color=BLUE)
+current_y -= 1.68
+ax.text(COL_NAME_X, current_y, "① 18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
+ax.text(COL_NAME_X + 12.0, current_y,
+        "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個は家族用でも理由問わず一律禁止（販売謝絶）",
+        fontsize=6.6, ha="left", va="center", color="#333333", fontweight="bold")
 current_y -= 1.55
+ax.text(COL_NAME_X, current_y, "② 18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 12.0, current_y,
+        "小容量は通常販売可（他店購入状況確認は必須）。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
+        fontsize=6.6, ha="left", va="center", color="#333333")
+current_y -= 1.55
+ax.text(COL_NAME_X, current_y, "③ 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 12.0, current_y,
+        "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
+        fontsize=6.6, ha="left", va="center", color="#333333")
+current_y -= 1.55
+ax.text(COL_NAME_X, current_y, "④ 商品の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装／大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬／", fontsize=6.6, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 56.8, current_y, "×5", fontsize=7.2, fontweight="bold", ha="left", va="center", color=ORANGE)
+ax.text(COL_NAME_X + 58.8, current_y, "＝それ以外）", fontsize=6.6, ha="left", va="center", color="#333333")
+current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.35
 
+# --- 計算手順・ブランド速断・成分判別（実務でよく使う判別系を、本体テーブルの直前に集約） ---
+current_y -= 1.55
+ax.text(COL_NAME_X, current_y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 9.5, current_y,
+        "①分類で基準日数(×7=かぜ薬等/×5=それ以外)②1日最大服用量を確認③総量÷1日量=消費日数④基準日数以下=小容量/超=大容量",
+        fontsize=6.4, ha="left", va="center", color=GRAY)
+current_y -= 1.5
+ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 10.5, current_y,
+        "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ",
+        fontsize=6.4, ha="left", va="center", color=GRAY)
+current_y -= 1.55
+ax.text(COL_NAME_X, current_y, "成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "対象(指定8成分)＝エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.4
+marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "対象外(紛らわしい)＝生薬マオウ／無水カフェイン／プロメタジン等の他の抗ヒス／アリルイソプロピルアセチル尿素",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.45
+ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
+current_y -= 0.35
+
 # --- 本体ヘッダー ---
-current_y -= 2.92
+current_y -= 1.75
 ax.text(COL_NAME_X, current_y, "薬剤名", fontweight="bold", fontsize=11.59, ha="left", va="center")
 ax.text(COL_INGR_X, current_y, "対象成分", fontweight="bold", fontsize=11.59, ha="left", va="center")
 ax.text(COL_DOSE_X, current_y, "1日量", fontweight="bold", fontsize=11.59, ha="center", va="center")
@@ -187,19 +225,12 @@ ax.text(COL_SMALL_X, current_y, "小包装", fontweight="bold", fontsize=11.59, 
 ax.text(COL_BOUND_X, current_y, "境界", fontweight="bold", fontsize=10.37, ha="center", va="center", color="#666666")
 ax.text(COL_LARGE_X, current_y, "大包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
 
-current_y -= 1.19
-ax.text(COL_INGR_X, current_y,
-        "指定8成分: エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
-        fontsize=4.64, ha="left", va="center", color="#999999")
-current_y -= 1.08
-ax.text(COL_INGR_X, current_y,
-        "非対象(紛らわしい): 生薬マオウ／無水カフェイン／プロメタジン等の抗ヒス／アリルイソプロピルアセチル尿素",
-        fontsize=4.64, ha="left", va="center", color="#999999")
-
-current_y -= 1.35
-ax.text(COL_NAME_X, current_y,
-        "小包装＝単品1個は18歳未満も可／大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量　｜　×5・×7＝容量区分の基準日数",
-        fontsize=6.35, ha="left", va="center", color="#555555")
+current_y -= 1.3
+ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可／大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量　｜　", fontsize=6.35, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 63.5, current_y, "×7", fontsize=6.9, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 65.5, current_y, "＝かぜ薬等／", fontsize=6.35, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X + 75.5, current_y, "×5", fontsize=6.9, fontweight="bold", ha="left", va="center", color=ORANGE)
+ax.text(COL_NAME_X + 77.5, current_y, "＝それ以外", fontsize=6.35, ha="left", va="center", color="#555555")
 
 current_y -= 1.35
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
@@ -324,36 +355,9 @@ DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】計算手順・判別・エビデンス（相談時の深掘り用／販売可否は最上部を参照）",
+ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導（相談時の深掘り用／販売可否・判別は最上部を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
-
-# A. 計算手順（1行に凝縮）
-ax.text(COL_NAME_X, y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 8.5, y,
-        "①分類で基準日数(かぜ薬等=7日/それ以外=5日)②1日最大服用量を確認③総量÷1日量=消費日数④基準日数以下=小容量/超=大容量",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 2.05
-
-# C. 瞬時の判別（ブランド速断）
-ax.text(COL_NAME_X, y, "ブランド速断:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 10.5, y, "外用薬・のどスプレー等は全て対象外。抗ヒスは「ジフェンヒドラミンのみ」該当",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 1.62
-ax.text(COL_NAME_X + 10.5, y, "原則対象: ルル・パブロン(50除く)・ベンザブロック　｜　対象外: セデス・ノーシン・バファリン・イブ",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 2.05
-
-# D. 成分判別
-ax.text(COL_NAME_X, y, "成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-marker(ax, COL_NAME_X + 9.0, y, RED, "circle", 0.45)
-ax.text(COL_NAME_X + 10.0, y, "対象＝エフェドリン系/コデイン系/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 1.62
-marker(ax, COL_NAME_X + 9.0, y, GREEN, "circle", 0.45)
-ax.text(COL_NAME_X + 10.0, y, "対象外＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 2.05
 
 # E. 医療エビデンス（1行要約×3）
 ax.text(COL_NAME_X, y, "過量服薬リスク:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
