@@ -186,6 +186,9 @@ current_y -= 1.35
 ax.text(COL_NAME_X + 12.0, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
+current_y -= 1.45
+ax.text(COL_NAME_X + 12.0, current_y, "★表にない商品は", fontsize=6.5, fontweight="bold", ha="left", va="center", color=RED)
+ax.text(COL_NAME_X + 25.0, current_y, "判定アプリ(右下QR・★マーク)で確認", fontsize=6.5, fontweight="bold", ha="left", va="center", color="#333333")
 current_y -= 1.4
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
@@ -327,6 +330,9 @@ QR_X = 89.5
 
 qr1_top = detail_top - 0.2
 qr1_center_y = qr1_top - qr_size / 2
+ax.add_patch(patches.Rectangle((QR_X - qr_size/2 - 0.6, qr1_center_y - qr_size/2 - 0.6),
+                               qr_size + 1.2, qr_size + 1.2, fill=False, edgecolor=RED, linewidth=1.4, zorder=2))
+ax.text(QR_X - qr_size/2 - 0.9, qr1_center_y + qr_size/2 + 0.9, "★", fontsize=10, ha="center", va="center", color=RED, fontweight="bold")
 try:
     qr_img = mpimg.imread(QR_APP_PATH)
     ax.imshow(qr_img, extent=[QR_X - qr_size/2, QR_X + qr_size/2,
@@ -335,8 +341,10 @@ except Exception:
     ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr1_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
 qr1_y = qr1_center_y - qr_size/2 - 0.85
-ax.text(QR_X, qr1_y, "判定アプリ", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
+ax.text(QR_X, qr1_y, "判定アプリ", fontsize=6.8, ha="center", va="top", color=RED, fontweight="bold")
 qr1_y -= 1.05
+ax.text(QR_X, qr1_y, "(表にない商品はこちら)", fontsize=5.0, ha="center", va="top", color=RED)
+qr1_y -= 0.85
 ax.text(QR_X, qr1_y, APP_URL.replace("https://", ""), fontsize=3.7, ha="center", va="top", color="#999999")
 
 qr2_top = qr1_y - 1.7
