@@ -78,5 +78,6 @@ python3 cheat_sheet_page2.py　→python3 cheat_sheet_page2_v2.py
 
 0818　クロード　vpc_v9_single_page.py
 GEMINI　　改　運転・ドーピング　python3 vpc_v9_single_page.py
-　「表面で問い、裏面で答える」UI設計　　表：python3 vpc_v11_front.py　→atomic_card_table_v11_front.png
+　「表面で問い、裏面で答える」UI設計　　
+　　　　表：python3 vpc_v11_front.py　→atomic_card_table_v11_front.png
 　　　　裏：python3 vpc_v11_back.py　→ atomic_card_table_v11_back_half.png

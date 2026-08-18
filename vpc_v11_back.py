@@ -2,64 +2,154 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import japanize_matplotlib
 
-OUTPUT_PNG = "atomic_card_table_v11_back_half.png"
+OUTPUT_PNG = "atomic_card_table_v11_back.png"
 
-# A5横相当の比率レイアウト (A4下半分に印刷)
+# A5横相当の比率レイアウト
 LOGICAL_W, LOGICAL_H = 100.0, 70.0
 fig, ax = plt.subplots(figsize=(10, 7.0))
-ax.set_xlim(0, LOGICAL_W); ax.set_ylim(0, LOGICAL_H); ax.axis("off")
+ax.set_position([0, 0, 1, 1])  # savefigでbbox_inches="tight"を使わず全面を使う（比率固定のため必須）
+ax.set_xlim(0, LOGICAL_W)
+ax.set_ylim(0, LOGICAL_H)
+ax.axis("off")
+fig.canvas.draw()  # テキスト幅計測のため、先に一度描画してレンダラーを確保
+renderer = fig.canvas.get_renderer()
 
 BLUE, RED, ORANGE, GREEN, GRAY = "#1565c0", "#d32f2f", "#e65100", "#2e7d32", "#555555"
 
+def text_width(text, fontsize, weight="normal"):
+    t = ax.text(0, -100, text, fontsize=fontsize, fontweight=weight, ha="left", va="center")
+    # fig.canvas.draw()  ← 【削除】毎回全体を再描画させない
+    bbox = t.get_window_extent(renderer=renderer)  # ← 【変更】保存したレンダラーを使う
+    inv = ax.transData.inverted()
+    (x0, _), (x1, _) = inv.transform([[bbox.x0, bbox.y0], [bbox.x1, bbox.y1]])
+    t.remove()
+    return x1 - x0
+
 # --- 全体枠とタイトル ---
-ax.add_patch(patches.Rectangle((1.0, 1.0), 98.0, 68.0, fill=False, edgecolor="#cccccc", linewidth=2.0))
-ax.text(LOGICAL_W/2, 66.0, "【裏面】 安全確認マニュアル （想定ケースと臨床エビデンス）", fontsize=14, fontweight="bold", ha="center", color=GRAY)
-ax.hlines(64.0, 2.0, 98.0, colors="#cccccc", linewidth=1.0)
+ax.text(LOGICAL_W / 2, 68.0, "【裏面】状況別対応のポイント（想定ケースと臨床エビデンス）", fontsize=13, fontweight="bold", ha="center", va="center", color=GRAY)
+ax.hlines(66.2, 2.0, 98.0, colors="#999999", linewidth=1.2)
 
-# ==========================================================
-# 2カラムレイアウト（表面の質問に対応）
-# ==========================================================
-COL1_X, COL2_X = 2.5, 51.5
+COL1_X, COL2_X = 2.0, 51.0
+COL_W = 47.0
+TITLE_FS, BODY_FS, LINE_H = 7.6, 6.8, 1.5
 
-def draw_case(ax, x, y, q_num, category, condition, action, bg_color):
-    ax.add_patch(patches.Rectangle((x, y-10.0), 46.0, 11.5, facecolor=bg_color, edgecolor="#e0e0e0", linewidth=1.0))
-    ax.text(x+1.0, y, f"{q_num} [{category}] {condition}", fontsize=10.5, fontweight="bold", color=BLUE)
-    lines = action.split('\n')
-    text_y = y - 2.5
-    for line in lines:
-        is_alert = "禁忌" in line or "謝絶" in line or "不可" in line
-        ax.text(x+1.5, text_y, line, fontsize=8.5, color=RED if is_alert else "#222222", fontweight="bold" if is_alert else "normal")
-        text_y -= 2.0
-    return y - 11.0
 
-current_y_col1, current_y_col2 = 61.0, 61.0
+def wrap_to_width(text, fontsize, max_width):
+    """1文字ずつ幅を測りながら、max_widthに収まるように行分割する"""
+    lines, cur = [], ""
+    for ch in text:
+        trial = cur + ch
+        if cur and text_width(trial, fontsize) > max_width:
+            lines.append(cur)
+            cur = ch
+        else:
+            cur = trial
+    if cur:
+        lines.append(cur)
+    return lines
 
-# --- 左カラム（年齢・重複・体質） ---
-current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "①②", "年齢・重複", "18歳未満 / または複数個を希望", 
-                           "▶ 18歳未満は「大容量」「複数個」ともに一律販売不可（謝絶）。\n▶ 12歳未満はコデイン類（ジヒドロ等）が呼吸抑制リスクのため\n  絶対禁忌。\n▶ 成人で複数個希望の場合、適正使用外（買いだめ等）と\n  判断した場合は販売謝絶。", "#f4f8fe")
 
-current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "③", "体質", "アレルギー / 喘息がある", 
-                           "▶ ピリン疹既往：非ピリン系（イブプロフェン等）へ代替可。\n▶ アスピリン喘息：NSAIDs全般が重篤な発作を誘発するため\n  禁忌。アセトアミノフェン単剤を推奨。", "#fff9f4")
+def draw_case(ax, x, y, q_num, category, condition, action_lines):
+    """タイトルの右に1点目の内容を続け、2点目以降はタイトル下に列挙。縦スペースを節約する。"""
+    header = f"{q_num}［{category}］{condition}"
+    ax.text(x, y, header, fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color=BLUE)
+    header_w = text_width(header, TITLE_FS, "bold")
+    remaining_w = COL_W - header_w - 1.5
 
-current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "③", "体質", "緑内障 / 前立腺肥大 / 不整脈がある", 
-                           "▶ 抗コリン薬・第一世代抗ヒスタミン（プロメタジン等）は\n  眼圧上昇や尿閉リスクのため禁忌または要注意。\n▶ 頻脈・QT延長リスクがあるため、単一成分薬を推奨。", "#fff9f4")
+    bullets = list(action_lines)
+    first_on_same_line = False
+    if bullets:
+        first_w = text_width(bullets[0], BODY_FS)
+        if remaining_w >= first_w + 1.0 and remaining_w >= 15.0:
+            first_on_same_line = True
 
-# --- 右カラム（併用・妊婦・その他） ---
-current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "④", "併用", "SSRI・MAO阻害薬・鎮静薬を服用中", 
-                           "▶ DXM（デキストロメトルファン）とSSRI等の併用は、\n  セロトニン症候群（発熱・錯乱等）の重大リスク。販売謝絶。\n▶ 中枢神経抑制薬との併用は呼吸抑制を増強するため不可。", "#fef4f4")
+    if first_on_same_line:
+        first = bullets.pop(0)
+        is_alert = ("禁忌" in first) or ("一律" in first) or ("不可" in first)
+        ax.text(x + header_w + 1.5, y, first, fontsize=BODY_FS, ha="left", va="center",
+                color=RED if is_alert else "#333333", fontweight="bold" if is_alert else "normal")
+    text_y = y - LINE_H
 
-current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "⑤", "妊婦・授乳", "妊娠中 / 授乳中", 
-                           "▶ 妊娠後期のNSAIDsは動脈管早期閉鎖リスクで禁忌。\n  アセトアミノフェン単剤等を第一選択として提案。\n▶ 授乳中のコデインは乳児モルヒネ中毒リスクのため代替薬へ。\n▶ DXM等は服薬後2〜4時間授乳を回避。", "#f4f8fe")
+    for bullet in bullets:
+        is_alert = ("禁忌" in bullet) or ("一律" in bullet) or ("不可" in bullet)
+        color = RED if is_alert else "#333333"
+        weight = "bold" if is_alert else "normal"
+        wrapped = wrap_to_width(bullet, BODY_FS, COL_W - 1.2)
+        for wi, wline in enumerate(wrapped):
+            indent = x + 1.2 if wi == 0 else x + 3.0
+            ax.text(indent, text_y, wline, fontsize=BODY_FS, ha="left", va="center", color=color, fontweight=weight)
+            text_y -= LINE_H
 
-current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "※", "その他", "運転 / ドーピング / 長期連用", 
-                           "▶ 運転：最遅排泄成分（例: 経口dl体クロルフェニラミンの\n  半減期12〜15h）を基準に、翌日への影響を指導。\n▶ 連用：月15日以上頭痛がある環境での連用は\n  薬剤乱用頭痛（MOH）に進展しやすいため受診勧奨。", "#fafafa")
+    sep_y = text_y + LINE_H * 0.35
+    ax.hlines(sep_y, x, x + COL_W, colors="#e5e5e5", linewidth=0.7)
+    return sep_y - 0.9
+
+
+current_y_col1 = 63.5
+current_y_col2 = 63.5
+
+# --- 左カラム（年齢・重複・体質・成分の落とし穴） ---
+current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "①②", "年齢・重複",
+    "18歳未満、または複数個(他店合算)を希望されたら", [
+    "▶ 18歳未満への大容量・複数個(種類違い含む)は理由問わず一律禁止（販売不可）。家族用でも例外なし。",
+    "▶ 12歳未満はコデイン系(ジヒドロコデイン含む)が処方・市販とも絶対禁忌。他成分の咳止めへ。",
+    "▶ 身分証の提示を拒否されたら、年齢確認不能のため販売不可。",
+])
+
+current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "③", "体質(アレルギー)",
+    "解熱鎮痛薬でアレルギー歴があると聞いたら", [
+    "▶ ピリン疹ならNSAIDs（ロキソプロフェン等）へ代替可。",
+    "▶ アスピリン喘息はNSAIDs全般（ロキソプロフェン/イブプロフェン/アスピリン等）に100%交差耐性があり全てNG→AAP単剤のみ提案。",
+])
+
+current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "③", "体質(喘息・不整脈等)",
+    "喘息・不整脈・緑内障・前立腺肥大の既往を聞いたら", [
+    "▶ 抗コリン薬/第一世代抗ヒスタミン薬は、喘息で痰の粘稠化・排痰困難、不整脈で頻脈・QT延長のリスク。",
+    "▶ 緑内障は眼圧上昇、前立腺肥大は尿閉のリスクがあり要注意。単一成分薬を推奨。",
+])
+
+current_y_col1 = draw_case(ax, COL1_X, current_y_col1, "※", "成分の落とし穴",
+    "長期連用・依存が疑われたら", [
+    "▶ ブロモバレリル尿素等ウレイド系は長期乱用で臭素蓄積→歩行困難・幻覚（慢性臭素中毒）。高齢者はせん妄・認知機能低下も。",
+    "▶ 月15日以上頭痛がある環境で複合鎮痛薬を月10日超・3ヶ月超服用→薬剤乱用頭痛（MOH）に進展。",
+])
+
+# --- 右カラム（併用・妊婦授乳・その他） ---
+current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "④", "併用",
+    "SSRI服用中、または他の薬との併用を聞かれたら", [
+    "▶ DXM×SSRIはセロトニン症候群のリスク（濫用防止領域で最も急性致死率が高い相互作用）。慎重に対応。",
+    "▶ グレープフルーツジュースはDXMの血中濃度を上昇。高脂肪食後はウレイド系の吸収を促進。マクロライド系/アゾール系薬はQT延長・心室頻拍に注意。",
+])
+
+current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "⑤", "妊婦・授乳",
+    "妊娠中、または授乳中と分かったら", [
+    "▶ 妊娠後期のコデイン系（パブロン/ルル等）は禁忌（新生児呼吸抑制）→メジコン等単剤（デキストロメトルファン）を提案。",
+    "▶ 抗コリン薬（ブスコパン等）はOTCでは一律禁忌（処方箋なら有益性投与可）。授乳中は母乳分泌低下・乳児頻脈のリスクで中断。",
+])
+
+current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "※", "運転",
+    "運転前後の服用を心配されたら", [
+    "▶ 最も排泄が遅い成分を基準に判断。経口・dl体クロルフェニラミン（アネトン/パブロンゴールドA等）の半減期は12〜15h",
+    "  →服用当日〜翌朝は運転を避けるよう案内。",
+])
+
+current_y_col2 = draw_case(ax, COL2_X, current_y_col2, "※", "外用薬・アンナカ",
+    "外用薬や無水カフェインについて聞かれたら", [
+    "▶ 軟膏・クリーム・目薬等の外用剤は規制対象成分が入っていても対象外。",
+    "▶ アンナカ（無水カフェイン）はお茶・コーヒー・エナジードリンク等にも大量に含まれ、医薬品だけの一律規制が非現実的なため対象外（危険性は認識されている）。",
+])
 
 # --- 中央区切り線 ---
-ax.plot([50.0, 50.0], [4.0, 63.0], color="#e0e0e0", linewidth=1.0, linestyle="--")
+ax.plot([49.5, 49.5], [4.0, 66.2], color="#dddddd", linewidth=1.0, linestyle="--")
 
-# --- 下部免責 ---
-ax.text(LOGICAL_W/2, 2.0, "※本マニュアルは一次的対応の目安であり、個別の診断を行うものではありません。最終判断は薬剤師・登録販売者の専門的知見に基づき実施してください。", fontsize=6.5, ha="center", color=GRAY)
+# --- 下部免責・出典 ---
+ax.text(LOGICAL_W / 2, 2.6, "※本マニュアルは一次的対応の目安であり、個別の診断を行うものではありません。最終判断は薬剤師・登録販売者の専門的知見に基づき実施してください。",
+        fontsize=5.6, ha="center", va="center", color=GRAY)
+ax.text(LOGICAL_W / 2, 1.3,
+        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」/JSMI「指定濫用防止医薬品の販売制度について」/兵庫県 薬務課 制度改正資料",
+        fontsize=4.4, ha="center", va="center", color="#aaaaaa")
 
-plt.savefig(OUTPUT_PNG, dpi=300, bbox_inches="tight")
+plt.savefig(OUTPUT_PNG, dpi=300)  # bbox_inches="tight"を使わない（比率固定のため）
 plt.close()
 print(f"v11【裏面】出力完了: {OUTPUT_PNG}")
+print(f"col1_end={current_y_col1:.2f} col2_end={current_y_col2:.2f}")
