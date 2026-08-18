@@ -167,8 +167,8 @@ ax.text(LOGICAL_W / 2, current_y, "【使い方】この表だけで販売可否
 current_y -= 1.68
 ax.text(COL_NAME_X, current_y, "① 18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
 ax.text(COL_NAME_X + 12.0, current_y,
-        "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個は家族用でも理由問わず一律禁止（販売謝絶）",
-        fontsize=6.6, ha="left", va="center", color="#333333", fontweight="bold")
+        "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売謝絶）",
+        fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "② 18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
@@ -177,8 +177,8 @@ ax.text(COL_NAME_X + 12.0, current_y,
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "③ 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
-        "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
-        fontsize=6.6, ha="left", va="center", color="#333333")
+        "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認。提示がなければ販売不可",
+        fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "④ 商品の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装／大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
@@ -186,6 +186,15 @@ ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha
 ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬／", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 56.8, current_y, "×5", fontsize=7.2, fontweight="bold", ha="left", va="center", color=ORANGE)
 ax.text(COL_NAME_X + 58.8, current_y, "＝それ以外）", fontsize=6.6, ha="left", va="center", color="#333333")
+current_y -= 1.35
+ax.text(COL_NAME_X + 12.0, current_y,
+        "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
+        fontsize=5.6, ha="left", va="center", color=LGRAY)
+current_y -= 1.4
+ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 11.0, current_y,
+        "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可／身分証の提示を拒否された→年齢確認不能のため販売不可",
+        fontsize=6.0, ha="left", va="center", color="#333333")
 current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.35
@@ -387,6 +396,10 @@ y -= 0.32
 ax.text(COL_NAME_X, y,
         "免責: 過去に用法用量超過の自己判断服用で重篤な健康被害が生じた事例を踏まえた確認です。意図的な過量服薬は保証・救済制度の対象外です。",
         fontsize=6.1, ha="left", va="center", color=LGRAY)
+y -= 1.05
+ax.text(COL_NAME_X, y,
+        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」・厚生労働大臣が定める数量（告示）／JSMI「指定濫用防止医薬品の販売制度について」／兵庫県 薬務課 制度改正資料",
+        fontsize=4.8, ha="left", va="center", color="#aaaaaa")
 
 plt.savefig(OUTPUT_PNG, dpi=300)
 plt.close()
