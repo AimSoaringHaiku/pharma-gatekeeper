@@ -226,23 +226,25 @@ current_y -= 1.75
 ax.text(COL_NAME_X, current_y, "薬剤名", fontweight="bold", fontsize=11.59, ha="left", va="center")
 ax.text(COL_INGR_X, current_y, "対象成分", fontweight="bold", fontsize=11.59, ha="left", va="center")
 ax.text(COL_DOSE_X, current_y, "1日量", fontweight="bold", fontsize=11.59, ha="center", va="center")
+ax.text(COL_MULT_X, current_y, "区分", fontweight="bold", fontsize=9.6, ha="center", va="center", color="#666666")
 ax.text(COL_SMALL_X, current_y, "小包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
 ax.text(COL_BOUND_X, current_y, "境界", fontweight="bold", fontsize=10.37, ha="center", va="center", color="#666666")
 ax.text(COL_LARGE_X, current_y, "大包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
 
-current_y -= 1.3
-ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量　｜　", fontsize=6.35, ha="left", va="center", color="#555555")
-ax.text(COL_NAME_X + 63.5, current_y, "×7", fontsize=6.9, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 65.5, current_y, "＝かぜ薬等/", fontsize=6.35, ha="left", va="center", color="#555555")
-ax.text(COL_NAME_X + 75.5, current_y, "×5", fontsize=6.9, fontweight="bold", ha="left", va="center", color=ORANGE)
-ax.text(COL_NAME_X + 77.5, current_y, "＝それ以外", fontsize=6.35, ha="left", va="center", color="#555555")
+current_y -= 1.2
+ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量", fontsize=6.35, ha="left", va="center", color="#555555")
+ax.text(52.3, current_y, "×7", fontsize=6.3, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(53.7, current_y, "＝かぜ薬等", fontsize=5.7, ha="left", va="center", color="#555555")
+current_y -= 1.05
+ax.text(52.3, current_y, "×5", fontsize=6.3, fontweight="bold", ha="left", va="center", color=ORANGE)
+ax.text(53.7, current_y, "＝それ以外", fontsize=5.7, ha="left", va="center", color="#555555")
 
-current_y -= 1.35
+current_y -= 1.25
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
-current_y -= 1.84
+current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.76
+row_height = 2.55
 
 for i, row in mart.iterrows():
     if i % 2 == 0:
@@ -387,30 +389,27 @@ nursing_rows = [
 ]
 for color, shape, tag, ingr in nursing_rows:
     marker(ax, COL_NAME_X + 1.0, y, color, shape, 0.45)
-    ax.text(COL_NAME_X + 2.2, y, tag, fontsize=6.59, fontweight="bold", ha="left", va="center", color="#333333")
-    ax.text(COL_NAME_X + 16.0, y, ingr, fontsize=6.35, ha="left", va="center", color=GRAY)
+    ax.text(COL_NAME_X + 2.2, y, ingr, fontsize=6.3, fontweight="bold", ha="left", va="center", color="#333333")
+    ax.text(COL_NAME_X + 32.0, y, "→ " + tag, fontsize=6.4, fontweight="bold", ha="left", va="center", color=color)
     y -= 1.51
 
 y -= 0.45
 ax.text(COL_NAME_X, y, "追加の安全確認:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 13.5, y, "禁忌確認(アスピリン喘息・ライ症候群等)も指定第2類医薬品として要説明",
-        fontsize=6.1, ha="left", va="center", color=GRAY)
-y -= 1.3
-ax.text(COL_NAME_X + 13.5, y, "年齢の混同注意: 用法上の「成人」＝15歳以上/濫用防止の年齢規制＝18歳未満(16歳も規制対象)",
-        fontsize=6.1, ha="left", va="center", color=GRAY)
-y -= 1.3
-ax.text(COL_NAME_X + 13.5, y, "ブロモバレリル尿素は長期乱用で臭素蓄積→歩行困難・幻覚等の慢性臭素中毒リスク",
-        fontsize=6.1, ha="left", va="center", color=GRAY)
-y -= 1.3
-ax.text(COL_NAME_X + 13.5, y, "妊娠後期はコデイン系(パブロン/ルル等)禁忌、メジコン等単剤を推奨。抗コリン薬(ブスコパン等)は妊婦服用不可・授乳中も中断要",
-        fontsize=6.1, ha="left", va="center", color=GRAY)
-y -= 1.3
-ax.text(COL_NAME_X + 13.5, y, "規定量(1回2錠等)の遵守がメーカー設計の最大効果を安全に引き出す方法。自己判断の増量・組合せ調整は不要",
-        fontsize=6.1, ha="left", va="center", color=GRAY)
-y -= 1.3
-ax.text(COL_NAME_X + 13.5, y, "喘息の方は抗コリン作用で痰が粘稠化し発作誘発の恐れ、不整脈の方は頻脈・QT延長のリスクがあるため抗ヒスタミン薬に注意",
-        fontsize=6.1, ha="left", va="center", color=GRAY)
-y -= 1.4
+SAFETY_SUBJ_X = COL_NAME_X + 13.5
+SAFETY_DET_X = COL_NAME_X + 27.0
+safety_items = [
+    ("アスピリン喘息・ライ症候群:", "禁忌確認は指定第2類医薬品として要説明"),
+    ("年齢区分:", "用法上の「成人」＝15歳以上/濫用防止の規制＝18歳未満(16歳も規制対象)"),
+    ("ブロモバレリル尿素:", "長期乱用で臭素蓄積→歩行困難・幻覚等の慢性中毒リスク"),
+    ("妊婦・授乳婦:", "コデイン系(パブロン/ルル等)は妊娠後期禁忌→メジコン等単剤推奨。抗コリン薬(ブスコパン等)も妊婦不可・授乳中断要"),
+    ("用法用量:", "規定量の遵守がメーカー設計の最大効果を安全に引き出す方法。自己判断の増量・組合せ調整は不要"),
+    ("喘息・不整脈:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)に注意"),
+]
+for subj, detail in safety_items:
+    ax.text(SAFETY_SUBJ_X, y, subj, fontsize=6.2, fontweight="bold", ha="left", va="center", color="#333333")
+    ax.text(SAFETY_DET_X, y, detail, fontsize=6.1, ha="left", va="center", color=GRAY)
+    y -= 1.3
+y -= 0.1
 
 y -= 0.25
 ax.text(COL_NAME_X, y,
