@@ -160,6 +160,24 @@ ax.text(LOGICAL_W / 2, current_y,
         "※本表はAIを用いて作成した試作品です。実使用前に最新の公式情報(添付文書・KEGG等)をご確認ください。",
         fontsize=6.71, ha="center", va="center", color="#888888")
 
+# --- 使い方・販売可否（ルール未経験者でもこの1枚だけで可否判断できるよう最上部に配置） ---
+current_y -= 1.75
+ax.hlines(current_y + 0.9, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
+ax.text(LOGICAL_W / 2, current_y,
+        "【使い方】①下表で商品名を検索し「小包装／大包装」を確認 → ②購入者の年齢を確認 → ③下の可否表に従う",
+        fontsize=8.1, fontweight="bold", ha="center", va="center", color=BLUE)
+current_y -= 1.78
+ax.text(COL_NAME_X, current_y, "販売可否:", fontsize=7.6, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 9.5, current_y,
+        "18歳未満・小容量1個＝氏名年齢確認＋他店購入状況確認が必須で条件付き販売可／18歳以上・小容量1個＝他店購入状況確認のみ必須で通常販売可",
+        fontsize=6.5, ha="left", va="center", color=GRAY)
+current_y -= 1.58
+ax.text(COL_NAME_X + 9.5, current_y, "※大容量・複数個の18歳未満への販売は理由を問わず一律禁止（販売謝絶）",
+        fontsize=6.9, ha="left", va="center", color=RED, fontweight="bold")
+current_y -= 1.55
+ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
+current_y -= 0.35
+
 # --- 本体ヘッダー ---
 current_y -= 2.92
 ax.text(COL_NAME_X, current_y, "薬剤名", fontweight="bold", fontsize=11.59, ha="left", va="center")
@@ -260,45 +278,53 @@ current_y -= 0.65
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.7)
 current_y -= 1.08
 
-# --- QR（右下） ---
-qr_size = 7.0
-qr_y_center = current_y - qr_size / 2 - 0.6
-qr1_x = 80.0
+# --- QR（右側に縦積み。詳細参考テキストと横並びにして高さを共有） ---
+detail_top = current_y
+
+def wrap_by_width(text, chars_per_line):
+    return [text[i:i + chars_per_line] for i in range(0, len(text), chars_per_line)]
+
+qr_size = 6.4
+QR_X = 89.5
+
+qr1_top = detail_top - 0.2
+qr1_center_y = qr1_top - qr_size / 2
 try:
     qr_img = mpimg.imread(QR_APP_PATH)
-    ax.imshow(qr_img, extent=[qr1_x - qr_size/2, qr1_x + qr_size/2,
-                              qr_y_center - qr_size/2, qr_y_center + qr_size/2], zorder=3)
+    ax.imshow(qr_img, extent=[QR_X - qr_size/2, QR_X + qr_size/2,
+                              qr1_center_y - qr_size/2, qr1_center_y + qr_size/2], zorder=3)
 except Exception:
-    ax.add_patch(patches.Rectangle((qr1_x - qr_size/2, qr_y_center - qr_size/2), qr_size, qr_size,
+    ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr1_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
-ax.text(qr1_x, qr_y_center - qr_size/2 - 0.9, "判定アプリ", fontsize=7.32, ha="center", va="top",
-        color="#555555", fontweight="bold")
-ax.text(qr1_x, qr_y_center - qr_size/2 - 1.9, APP_URL, fontsize=4.4, ha="center", va="top", color="#999999")
+qr1_y = qr1_center_y - qr_size/2 - 0.85
+ax.text(QR_X, qr1_y, "判定アプリ", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
+qr1_y -= 1.05
+ax.text(QR_X, qr1_y, APP_URL.replace("https://", ""), fontsize=3.7, ha="center", va="top", color="#999999")
 
-qr2_x = 92.0
+qr2_top = qr1_y - 1.7
+qr2_center_y = qr2_top - qr_size / 2
 try:
     qr_img2 = mpimg.imread(QR_FORM_PATH)
-    ax.imshow(qr_img2, extent=[qr2_x - qr_size/2, qr2_x + qr_size/2,
-                               qr_y_center - qr_size/2, qr_y_center + qr_size/2], zorder=3)
+    ax.imshow(qr_img2, extent=[QR_X - qr_size/2, QR_X + qr_size/2,
+                               qr2_center_y - qr_size/2, qr2_center_y + qr_size/2], zorder=3)
 except Exception:
-    ax.add_patch(patches.Rectangle((qr2_x - qr_size/2, qr_y_center - qr_size/2), qr_size, qr_size,
+    ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr2_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
-ax.text(qr2_x, qr_y_center - qr_size/2 - 0.9, "ご意見・改善案", fontsize=7.32, ha="center", va="top",
-        color="#555555", fontweight="bold")
+qr2_y = qr2_center_y - qr_size/2 - 0.85
+ax.text(QR_X, qr2_y, "ご意見・改善案", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
+qr2_y -= 1.05
+# FORM_URL_SHORT に短縮URL（例: qr.quel.jp等で発行したもの）を設定すると、QRの下にテキスト表示されます。
+FORM_URL_SHORT = ""
+if FORM_URL_SHORT:
+    ax.text(QR_X, qr2_y, FORM_URL_SHORT, fontsize=4.4, ha="center", va="top", color="#999999")
+    qr2_y -= 1.0
 
-# 右下QR分の高さに揃え、左側スペースに「詳細参考(要約)」を並べて配置
-right_block_bottom = qr_y_center - qr_size/2 - 1.9 - 0.8
-detail_top = current_y  # QR/トラップ区切り線の直後の高さを起点に、左カラムへ詳細要約を追加
-detail_bottom = right_block_bottom
-
-# ==========================================================
-# 3. 詳細参考資料の要約（旧2ページ目を集約・左カラムに配置）
-# ==========================================================
-DL, DR = 0.0, 74.0  # 左カラム幅（QR列を避ける）
+# --- 詳細参考資料の要約（旧2ページ目を集約・QR列を避けて配置） ---
+DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】計算手順・販売ルール・判別・エビデンス（相談時の深掘り用）",
+ax.text(COL_NAME_X, y, "【詳細参考】計算手順・判別・エビデンス（相談時の深掘り用／販売可否は最上部を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
 
@@ -307,18 +333,6 @@ ax.text(COL_NAME_X, y, "計算手順:", fontsize=7.07, fontweight="bold", ha="le
 ax.text(COL_NAME_X + 8.5, y,
         "①分類で基準日数(かぜ薬等=7日/それ以外=5日)②1日最大服用量を確認③総量÷1日量=消費日数④基準日数以下=小容量/超=大容量",
         fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 2.05
-
-# B. 販売ルール（ミニ表）
-ax.text(COL_NAME_X, y, "販売ルール:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 9.5, y, "18歳未満・小容量1個＝氏名年齢確認必須＋他店購入状況確認必須で条件付き販売可／",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 1.62
-ax.text(COL_NAME_X + 9.5, y, "18歳以上・小容量1個＝他店購入状況確認のみ必須で通常販売可",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 1.62
-ax.text(COL_NAME_X + 9.5, y, "※大容量・複数個の18歳未満への販売は理由問わず一律禁止",
-        fontsize=6.59, ha="left", va="center", color=RED, fontweight="bold")
 y -= 2.05
 
 # C. 瞬時の判別（ブランド速断）
