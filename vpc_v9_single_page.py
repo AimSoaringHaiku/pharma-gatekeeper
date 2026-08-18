@@ -164,7 +164,7 @@ ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.15
 ax.text(COL_NAME_X, current_y, "① 18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
 ax.text(COL_NAME_X + 12.0, current_y,
-        "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売謝絶）",
+        "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
         fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "② 18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
@@ -187,9 +187,8 @@ current_y -= 1.35
 ax.text(COL_NAME_X + 12.0, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
+ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は判定アプリ(右下QR)で確認", fontsize=5.6, ha="left", va="center", color="#888888")
 current_y -= 1.45
-ax.text(COL_NAME_X + 12.0, current_y, "表にない商品は判定アプリ(右下QR)で確認", fontsize=6.3, ha="left", va="center", color="#333333")
-current_y -= 1.4
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
         "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示を拒否された→年齢確認不能のため販売不可",
@@ -242,13 +241,16 @@ ax.text(53.7, current_y, "＝かぜ薬等", fontsize=5.7, ha="left", va="center"
 current_y -= 1.05
 ax.text(52.3, current_y, "×5", fontsize=6.3, fontweight="bold", ha="left", va="center", color=ORANGE)
 ax.text(53.7, current_y, "＝それ以外", fontsize=5.7, ha="left", va="center", color="#555555")
+current_y -= 1.05
+ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に「成人(15歳以上)の1日量」で計算します（18歳未満の購入者でも同じ）",
+        fontsize=5.6, ha="left", va="center", color=LGRAY)
 
 current_y -= 1.25
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.48
+row_height = 2.42
 
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0
@@ -322,6 +324,14 @@ current_y -= 1.35
 ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
         fontsize=6.1, ha="left", va="center", color="#888888")
+
+# --- ゾーン区分：ここから下は「精査ゾーン」（安全確認業務の質を担保する詳細情報） ---
+current_y -= 1.1
+zone_top = current_y + 0.55
+ax.add_patch(patches.Rectangle((0, -3), LOGICAL_W, zone_top + 3, facecolor="#eaecef", edgecolor="none", zorder=-2))
+ax.text(LOGICAL_W / 2, current_y, "▼ ここからは安全確認を担保するための精査ゾーン（必要に応じて確認）",
+        fontsize=6.0, fontweight="bold", ha="center", va="center", color="#8a8a8a", style="italic")
+current_y -= 0.55
 
 # --- 判定注意・参考（マトリックス） ---
 ref_rows = len(reference) if not reference.empty else 0
@@ -399,7 +409,7 @@ DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・クリニカルパール（相談時の深掘り用/販売可否・判別は最上部を参照）",
+ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・状況別対応のポイント（相談時の深掘り用/販売可否・判別は最上部を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
 
@@ -425,13 +435,13 @@ nursing_rows = [
     (DARKRED, "square", "代替薬へ変更提案", "コデイン/ジヒドロコデイン(乳児モルヒネ代謝リスク)"),
 ]
 for color, shape, tag, ingr in nursing_rows:
-    marker(ax, COL_NAME_X + 1.0, y, color, shape, 0.45)
-    ax.text(COL_NAME_X + 2.2, y, ingr, fontsize=6.3, fontweight="bold", ha="left", va="center", color="#333333")
+    marker(ax, COL_NAME_X + 3.0, y, color, shape, 0.45)
+    ax.text(COL_NAME_X + 4.2, y, ingr, fontsize=6.3, fontweight="bold", ha="left", va="center", color="#333333")
     ax.text(COL_NAME_X + 32.0, y, "→ " + tag, fontsize=6.4, fontweight="bold", ha="left", va="center", color=color)
     y -= 1.51
 
 y -= 0.45
-ax.text(COL_NAME_X, y, "検討すべきクリニカルパール:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, y, "状況別対応のポイント:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 28.5, y, "●", fontsize=5.3, ha="left", va="center", color=RED)
 ax.text(COL_NAME_X + 29.5, y, "禁忌・重大リスク", fontsize=5.3, ha="left", va="center", color="#555555")
 ax.text(COL_NAME_X + 41.0, y, "●", fontsize=5.3, ha="left", va="center", color=ORANGE)
@@ -442,9 +452,9 @@ SAFETY_SUBJ_X = COL_NAME_X + 4.2
 SAFETY_DET_X = COL_NAME_X + 27.0
 safety_items = [
     (RED, "長期連用・依存が疑われたら:", "ブロモバレリル尿素による慢性臭素中毒(歩行困難・幻覚)を疑い、専門医への相談を促す"),
-    (RED, "12歳未満の子どもには:", "コデイン系(ジヒドロコデイン含む)は処方・市販とも絶対禁忌。他成分の咳止めを提案"),
+    (RED, "12歳未満の方には:", "コデイン系(ジヒドロコデイン含む)は処方・市販とも絶対禁忌。他成分の咳止めを提案"),
     (RED, "SSRI服用中と分かったら:", "DXM併用でセロトニン症候群(最も急性致死率が高い相互作用)のリスクを説明し慎重に対応"),
-    (RED, "妊娠後期・授乳中と分かったら:", "コデイン系(パブロン/ルル等)は禁忌、メジコン等単剤を提案。抗コリン薬も服用不可・授乳中断"),
+    (RED, "妊娠後期・授乳中と分かったら:", "コデイン系(パブロン/ルル等)は禁忌、メジコン等単剤を提案。抗コリン薬(ブスコパン等)もOTCでは禁忌(処方箋なら有益性投与可)、授乳中は中断"),
     (ORANGE, "アレルギー歴を聞いたら:", "ピリン疹ならNSAIDsへ代替可、アスピリン喘息ならNSAIDs全般NGでAAP単剤のみ提案"),
     (ORANGE, "喘息・不整脈の既往を聞いたら:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)のリスクを説明"),
     (ORANGE, "他の薬/飲食物との併用を聞かれたら:", "GFJはDXMの血中濃度上昇、高脂肪食後はウレイド系の吸収促進、マクロライド系/アゾール系薬はQT延長に注意"),
@@ -456,7 +466,7 @@ y -= 1.35
 for i, (color, subj, detail) in enumerate(safety_items):
     if i % 2 == 0:
         ax.add_patch(patches.Rectangle((0, y - 0.57), LOGICAL_W, 1.14, facecolor="#fafafa", edgecolor="none"))
-    marker(ax, COL_NAME_X + 1.0, y, color, "circle", 0.4)
+    marker(ax, COL_NAME_X + 3.0, y, color, "circle", 0.4)
     ax.text(SAFETY_SUBJ_X, y, subj, fontsize=6.2, fontweight="bold", ha="left", va="center", color=color)
     ax.text(SAFETY_DET_X, y, detail, fontsize=6.1, ha="left", va="center", color=GRAY)
     y -= 1.14
