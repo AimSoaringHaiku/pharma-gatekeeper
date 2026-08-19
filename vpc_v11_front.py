@@ -174,7 +174,7 @@ ax.text(COL_NAME_X + 12.0, current_y,
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "③ 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
-        "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認。提示がなければ販売不可",
+        "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
         fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "④ 商品の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
@@ -191,7 +191,7 @@ ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は判定アプリ(右�
 current_y -= 1.45
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
-        "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示を拒否された→年齢確認不能のため販売不可",
+        "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示が難しい→年齢・氏名を確認できる方法がないか丁寧に確認",
         fontsize=6.0, ha="left", va="center", color="#333333")
 current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
@@ -440,28 +440,41 @@ for color, shape, tag, ingr in nursing_rows:
     ax.text(COL_NAME_X + 32.0, y, "→ " + tag, fontsize=6.4, fontweight="bold", ha="left", va="center", color=color)
     y -= 1.51
 
-# G. 必須質問5箇条（該当時は裏面の「状況別対応のポイント」を参照）
+# G. 必須質問（厚労省チェック項目に準拠。該当時は裏面の「状況別対応のポイント」を参照）
 y -= 0.5
 box_top = y + 0.7
-box_h = 11.0
+box_h = 15.6
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - box_h), LOGICAL_W - 2 * (COL_NAME_X - 0.5), box_h,
                                      boxstyle="round,pad=0.2", linewidth=1.4, edgecolor=BLUE, facecolor="#f7fafd", zorder=2))
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W - 2 * (COL_NAME_X - 0.5), 1.9,
                                      boxstyle="round,pad=0.2", linewidth=0, facecolor=BLUE, zorder=2))
-ax.text(LOGICAL_W / 2, box_top - 0.95, "レジでの必須質問 5箇条　※該当する場合は裏面「状況別対応のポイント」を参照",
+ax.text(LOGICAL_W / 2, box_top - 0.95, "レジでの必須確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
         fontsize=7.6, fontweight="bold", ha="center", va="center", color="white", zorder=3)
-questions = [
-    "①【年齢】18歳未満ですか？（または身分証はお持ちですか？）",
-    "②【重複】本日、他店で風邪薬・咳止め等を購入されましたか？",
-    "③【体質】アレルギー、喘息、不整脈などの持病はありますか？",
-    "④【併用】病院の薬や、他のお薬を飲まれていますか？",
-    "⑤【妊婦】妊娠中、または授乳中ではありませんか？",
-]
+
 qy = box_top - 3.0
-for q in questions:
-    ax.text(COL_NAME_X + 1.0, qy, q, fontsize=6.6, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-    qy -= 1.55
-ax.text(COL_NAME_X + 1.0, qy, "＋ 複数個希望の方には「どのようなご事情でしょうか？」", fontsize=5.9, ha="left", va="center", color=GRAY, zorder=3)
+ax.text(COL_NAME_X + 1.0, qy, "①【年齢】18歳未満ですか？（身分証等の提示をお願いする場合があります。18歳未満の場合は氏名の確認も必要です）",
+        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.5
+ax.text(COL_NAME_X + 3.0, qy, "→ 18歳未満には複数個・大容量は販売できません。成人の大容量・複数個購入には理由確認が必要です",
+        fontsize=5.9, ha="left", va="center", color=RED, zorder=3)
+qy -= 1.65
+ax.text(COL_NAME_X + 1.0, qy, "②【重複】他店・他の指定濫用防止医薬品の購入や譲り受けはありませんか？（市販薬の譲り受けも含みます）",
+        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.65
+ax.text(COL_NAME_X + 1.0, qy, "③【体質】アレルギー、喘息、不整脈などの持病や副作用歴はありますか？",
+        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.55
+ax.text(COL_NAME_X + 1.0, qy, "④【併用】病院の薬や、他のお薬を飲まれていますか？",
+        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.55
+ax.text(COL_NAME_X + 1.0, qy, "⑤【妊婦】妊娠中、または授乳中ではありませんか？",
+        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.65
+ax.text(COL_NAME_X + 1.0, qy, "＋ いつから、どの程度の症状ですか？（適正使用の確認、長引く場合は受診勧奨の判断に役立ちます）",
+        fontsize=5.9, ha="left", va="center", color=GRAY, zorder=3)
+qy -= 1.45
+ax.text(COL_NAME_X + 1.0, qy, "＋ 複数個希望の方には「どのようなご事情でしょうか？」",
+        fontsize=5.9, ha="left", va="center", color=GRAY, zorder=3)
 y = box_top - box_h - 0.9
 
 y -= 0.25
