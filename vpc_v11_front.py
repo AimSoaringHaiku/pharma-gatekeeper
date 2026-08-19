@@ -197,16 +197,11 @@ current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.35
 
-# --- 計算手順・ブランド速断・成分判別（実務でよく使う判別系を、本体テーブルの直前に集約） ---
+# --- 計算手順・成分判別・ブランド速断（実務でよく使う判別系を、本体テーブルの直前に集約） ---
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 9.5, current_y,
-        "①分類で基準日数(×7=かぜ薬等/×5=それ以外)②1日最大服用量を確認③総量÷1日量=消費日数④基準日数以下=小容量/超=大容量",
-        fontsize=6.4, ha="left", va="center", color=GRAY)
-current_y -= 1.5
-ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 10.5, current_y,
-        "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ",
+        "①分類で基準日数(×7=かぜ薬等/×5=それ以外)　②1日最大服用量を確認　③総量÷1日量=消費日数　④基準日数以下=小容量/超=大容量",
         fontsize=6.4, ha="left", va="center", color=GRAY)
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
@@ -219,6 +214,13 @@ marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
         fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.5
+ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.6, fontweight="bold", fontstyle="italic",
+        ha="left", va="center", color=LGRAY, alpha=0.55)
+ax.text(COL_NAME_X + 9.8, current_y,
+        "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ"
+        "　※正式ルールではなく参考の目安",
+        fontsize=6.0, fontstyle="italic", ha="left", va="center", color=LGRAY, alpha=0.55)
 current_y -= 1.45
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
 current_y -= 0.35
@@ -325,12 +327,9 @@ ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
         fontsize=6.1, ha="left", va="center", color="#888888")
 
-# --- ゾーン区分：ここから下は「精査ゾーン」（安全確認業務の質を担保する詳細情報） ---
-current_y -= 1.1
+current_y -= 0.55
 zone_top = current_y + 0.55
 ax.add_patch(patches.Rectangle((0, -3), LOGICAL_W, zone_top + 3, facecolor="#eaecef", edgecolor="none", zorder=-2))
-ax.text(LOGICAL_W / 2, current_y, "▼ ここからは安全確認を担保するための精査ゾーン（必要に応じて確認）",
-        fontsize=6.0, fontweight="bold", ha="center", va="center", color="#8a8a8a", style="italic")
 current_y -= 0.55
 
 # --- 判定注意・参考（マトリックス） ---
@@ -409,41 +408,14 @@ DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
-ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指導・必須質問（相談時の深掘り用/販売可否・判別は最上部を参照）",
+ax.text(COL_NAME_X, y, "【詳細参考】必須質問（相談時の深掘り用/医療エビデンス・授乳婦指導・状況別対応のポイントは裏面を参照）",
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
-
-# E. 医療エビデンス（1行要約×3）
-ax.text(COL_NAME_X, y, "過量服薬リスク:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 12.0, y, "初日=急性心毒性(無水カフェイン等)で致死性不整脈。3日目以降=劇症肝不全(アセトアミノフェン)が急速進行",
-        fontsize=6.59, ha="left", va="center", color=GRAY)
-y -= 1.5
-ax.text(COL_NAME_X + 12.0, y, "(NSAIDsは服用後すぐ胃痛等の自覚症状が出るが、AAPは無症状のまま進行するため特に注意)",
-        fontsize=6.0, ha="left", va="center", color=LGRAY)
-y -= 1.5
-ax.text(COL_NAME_X + 12.0, y, "頭痛が月15日以上ある環境下で複合鎮痛薬を月10日超・3ヶ月超服用すると薬剤乱用頭痛(MOH)に進展しやすい",
-        fontsize=6.4, ha="left", va="center", color=GRAY)
-y -= 2.0
-
-# F. 授乳婦指導（色マーカー4段）
-ax.text(COL_NAME_X, y, "授乳婦指導:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
-y -= 1.62
-nursing_rows = [
-    (GREEN, "circle", "通常授乳可", "アセトアミノフェン/イブプロフェン/無水カフェイン(通常量)"),
-    (ORANGE, "circle", "服薬後2-4h授乳回避", "デキストロメトルファン/ジフェンヒドラミン(短期)"),
-    (RED, "circle", "搾乳破棄(半減期×3-4h)", "クロルフェニラミン(長期)/プロメタジン/ブロモバレリル尿素"),
-    (DARKRED, "square", "代替薬へ変更提案", "コデイン/ジヒドロコデイン(乳児モルヒネ代謝リスク)"),
-]
-for color, shape, tag, ingr in nursing_rows:
-    marker(ax, COL_NAME_X + 3.0, y, color, shape, 0.45)
-    ax.text(COL_NAME_X + 4.2, y, ingr, fontsize=6.3, fontweight="bold", ha="left", va="center", color="#333333")
-    ax.text(COL_NAME_X + 32.0, y, "→ " + tag, fontsize=6.4, fontweight="bold", ha="left", va="center", color=color)
-    y -= 1.51
 
 # G. 必須質問（厚労省チェック項目に準拠。該当時は裏面の「状況別対応のポイント」を参照）
 y -= 0.5
 box_top = y + 0.7
-box_h = 15.6
+box_h = box_top - 5.9
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - box_h), LOGICAL_W - 2 * (COL_NAME_X - 0.5), box_h,
                                      boxstyle="round,pad=0.2", linewidth=1.4, edgecolor=BLUE, facecolor="#f7fafd", zorder=2))
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W - 2 * (COL_NAME_X - 0.5), 1.9,
@@ -451,30 +423,33 @@ ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W
 ax.text(LOGICAL_W / 2, box_top - 0.95, "レジでの必須確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
         fontsize=7.6, fontweight="bold", ha="center", va="center", color="white", zorder=3)
 
-qy = box_top - 3.0
+qy = box_top - 3.7
 ax.text(COL_NAME_X + 1.0, qy, "①【年齢】18歳未満ですか？（身分証等の提示をお願いする場合があります。18歳未満の場合は氏名の確認も必要です）",
-        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 1.5
+        fontsize=7.8, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 2.35
 ax.text(COL_NAME_X + 3.0, qy, "→ 18歳未満には複数個・大容量は販売できません。成人の大容量・複数個購入には理由確認が必要です",
-        fontsize=5.9, ha="left", va="center", color=RED, zorder=3)
-qy -= 1.65
+        fontsize=7.1, ha="left", va="center", color=RED, zorder=3)
+qy -= 2.55
 ax.text(COL_NAME_X + 1.0, qy, "②【重複】他店・他の指定濫用防止医薬品の購入や譲り受けはありませんか？（市販薬の譲り受けも含みます）",
-        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 1.65
+        fontsize=7.8, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 2.7
+ax.text(COL_NAME_X + 1.0, qy, "以下は、お薬の選択に関わります。", fontsize=6.2, fontstyle="italic",
+        ha="left", va="center", color=LGRAY, zorder=3)
+qy -= 2.15
 ax.text(COL_NAME_X + 1.0, qy, "③【体質】アレルギー、喘息、不整脈などの持病や副作用歴はありますか？",
-        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 1.55
+        fontsize=7.8, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 2.55
 ax.text(COL_NAME_X + 1.0, qy, "④【併用】病院の薬や、他のお薬を飲まれていますか？",
-        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 1.55
+        fontsize=7.8, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 2.55
 ax.text(COL_NAME_X + 1.0, qy, "⑤【妊婦】妊娠中、または授乳中ではありませんか？",
-        fontsize=6.4, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 1.65
+        fontsize=7.8, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 2.7
 ax.text(COL_NAME_X + 1.0, qy, "＋ いつから、どの程度の症状ですか？（適正使用の確認、長引く場合は受診勧奨の判断に役立ちます）",
-        fontsize=5.9, ha="left", va="center", color=GRAY, zorder=3)
-qy -= 1.45
+        fontsize=7.1, ha="left", va="center", color=GRAY, zorder=3)
+qy -= 2.35
 ax.text(COL_NAME_X + 1.0, qy, "＋ 複数個希望の方には「どのようなご事情でしょうか？」",
-        fontsize=5.9, ha="left", va="center", color=GRAY, zorder=3)
+        fontsize=7.1, ha="left", va="center", color=GRAY, zorder=3)
 y = box_top - box_h - 0.9
 
 y -= 0.25
