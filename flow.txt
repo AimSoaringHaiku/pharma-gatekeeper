@@ -13,7 +13,7 @@ python build_final.py
 これでindex.htmlが生成されます。確認してよければ、
 bash
 git add .
-git commit -m "表裏分割"
+git commit -m "表書式統一"
 git push
 
 もし書き換えを元に戻したくなった場合は、
