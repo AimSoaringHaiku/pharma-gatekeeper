@@ -98,15 +98,9 @@ def draw_poster1(x, y_top, w, h):
     for line in wrap_to_width("販売にあたり、OTC医薬品の各区分で確認する事項に加え、以下を確認させていただきます。", fs_b, w - 2.0):
         ax.text(x + 1.0, y, line, fontsize=fs_b, ha="left", va="center", color="#333333")
         y -= lh
-    y -= 0.4
-
-    box_h = 2.4
-    ax.add_patch(patches.FancyBboxPatch((x + 0.8, y - box_h), w - 1.6, box_h, boxstyle="round,pad=0.1",
-                                         linewidth=1.0, edgecolor=RED, facecolor="#fdecea", zorder=2))
-    for i, line in enumerate(wrap_to_width("購入者が18歳未満の場合、複数個・大容量の販売はできません。", fs_h, w - 3.0)):
-        ax.text(x + w / 2, y - 0.7 - i * 1.05, line, fontsize=fs_h, fontweight="bold",
-                ha="center", va="center", color=RED, zorder=3)
-    y -= box_h + 0.7
+    y -= 0.5
+    # ※「18歳未満は複数個/大容量不可」の赤枠は表面①と重複するため削除し、
+    #   この掲示物特有の法的根拠一覧（チェックリスト）に絞る。
 
     ax.text(x + 1.0, y, "＜確認事項＞", fontsize=fs_b, fontweight="bold", ha="left", va="center", color=GRAY)
     y -= lh
@@ -157,19 +151,15 @@ def draw_poster2(x, y_top, w, h):
             fontsize=fs_s, fontweight="bold", ha="center", va="center", color=ORANGE, zorder=3)
     y -= box_h + 0.7
 
-    steps = [
-        ("1 購入数", "18歳未満は小容量1個のみ。18歳以上の複数個・大容量は購入理由を伺います。"),
-        ("2 年齢確認", "18歳未満の方は年齢・氏名を確認。必要に応じ身分証等で確認します。"),
-        ("3 使用状況の確認", "他の薬局での購入や併用薬の重複がないか確認します。"),
-        ("4 販売できない場合", "適正使用が確認できない時は、販売できないことがあります。"),
-    ]
-    for label, body in steps:
-        ax.text(x + 1.0, y, label, fontsize=fs_b, fontweight="bold", ha="left", va="center", color=ORANGE)
-        y -= 0.95
-        for line in wrap_to_width(body, fs_s, w - 2.6):
-            ax.text(x + 1.8, y, line, fontsize=fs_s, ha="left", va="center", color="#333333")
-            y -= 0.9
-        y -= 0.2
+    # ※確認項目1〜4の詳細(年齢・重複・理由確認等)は表面の必須質問①〜⑤と重複するため、
+    #   見出しのみの1行要約に圧縮する。
+    ax.text(x + 1.0, y, "確認の流れ：①購入数→②年齢確認→③使用状況→④販売可否",
+            fontsize=fs_b, fontweight="bold", ha="left", va="center", color=ORANGE)
+    y -= lh
+    for line in wrap_to_width("（詳細は表面「レジでの必須確認事項」を参照）", fs_s, w - 2.0):
+        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color=GRAY)
+        y -= 0.9
+    y -= 0.4
 
     for line in wrap_to_width("対象商品には「要確認」等の表示がある場合があります（不明な点は薬剤師・登録販売者へ）。",
                                fs_s, w - 2.0):
@@ -195,7 +185,7 @@ def draw_poster3_flow(x, y_top, w, h):
         ["来店・購入の意思表示", "（陳列品を持参／声かけ）"],
         ["購入者の様子を確認", "（年齢確認が必要そうか等）"],
         ["年齢確認（身分証等）", "18歳未満／18歳以上で分岐"],
-        ["確認・情報提供", "他店購入状況を全件確認／", "18歳未満は氏名+大容量不可／", "18歳以上は複数個等の理由確認"],
+        ["確認・情報提供", "（詳細は表面フローを参照）"],
         ["販売の可否判断", "（説明の理解度・懸念の有無等）"],
         ["販売せず／販売実施", "懸念があれば理由等を記録・申し送り"],
     ]
@@ -273,11 +263,24 @@ cy_top = ROW1_BOTTOM - header_h - 1.3
 
 
 def draw_dense_case(x, y, w, q_num, category, condition, bullets):
-    """タイトルを1行にまとめ、各弾丸を密に列挙。"""
-    header = f"{q_num}［{category}］{condition}"
-    for hline in wrap_to_width(header, TITLE_FS, w):
-        ax.text(x, y, hline, fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color=BLUE)
+    """カテゴリを色付きバッジで強調し、条件文・弾丸を列挙。末尾に薄い罫線で区切る。"""
+    tag = f"{q_num}{category}"
+    tag_w = text_width(tag, TITLE_FS, "bold") + 1.4
+    tag_h = LINE_H * 0.95
+    ax.add_patch(patches.FancyBboxPatch((x, y - tag_h / 2), tag_w, tag_h, boxstyle="round,pad=0.06",
+                                         linewidth=0, facecolor=BLUE, zorder=2))
+    ax.text(x + tag_w / 2, y, tag, fontsize=TITLE_FS, fontweight="bold", ha="center", va="center",
+            color="white", zorder=3)
+
+    cond_x = x + tag_w + 1.0
+    wrapped_cond = wrap_to_width(condition, TITLE_FS, w - tag_w - 1.0)
+    if wrapped_cond:
+        ax.text(cond_x, y, wrapped_cond[0], fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color="#222222")
+    y -= LINE_H
+    for line in wrapped_cond[1:]:
+        ax.text(x, y, line, fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color="#222222")
         y -= LINE_H
+
     for bullet in bullets:
         is_alert = ("禁忌" in bullet) or ("一律" in bullet) or ("不可" in bullet)
         color = RED if is_alert else "#333333"
@@ -287,7 +290,9 @@ def draw_dense_case(x, y, w, q_num, category, condition, bullets):
             indent = x + 1.0 if wi == 0 else x + 2.2
             ax.text(indent, y, wline, fontsize=BODY_FS, ha="left", va="center", color=color, fontweight=weight)
             y -= LINE_H
-    return y - 0.25
+    y -= 0.15
+    ax.hlines(y, x, x + w, colors="#e8b8b8", linewidth=0.6)
+    return y - 0.35
 
 
 CASES_A = [
@@ -344,9 +349,20 @@ DRIVING_ROWS = [
 
 def draw_driving_table(x, y, w, rows):
     """運転回避目安を表形式で密に列挙（プロース箇条書きより省スペース）。"""
-    header = "※［運転］運転前後の服用を心配されたら"
-    for hline in wrap_to_width(header, TITLE_FS, w):
-        ax.text(x, y, hline, fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color=BLUE)
+    tag = "※運転"
+    tag_w = text_width(tag, TITLE_FS, "bold") + 1.4
+    tag_h = LINE_H * 0.95
+    ax.add_patch(patches.FancyBboxPatch((x, y - tag_h / 2), tag_w, tag_h, boxstyle="round,pad=0.06",
+                                         linewidth=0, facecolor=BLUE, zorder=2))
+    ax.text(x + tag_w / 2, y, tag, fontsize=TITLE_FS, fontweight="bold", ha="center", va="center",
+            color="white", zorder=3)
+    cond_x = x + tag_w + 1.0
+    wrapped_cond = wrap_to_width("運転前後の服用を心配されたら", TITLE_FS, w - tag_w - 1.0)
+    if wrapped_cond:
+        ax.text(cond_x, y, wrapped_cond[0], fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color="#222222")
+    y -= LINE_H
+    for line in wrapped_cond[1:]:
+        ax.text(x, y, line, fontsize=TITLE_FS, fontweight="bold", ha="left", va="center", color="#222222")
         y -= LINE_H
     ax.text(x + 1.0, y, "▶最も排泄が遅い成分を基準に判断（半減期の長い成分ほど翌日に持ち越しやすい）",
             fontsize=BODY_FS - 0.3, ha="left", va="center", color="#333333")
@@ -364,7 +380,9 @@ def draw_driving_table(x, y, w, rows):
         ax.text(col2_x, y, avoid, fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=RED)
         ax.text(col3_x, y, half, fontsize=tbl_fs, ha="left", va="center", color="#666666")
         y -= tbl_lh
-    return y - 0.2
+    y -= 0.15
+    ax.hlines(y, x, x + w, colors="#e8b8b8", linewidth=0.6)
+    return y - 0.35
 
 
 def draw_nursing(x, y, w):
