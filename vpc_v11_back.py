@@ -37,8 +37,8 @@ def text_width(text, fontsize, weight="normal", style="normal"):
     return x1 - x0
 
 
-def wrap_to_width(text, fontsize, max_width):
-    """1文字ずつ幅を測りながら、max_widthに収まるように行分割する"""
+def _split_chars(text, fontsize, max_width):
+    """1文字ずつ幅を測りながら折り返す（フォールバック用）"""
     lines, cur = [], ""
     for ch in text:
         trial = cur + ch
@@ -50,6 +50,49 @@ def wrap_to_width(text, fontsize, max_width):
     if cur:
         lines.append(cur)
     return lines
+
+
+def wrap_to_width(text, fontsize, max_width):
+    """句読点等の直後を優先的な改行位置とし、意味のまとまりで行分割する。
+    「。」だけが次行に孤立する等の不自然な折り返しを避けるため、1文字単位ではなく
+    句読点区切りのトークン単位で貪欲に詰める（トークル自体が幅を超える場合のみ
+    文字単位にフォールバック）。"""
+    tokens, cur_token = [], ""
+    for ch in text:
+        cur_token += ch
+        if ch in "。、）":
+            tokens.append(cur_token)
+            cur_token = ""
+    if cur_token:
+        tokens.append(cur_token)
+
+    lines, cur = [], ""
+    for token in tokens:
+        trial = cur + token
+        if cur and text_width(trial, fontsize) > max_width:
+            lines.append(cur)
+            cur = token
+        else:
+            cur = trial
+    if cur:
+        lines.append(cur)
+
+    final_lines = []
+    for line in lines:
+        if text_width(line, fontsize) <= max_width:
+            final_lines.append(line)
+        else:
+            final_lines.extend(_split_chars(line, fontsize, max_width))
+
+    # 「）」の直後に「。」が続く場合など、句読点だけの短い行が孤立することがあるため、
+    # そのような行は前の行へ統合する。
+    merged = []
+    for line in final_lines:
+        if merged and len(line) <= 2 and all(c in "。、）" for c in line):
+            merged[-1] += line
+        else:
+            merged.append(line)
+    return merged
 
 
 # --- 上部余白（約10cm）。物理A4縦(297mm)に対する比率で確保 ---
@@ -69,16 +112,23 @@ GRID_BOTTOM = 3.0
 GUTTER = 2.0
 
 
-def panel_frame(x, y_top, w, h, title, color):
-    """イラスト無し・テキストのみのパネル枠。細い色付きタイトルバーのみで無駄な余白を作らない。"""
+def panel_frame(x, y_top, w, h, title, color, subtitle=None):
+    """イラスト無し・テキストのみのパネル枠。色付きタイトルバー＋元資料名の副題（任意）。"""
     y_bottom = y_top - h
     ax.add_patch(patches.FancyBboxPatch((x, y_bottom), w, h, boxstyle="round,pad=0.12",
                                          linewidth=1.2, edgecolor=color, facecolor="white", zorder=1))
-    bar_h = 2.3
+    sub_fs = 4.0
+    sub_lines = wrap_to_width(subtitle, sub_fs, w - 2.0) if subtitle else []
+    bar_h = 2.3 + (0.85 * len(sub_lines) if sub_lines else 0)
     ax.add_patch(patches.FancyBboxPatch((x, y_top - bar_h), w, bar_h, boxstyle="round,pad=0.12",
                                          linewidth=0, facecolor=color, zorder=2))
-    ax.text(x + w / 2, y_top - bar_h / 2, title, fontsize=6.6, fontweight="bold",
+    title_y = y_top - (1.15 if sub_lines else bar_h / 2)
+    ax.text(x + w / 2, title_y, title, fontsize=6.6, fontweight="bold",
             ha="center", va="center", color="white", zorder=3)
+    sy = title_y - 1.05
+    for line in sub_lines:
+        ax.text(x + w / 2, sy, line, fontsize=sub_fs, ha="center", va="center", color="#eef4fb", zorder=3)
+        sy -= 0.85
     return y_top - bar_h - 0.9
 
 
@@ -88,7 +138,8 @@ def panel_frame(x, y_top, w, h, title, color):
 def draw_poster1(x, y_top, w, h):
     fs_h, fs_b, fs_s = 5.4, 4.7, 4.3
     lh = 1.0
-    y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", BLUE)
+    y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", BLUE,
+                     subtitle="元資料：指定濫用防止医薬品をご購入時フリップ")
 
     for line in wrap_to_width("指定濫用防止医薬品の濫用をした場合、保健衛生上の危害が発生するおそれがあります。", fs_h, w - 2.0):
         ax.text(x + 1.0, y, line, fontsize=fs_h, fontweight="bold", ha="left", va="center", color=RED)
@@ -133,7 +184,8 @@ def draw_poster1(x, y_top, w, h):
 def draw_poster2(x, y_top, w, h):
     fs_h, fs_b, fs_s = 5.4, 4.7, 4.3
     lh = 1.0
-    y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", ORANGE)
+    y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", ORANGE,
+                     subtitle="元資料：薬物濫用ポスター「大切なお知らせ」販売方法の変更")
 
     for line in wrap_to_width("2026.5/1から、法律で「指定濫用防止医薬品」と定められた製品は販売方法が変わります。",
                                fs_h, w - 2.0):
@@ -179,7 +231,8 @@ def draw_poster2(x, y_top, w, h):
 # 参考③ 来店〜販売可否フロー（簡略版・箱＋矢印で骨格のみ再現）
 # ==========================================================
 def draw_poster3_flow(x, y_top, w, h):
-    y = panel_frame(x, y_top, w, h, "参考③ 来店〜販売可否フロー", GREEN)
+    y = panel_frame(x, y_top, w, h, "参考③ 来店〜販売可否フロー", GREEN,
+                     subtitle="元資料：「販売可否判断フローチャート」OTCマニュアル(第2版)")
     fs = 4.5
     nodes = [
         ["来店・購入の意思表示", "（陳列品を持参／声かけ）"],
@@ -248,7 +301,7 @@ ROW1_BOTTOM = min(end1, end2, end3) - 0.6
 # 余った縦スペースを使ってフォントを拡大し、枠は実際の分量に合わせて後から
 # ぴったりのサイズで描く（無駄な余白を残さないため）。
 # ==========================================================
-FONT_SCALE = 1.4
+FONT_SCALE = 1.35
 TITLE_FS, BODY_FS, LINE_H = 6.0 * FONT_SCALE, 5.3 * FONT_SCALE, 1.06 * FONT_SCALE
 
 header_h = 2.6
@@ -259,7 +312,7 @@ Q_COL_GUTTER = 3.0
 Q_COL_W = (CONTENT_W_FULL - Q_COL_GUTTER) / 2
 QA_X = CONTENT_LEFT
 QB_X = CONTENT_LEFT + Q_COL_W + Q_COL_GUTTER
-cy_top = ROW1_BOTTOM - header_h - 1.3
+cy_top = ROW1_BOTTOM - header_h - 2.3
 
 
 def draw_dense_case(x, y, w, q_num, category, condition, bullets):
@@ -282,6 +335,7 @@ def draw_dense_case(x, y, w, q_num, category, condition, bullets):
         y -= LINE_H
 
     for bullet in bullets:
+        bullet = bullet.replace("→", "⇒")  # 行動指示の矢印を強調（➡は和文フォントで欠字するため⇒を使用）
         is_alert = ("禁忌" in bullet) or ("一律" in bullet) or ("不可" in bullet)
         color = RED if is_alert else "#333333"
         weight = "bold" if is_alert else "normal"
@@ -369,16 +423,17 @@ def draw_driving_table(x, y, w, rows):
     y -= LINE_H * 0.95
     tbl_fs = 4.5 * FONT_SCALE
     tbl_lh = 0.88 * FONT_SCALE
-    col1_x, col2_x, col3_x = x + 1.0, x + w * 0.46, x + w * 0.76
+    # 「半減期→回避目安」の因果関係が伝わるよう、半減期を先に置く
+    col1_x, col2_x, col3_x = x + 1.0, x + w * 0.46, x + w * 0.68
     ax.text(col1_x, y, "成分（世代/分類）", fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=GRAY)
-    ax.text(col2_x, y, "回避目安", fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=GRAY)
-    ax.text(col3_x, y, "半減期", fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=GRAY)
+    ax.text(col2_x, y, "半減期", fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=GRAY)
+    ax.text(col3_x, y, "⇒ 回避目安", fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=GRAY)
     y -= tbl_lh
     ax.hlines(y + tbl_lh * 0.55, x + 1.0, x + w - 1.0, colors="#dddddd", linewidth=0.5)
     for name, avoid, half in rows:
         ax.text(col1_x, y, name, fontsize=tbl_fs, ha="left", va="center", color="#333333")
-        ax.text(col2_x, y, avoid, fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=RED)
-        ax.text(col3_x, y, half, fontsize=tbl_fs, ha="left", va="center", color="#666666")
+        ax.text(col2_x, y, half, fontsize=tbl_fs, ha="left", va="center", color="#666666")
+        ax.text(col3_x, y, avoid, fontsize=tbl_fs, fontweight="bold", ha="left", va="center", color=RED)
         y -= tbl_lh
     y -= 0.15
     ax.hlines(y, x, x + w, colors="#e8b8b8", linewidth=0.6)
@@ -399,7 +454,7 @@ def draw_nursing(x, y, w):
             ax.add_patch(patches.Circle((x + 0.35, y), 0.3, facecolor=mcolor, edgecolor="none", zorder=3))
         else:
             ax.add_patch(patches.Rectangle((x + 0.05, y - 0.3), 0.6, 0.6, facecolor=mcolor, edgecolor="none", zorder=3))
-        wrapped = wrap_to_width(f"{ingr} → {tag}", BODY_FS, w - 1.6)
+        wrapped = wrap_to_width(f"{ingr} ⇒ {tag}", BODY_FS, w - 1.6)
         for wi, wline in enumerate(wrapped):
             ax.text(x + 1.0, y, wline, fontsize=BODY_FS, fontweight="bold" if wi == 0 else "normal",
                     ha="left", va="center", color=mcolor if wi == 0 else "#333333")
@@ -427,6 +482,9 @@ ax.add_patch(patches.FancyBboxPatch((GRID_LEFT, ROW1_BOTTOM - header_h), GRID_RI
                                      boxstyle="round,pad=0.15", linewidth=0, facecolor=RED, zorder=0.5))
 ax.text(LOGICAL_W / 2, ROW1_BOTTOM - header_h / 2, "④ 状況別対応のポイント", fontsize=8.4, fontweight="bold",
         ha="center", va="center", color="white", zorder=3)
+ax.text(LOGICAL_W / 2, ROW1_BOTTOM - header_h - 1.0,
+        "※現場で遭遇しやすい主要な注意点の抜粋です。全てを網羅するものではありません。",
+        fontsize=5.4, fontstyle="italic", ha="center", va="center", color=GRAY, zorder=3)
 
 # --- 下部免責・出典 ---
 ax.text(LOGICAL_W / 2, 1.9, "※本マニュアルは一次的対応の目安であり、個別の診断を行うものではありません。最終判断は薬剤師・登録販売者の専門的知見に基づき実施してください。",
