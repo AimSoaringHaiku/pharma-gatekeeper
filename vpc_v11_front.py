@@ -224,6 +224,11 @@ marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
         fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.4
+marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
 current_y -= 1.5
 WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
