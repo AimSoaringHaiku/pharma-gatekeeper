@@ -65,6 +65,12 @@ for line in wrap_to_width(note, 3.6, w - 1.0):
     ax.text(x + 0.5, y, line, fontsize=3.6, fontweight="bold", ha="left", va="center",
             color=RED, fontstyle="italic", zorder=4)
     y -= 1.5
+y -= 0.2
+note2 = "※パッケージ表記は今後数年かけて順次変更される予定。最新の表示に注意（出典：cheer-job.comコラム）"
+for line in wrap_to_width(note2, 3.2, w - 1.0):
+    ax.text(x + 0.5, y, line, fontsize=3.2, ha="left", va="center",
+            color="#666666", fontstyle="italic", zorder=4)
+    y -= 1.3
 
 plt.close(_meas_fig)
 fig.savefig("scratch_poster2_test.png", dpi=300)
