@@ -3,11 +3,9 @@ import matplotlib.patches as patches
 import matplotlib.image as mpimg
 import japanize_matplotlib
 
-IMG_POSTER1 = "ref_poster_kounyusha.png"
+IMG_POSTER2 = "ref_poster_oshirase.png"
 RED = "#d32f2f"
-INK = "#1a1a1a"
 
-# 本番と同じ比率・1コマ幅で検証
 LOGICAL_W, LOGICAL_H = 32.67, 55.0
 fig, ax = plt.subplots(figsize=(3.267, 5.5))
 ax.set_position([0, 0, 1, 1])
@@ -48,7 +46,7 @@ def wrap_to_width(text, fontsize, max_width):
 
 
 x, w = 1.0, 30.67
-img = mpimg.imread(IMG_POSTER1)
+img = mpimg.imread(IMG_POSTER2)
 img_h_px, img_w_px = img.shape[0], img.shape[1]
 aspect = img_w_px / img_h_px
 img_w = w
@@ -58,16 +56,17 @@ img_y0 = img_y1 - img_h
 ax.imshow(img, extent=[img_x0, img_x0 + img_w, img_y0, img_y1], zorder=2)
 ax.add_patch(patches.Rectangle((img_x0, img_y0), img_w, img_h, fill=False, edgecolor="#cccccc", linewidth=0.5, zorder=3))
 
-# --- 「□ 年齢」行の右側の余白に、注釈を1つだけ書き込む ---
-# 「複数個・大容量の理由を聞けるのは18歳以上が前提」という、赤枠の文言だけでは
-# 伝わりにくい点を補足する。他の箇所（第一声・法的根拠等）は見れば分かるため省略。
-note_y = img_y1 - 0.370 * img_h
-ax.text(img_x0 + img_w * 0.35, note_y, "☞理由確認は成人（18歳以上）のみ対象",
-        fontsize=3.5, fontweight="bold", ha="left", va="center",
-        color=RED, fontstyle="italic", zorder=4,
-        bbox=dict(boxstyle="round,pad=0.1", facecolor="white", edgecolor="none", alpha=0.85))
+# --- 画像内に書き込める余白がないため、パネル下に短い追記を1つだけ添える ---
+# 「対象商品の目印」の表示イメージから読み取れる、意外と知られていないパターン。
+# あくまで例であり例外もあるため、断定を避けた表現にする。
+y = img_y0 - 1.3
+note = "☞目印の傾向：小容量は「要確認」全体を枠で囲み、大容量は「要」の一文字だけを枠で囲むことが多い（表示は製品により異なり、表示がない製品も対象外とは限らない）"
+for line in wrap_to_width(note, 3.6, w - 1.0):
+    ax.text(x + 0.5, y, line, fontsize=3.6, fontweight="bold", ha="left", va="center",
+            color=RED, fontstyle="italic", zorder=4)
+    y -= 1.5
 
 plt.close(_meas_fig)
-fig.savefig("scratch_poster1_test3.png", dpi=300)
+fig.savefig("scratch_poster2_test.png", dpi=300)
 plt.close(fig)
-print("done")
+print("done, final y =", y)
