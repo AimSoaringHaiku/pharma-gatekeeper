@@ -1,8 +1,12 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import matplotlib.image as mpimg
 import japanize_matplotlib
 
 OUTPUT_PNG = "atomic_card_table_v11_back.png"
+IMG_POSTER1 = "ref_poster_kounyusha.png"   # 「指定濫用防止医薬品をご購入時フリップ」
+IMG_POSTER2 = "ref_poster_oshirase.png"    # 「大切なお知らせ」販売方法の変更
+IMG_FLOWCHART = "ref_flowchart.png"        # 「販売可否判断フローチャート」OTCマニュアル(第2版)
 
 # A4縦相当の比率レイアウト（表面と用紙を揃え、両面印刷での取り扱いを統一）
 LOGICAL_W, LOGICAL_H = 100.0, 141.4
@@ -132,134 +136,82 @@ def panel_frame(x, y_top, w, h, title, color, subtitle=None):
     return y_top - bar_h - 0.9
 
 
+def draw_callout_note(cx, cy, text, w, fontsize=3.5, line_h=1.35, color=RED, halign="left"):
+    """元資料の画像上の余白に直接書き込む、手書きメモ風の短い注釈（☞＋断定しすぎない一言）。"""
+    lines = wrap_to_width(text, fontsize, w)
+    for i, line in enumerate(lines):
+        ax.text(cx, cy - i * line_h, line, fontsize=fontsize, fontweight="bold",
+                ha=halign, va="center", color=color, fontstyle="italic", zorder=4,
+                bbox=dict(boxstyle="round,pad=0.08", facecolor="white", edgecolor="none", alpha=0.85))
+    return cy - len(lines) * line_h
+
+
+def draw_poster_image(x, y_top, w, img_path):
+    """元資料の画像をそのまま表示する（記述層）。imgオブジェクトと配置座標を返す。"""
+    img = mpimg.imread(img_path)
+    img_h_px, img_w_px = img.shape[0], img.shape[1]
+    aspect = img_w_px / img_h_px
+    img_w = w
+    img_h = img_w / aspect
+    img_x0, img_y1 = x, y_top
+    img_y0 = img_y1 - img_h
+    ax.imshow(img, extent=[img_x0, img_x0 + img_w, img_y0, img_y1], zorder=2)
+    ax.add_patch(patches.Rectangle((img_x0, img_y0), img_w, img_h, fill=False,
+                                    edgecolor="#cccccc", linewidth=0.5, zorder=3))
+    return img_x0, img_y1, img_w, img_h
+
+
 # ==========================================================
-# 参考① 購入者への掲示例（イラスト・ロゴを省き、文章構成のみ再現）
+# 参考① 購入者への掲示例（元資料の画像そのまま＋要所に一言だけ書き込み）
 # ==========================================================
 def draw_poster1(x, y_top, w, h):
-    fs_h, fs_b, fs_s = 5.4, 4.7, 4.3
-    lh = 1.0
     y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", BLUE,
-                     subtitle="元資料：指定濫用防止医薬品をご購入時フリップ")
+                     subtitle="元資料：指定濫用防止医薬品をご購入時フリップ（原本＋解釈）")
+    img_x0, img_y1, img_w, img_h = draw_poster_image(x, y, w, IMG_POSTER1)
 
-    for line in wrap_to_width("指定濫用防止医薬品の濫用をした場合、保健衛生上の危害が発生するおそれがあります。", fs_h, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_h, fontweight="bold", ha="left", va="center", color=RED)
-        y -= lh
-    y -= 0.3
-
-    for line in wrap_to_width("販売にあたり、OTC医薬品の各区分で確認する事項に加え、以下を確認させていただきます。", fs_b, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_b, ha="left", va="center", color="#333333")
-        y -= lh
-    y -= 0.5
-    # ※「18歳未満は複数個/大容量不可」の赤枠は表面①と重複するため削除し、
-    #   この掲示物特有の法的根拠一覧（チェックリスト）に絞る。
-
-    ax.text(x + 1.0, y, "＜確認事項＞", fontsize=fs_b, fontweight="bold", ha="left", va="center", color=GRAY)
-    y -= lh
-    checklist = ["年齢", "18歳未満の場合は当該者の氏名", "他の薬剤・医薬品の使用状況",
-                 "当該製品/他の指定濫用防止医薬品の購入・譲り受け状況", "大容量・複数個購入の場合、その理由",
-                 "適正な使用であることを確認するために必要な事項", "その他、情報提供に必要な事項"]
-    for item in checklist:
-        for i, line in enumerate(wrap_to_width(f"□ {item}", fs_s, w - 3.0)):
-            indent = x + 1.0 if i == 0 else x + 2.6
-            ax.text(indent, y, line, fontsize=fs_s, ha="left", va="center", color="#333333")
-            y -= 0.95
-    y -= 0.3
-
-    ax.text(x + 1.0, y, "＜情報提供内容＞", fontsize=fs_b, fontweight="bold", ha="left", va="center", color=GRAY)
-    y -= lh
-    for line in wrap_to_width("①名称②有効成分と分量③用法用量④効能効果⑤その他薬剤師が適正使用に必要と判断する事項",
-                               fs_s, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color="#333333")
-        y -= 0.95
-    y -= 0.3
-    for line in wrap_to_width("※適正な使用を確保できないと判断した場合は販売を行いません。", fs_s, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color=GRAY)
-        y -= 0.95
-    return y
+    # 「□ 年齢」行の右余白に、赤枠の文言だけでは伝わりにくい前提を一言だけ添える。
+    # 他の見出し(第一声・法的根拠等)は見れば分かるため、書き込みは最小限に絞る。
+    draw_callout_note(img_x0 + img_w * 0.35, img_y1 - 0.370 * img_h,
+                       "☞理由確認は成人（18歳以上）のみ対象", img_w * 0.6)
+    return img_y1 - img_h
 
 
 # ==========================================================
-# 参考② 制度改正のお知らせ（イラスト・写真を省き、文章構成のみ再現）
+# 参考② 制度改正のお知らせ（元資料の画像そのまま＋パネル下に短い補足）
 # ==========================================================
 def draw_poster2(x, y_top, w, h):
-    fs_h, fs_b, fs_s = 5.4, 4.7, 4.3
-    lh = 1.0
     y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", ORANGE,
                      subtitle="元資料：薬物濫用ポスター「大切なお知らせ」販売方法の変更")
+    img_x0, img_y1, img_w, img_h = draw_poster_image(x, y, w, IMG_POSTER2)
+    y = img_y1 - img_h
 
-    for line in wrap_to_width("2026.5/1から、法律で「指定濫用防止医薬品」と定められた製品は販売方法が変わります。",
-                               fs_h, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_h, fontweight="bold", ha="left", va="center", color=ORANGE)
-        y -= lh
-    for line in wrap_to_width("※市販薬の不適正使用による健康被害が報告されています。", fs_s, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color=GRAY)
-        y -= 0.95
-    y -= 0.3
-
-    box_h = 1.9
-    ax.add_patch(patches.FancyBboxPatch((x + 0.8, y - box_h), w - 1.6, box_h, boxstyle="round,pad=0.1",
-                                         linewidth=1.0, edgecolor=ORANGE, facecolor="#fff3e6", zorder=2))
-    ax.text(x + w / 2, y - box_h / 2, "購入時に確認・説明があります（原則、使用者本人への販売）",
-            fontsize=fs_s, fontweight="bold", ha="center", va="center", color=ORANGE, zorder=3)
-    y -= box_h + 0.7
-
-    # ※確認項目1〜4の詳細(年齢・重複・理由確認等)は表面の必須質問①〜⑤と重複するため、
-    #   見出しのみの1行要約に圧縮する。
-    ax.text(x + 1.0, y, "確認の流れ：①購入数→②年齢確認→③使用状況→④販売可否",
-            fontsize=fs_b, fontweight="bold", ha="left", va="center", color=ORANGE)
-    y -= lh
-    for line in wrap_to_width("（詳細は表面「レジでの必須確認事項」を参照）", fs_s, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color=GRAY)
-        y -= 0.9
-    y -= 0.4
-
-    for line in wrap_to_width("対象商品には「要確認」等の表示がある場合があります（不明な点は薬剤師・登録販売者へ）。",
-                               fs_s, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color=GRAY)
-        y -= 0.9
-    y -= 0.3
-    ax.text(x + 1.0, y, "＜対象8成分＞", fontsize=fs_s, fontweight="bold", ha="left", va="center", color=GRAY)
-    y -= 0.9
-    for line in wrap_to_width("エフェドリン/コデイン/ジヒドロコデイン/ジフェンヒドラミン/デキストロメトルファン/"
-                               "プソイドエフェドリン/ブロムワレリル尿素/メチルエフェドリン", fs_s, w - 2.0):
-        ax.text(x + 1.0, y, line, fontsize=fs_s, ha="left", va="center", color="#333333")
-        y -= 0.9
+    # 画像内に書き込める余白がないため、パネル下にごく短い補足を1つだけ添える。
+    # 「対象商品の目印」の表示イメージから読み取れる、意外と知られていない傾向。
+    y -= 1.3
+    y = draw_callout_note(x + 0.5, y,
+                           "☞目印の傾向：小容量は「要確認」全体を枠で囲み、大容量は「要」の一文字だけを枠で囲むことが多い"
+                           "（表示は製品により異なり、表示がない製品も対象外とは限らない）",
+                           w - 1.0, fontsize=3.6, line_h=1.5, color=RED)
+    y -= 0.2
+    y = draw_callout_note(x + 0.5, y,
+                           "※パッケージ表記は今後数年かけて順次変更される予定。最新の表示に注意（出典：cheer-job.comコラム）",
+                           w - 1.0, fontsize=3.2, line_h=1.3, color="#666666")
     return y
 
 
 # ==========================================================
-# 参考③ 来店〜販売可否フロー（簡略版・箱＋矢印で骨格のみ再現）
+# 参考③ 来店〜販売可否フロー（元資料の画像そのまま＋要所に一言だけ書き込み）
 # ==========================================================
 def draw_poster3_flow(x, y_top, w, h):
     y = panel_frame(x, y_top, w, h, "参考③ 来店〜販売可否フロー", GREEN,
                      subtitle="元資料：「販売可否判断フローチャート」OTCマニュアル(第2版)")
-    fs = 4.5
-    nodes = [
-        ["来店・購入の意思表示", "（陳列品を持参／声かけ）"],
-        ["購入者の様子を確認", "（年齢確認が必要そうか等）"],
-        ["年齢確認（身分証等）", "18歳未満／18歳以上で分岐"],
-        ["確認・情報提供", "（詳細は表面フローを参照）"],
-        ["販売の可否判断", "（説明の理解度・懸念の有無等）"],
-        ["販売せず／販売実施", "懸念があれば理由等を記録・申し送り"],
-    ]
-    box_w = w - 4.0
-    lh = 0.92
-    for i, lines in enumerate(nodes):
-        box_h = 0.7 + lh * len(lines)
-        ax.add_patch(patches.FancyBboxPatch((x + 2.0, y - box_h), box_w, box_h, boxstyle="round,pad=0.1",
-                                             linewidth=1.0, edgecolor=GREEN, facecolor="#eaf5ea", zorder=2))
-        ly = y - 0.55
-        for line in lines:
-            for wline in wrap_to_width(line, fs, box_w - 1.2):
-                ax.text(x + w / 2, ly, wline, fontsize=fs, ha="center", va="center", color="#2e5e2e", zorder=3)
-                ly -= lh
-        y -= box_h
-        if i < len(nodes) - 1:
-            y -= 0.5
-            ax.annotate("", xy=(x + w / 2, y), xytext=(x + w / 2, y + 0.5),
-                        arrowprops=dict(arrowstyle="-|>", color="#7a9d7a", lw=1.1))
-            y -= 0.1
-    return y
+    img_x0, img_y1, img_w, img_h = draw_poster_image(x, y, w, IMG_FLOWCHART)
+
+    # 「必要に応じ」の右余白に、表面のフローにはない実務ポイントを一言だけ添える。
+    draw_callout_note(img_x0 + img_w * 0.78, img_y1 - 0.838 * img_h,
+                       "☞販売しても「申し送り」が必要な場合あり", img_w * 0.24,
+                       fontsize=3.3, line_h=1.3)
+    return img_y1 - img_h
 
 
 COL_W3 = (GRID_RIGHT - GRID_LEFT - 2 * GUTTER) / 3
@@ -301,7 +253,7 @@ ROW1_BOTTOM = min(end1, end2, end3) - 0.6
 # 余った縦スペースを使ってフォントを拡大し、枠は実際の分量に合わせて後から
 # ぴったりのサイズで描く（無駄な余白を残さないため）。
 # ==========================================================
-FONT_SCALE = 1.35
+FONT_SCALE = 0.85
 TITLE_FS, BODY_FS, LINE_H = 6.0 * FONT_SCALE, 5.3 * FONT_SCALE, 1.06 * FONT_SCALE
 
 header_h = 2.6
