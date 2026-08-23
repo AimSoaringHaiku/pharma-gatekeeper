@@ -58,25 +58,14 @@ img_y0 = img_y1 - img_h
 ax.imshow(img, extent=[img_x0, img_x0 + img_w, img_y0, img_y1], zorder=2)
 ax.add_patch(patches.Rectangle((img_x0, img_y0), img_w, img_h, fill=False, edgecolor="#cccccc", linewidth=0.5, zorder=3))
 
-# --- 画像内の余白（左端）に直接書き込む ---
-# 元画像を目視して、左マージンの相対x位置(0=左端)・各注記の相対y位置を見積もる
-note_x = img_x0 + img_w * 0.03  # 画像の左端ギリギリ
-notes = [
-    (0.135, "☞ここが第一声"),
-    (0.315, "☞最重要ルール"),
-    (0.44, "☞法的根拠"),
-]
-for rel_y, text in notes:
-    ny = img_y1 - rel_y * img_h
-    ax.text(note_x, ny, text, fontsize=3.6, fontweight="bold", ha="left", va="center",
-            color=RED, fontstyle="italic", zorder=4,
-            bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.75))
-
-# 情報提供内容の右余白（イラスト左上の空きスペース）に書き込む
-ax.text(img_x0 + img_w * 0.50, img_y1 - 0.615 * img_h,
-        "☞⑤は薬剤師の判断が\n入る唯一の項目", fontsize=3.4, fontweight="bold", ha="left", va="top",
+# --- 赤枠とチェックリストの間の細い隙間に、注釈を1つだけ書き込む ---
+# 「複数個・大容量の理由を聞けるのは18歳以上が前提」という、赤枠の文言だけでは
+# 伝わりにくい点を補足する。他の箇所（第一声・法的根拠等）は見れば分かるため省略。
+note_y = img_y1 - 0.358 * img_h
+ax.text(img_x0 + img_w * 0.06, note_y, "☞理由確認は成人（18歳以上）のみ対象",
+        fontsize=3.5, fontweight="bold", ha="left", va="center",
         color=RED, fontstyle="italic", zorder=4,
-        bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.75))
+        bbox=dict(boxstyle="round,pad=0.1", facecolor="white", edgecolor="none", alpha=0.85))
 
 plt.close(_meas_fig)
 fig.savefig("scratch_poster1_test3.png", dpi=300)
