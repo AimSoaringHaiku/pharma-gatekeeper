@@ -189,22 +189,22 @@ ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最�
 current_y -= 1.55
 ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.15
-ax.text(COL_NAME_X, current_y, "① 18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
+ax.text(COL_NAME_X, current_y, "18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
         fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "② 18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量は通常販売可（他店購入状況確認は必須）。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
         fontsize=6.6, ha="left", va="center", color="#333333")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "③ 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "① 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
         "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
         fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "④ 商品の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "② 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬/", fontsize=6.6, ha="left", va="center", color="#333333")
@@ -214,7 +214,7 @@ current_y -= 1.35
 ax.text(COL_NAME_X + 12.0, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
-ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は判定アプリ(右下QR)で確認", fontsize=5.6, ha="left", va="center", color="#888888")
+ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は、右下のQRからご確認いただけます", fontsize=5.6, ha="left", va="center", color="#888888")
 current_y -= 1.45
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
@@ -280,9 +280,14 @@ current_y -= 1.05
 ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に「成人(15歳以上)の1日量」で計算します（18歳未満の購入者でも同じ）",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 
-# --- 視線誘導アイコン：この表の核心操作（小/大の枠と①②のルールの照合）に一言だけ誘導 ---
-draw_point_seal(ax, 62.3, current_y, "注目", r=0.85, fontsize=2.9)
-draw_eye_guide(ax, 63.6, current_y, "枠と①②を必ず照合", fontsize=4.3)
+# --- 視線誘導（解釈層）：小/大の枠は①②の年齢ルールと合わせて確認する運用上のポイントを一言添える ---
+current_y -= 1.2
+draw_eye_guide(ax, COL_NAME_X, current_y,
+               "小/大の枠は①②の年齢ルールと合わせて確認を", color=BLUE, fontsize=4.7)
+current_y -= 1.15
+draw_eye_guide(ax, COL_NAME_X, current_y,
+               "新しめの包装は「要確認」の「要」に囲みがあるかも目安に(旧包装は記載がない場合も)",
+               color=BLUE, fontsize=4.3)
 
 current_y -= 1.25
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
@@ -327,7 +332,7 @@ for i, row in mart.iterrows():
         ax.add_patch(patches.Rectangle((0, current_y - 1.9), LOGICAL_W, row_height, facecolor="#f5f5f5", edgecolor="none", zorder=0))
 
     name_len = len(row["product"])
-    name_fontsize = 10.3 if name_len <= 8 else (9.2 if name_len <= 12 else 8.2)
+    name_fontsize = 9.4 if name_len <= 8 else (8.5 if name_len <= 12 else 7.6)
     name_text = row["product"] + ("※" if row["is_caplet"] else "")
     ax.text(COL_NAME_X, current_y, name_text, fontsize=name_fontsize, fontweight="bold", ha="left", va="center")
 
@@ -376,7 +381,9 @@ if ref_rows > 0:
     ax.hlines(current_y, 0, LOGICAL_W, colors="black", linewidth=1.1)
     current_y -= 1.84
 
-    ax.text(COL_NAME_X, current_y, "判定注意・参考", fontsize=10.37, fontweight="bold", ha="left", va="center")
+    ax.text(COL_NAME_X, current_y, "判定注意・参考", fontsize=10.37, fontweight="bold", ha="left", va="center", color=BLUE)
+    ax.text(COL_NAME_X + 10.5, current_y, "※該当はまれです", fontsize=5.0, fontstyle="italic",
+            ha="left", va="center", color=LGRAY)
     ax.text(28.0, current_y, "指定濫用判定", fontsize=8.54, fontweight="bold", ha="center", va="center")
     ax.text(41.0, current_y, "同ブランド内比較・注釈（「対比:」＝取り違え注意ポイント）", fontsize=8.54, fontweight="bold", ha="left", va="center")
 
@@ -422,9 +429,9 @@ except Exception:
     ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr1_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
 qr1_y = qr1_center_y - qr_size/2 - 0.85
-ax.text(QR_X, qr1_y, "判定アプリ", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
+ax.text(QR_X, qr1_y, "参考：商品検索", fontsize=6.8, ha="center", va="top", color=BLUE, fontweight="bold")
 qr1_y -= 1.05
-ax.text(QR_X, qr1_y, "(表にない商品はこちら)", fontsize=5.0, ha="center", va="top", color="#999999")
+ax.text(QR_X, qr1_y, "(表にない商品はこちらから)", fontsize=5.0, ha="center", va="top", color="#999999")
 qr1_y -= 0.85
 ax.text(QR_X, qr1_y, APP_URL.replace("https://", ""), fontsize=3.7, ha="center", va="top", color="#999999")
 
@@ -465,7 +472,6 @@ ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W
                                      boxstyle="round,pad=0.2", linewidth=0, facecolor=BLUE, zorder=2))
 ax.text(LOGICAL_W / 2, box_top - 0.95, "レジでの必須確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
         fontsize=7.6, fontweight="bold", ha="center", va="center", color="white", zorder=3)
-draw_point_seal(ax, 96.3, box_top - 0.95, "必読", r=1.0, fontsize=3.4, rotation=8)
 
 qy = box_top - 3.7
 ax.text(COL_NAME_X + 1.0, qy, "①【年齢・氏名】18歳未満ですか？（※18歳未満への大容量・複数個は理由問わず一律販売不可。小容量1個のみ可。氏名・年齢の記録が必須）",
