@@ -18,6 +18,7 @@ ax.axis("off")
 fig.canvas.draw()  # テキスト幅計測のため、先に一度描画してレンダラーを確保
 
 BLUE, RED, ORANGE, GREEN, GRAY, DARKRED = "#1565c0", "#d32f2f", "#e65100", "#2e7d32", "#555555", "#8e0000"
+INK = "#1a1a1a"  # 白黒印刷を基本とし、解釈層(☞)と赤字指定の禁忌系のみ色を残す
 
 
 # テキスト幅測定専用の figure（本体 fig とは別）。
@@ -163,7 +164,7 @@ def draw_poster_image_fit(x, y_top, w, h_avail, img_path):
 # 参考① 購入者への掲示例
 # ==========================================================
 def draw_poster1(x, y_top, w, h):
-    y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", BLUE,
+    y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", INK,
                      subtitle="元資料：指定濫用防止医薬品をご購入時フリップ")
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - (y_top - h) - 0.3, IMG_POSTER1)
     draw_callout_note(img_x0 + img_w * 0.35, img_y1 - 0.370 * img_h,
@@ -174,7 +175,7 @@ def draw_poster1(x, y_top, w, h):
 # 参考② 制度改正のお知らせ
 # ==========================================================
 def draw_poster2(x, y_top, w, h):
-    y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", ORANGE,
+    y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", INK,
                      subtitle="元資料：薬物濫用ポスター「大切なお知らせ」")
     frame_bottom = y_top - h
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 6.8, IMG_POSTER2)
@@ -193,7 +194,7 @@ def draw_poster2(x, y_top, w, h):
 # 参考③ 来店〜販売可否フロー
 # ==========================================================
 def draw_poster3_flow(x, y_top, w, h):
-    y = panel_frame(x, y_top, w, h, "参考③ 来店〜販売可否フロー", GREEN,
+    y = panel_frame(x, y_top, w, h, "参考③ 来店〜販売可否フロー", INK,
                      subtitle="元資料：販売可否判断フローチャート")
     frame_bottom = y_top - h
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.3, IMG_FLOWCHART)
@@ -211,9 +212,16 @@ draw_poster3_flow(Q1_X, ROW2_TOP, COL_W, ROW_H)
 Q4_X, Q4_TOP, Q4_W, Q4_H = Q2_X, ROW2_TOP, COL_W, ROW_H
 
 
+ALERT_KEYWORDS = [
+    "禁忌", "禁止", "NG", "搾乳破棄", "回避", "家族用も例外なし", "アスピリン喘息",
+    "劇症肝不全", "OTC一律不可", "プソイドエフェドリン：",
+]
+
+
 def draw_alert_bullet(x, y, w, text, fontsize, line_h):
-    """禁忌・一律不可等の重要事項は「■」＋太字＋赤で強調（色が飛ぶ白黒印刷でも■と太字で判別可）。"""
-    is_alert = ("禁忌" in text) or ("一律" in text) or ("不可" in text) or ("NG" in text)
+    """禁忌・NG等の重要事項は「■」＋太字＋赤で強調（色が飛ぶ白黒印刷でも■と太字で判別可）。
+    それ以外は白黒（■の代わりに▶）に統一し、赤は本当に危険な項目だけに絞る。"""
+    is_alert = any(kw in text for kw in ALERT_KEYWORDS)
     mark = "■" if is_alert else "▶"
     color = RED if is_alert else "#222222"
     weight = "bold" if is_alert else "normal"
@@ -230,7 +238,7 @@ def draw_case(x, y, w, q_num, category, condition, bullets, fs_tag, fs_body, lin
     tag_w = text_width(tag, fs_tag, "bold") + 1.2
     tag_h = line_h * 0.92
     ax.add_patch(patches.FancyBboxPatch((x, y - tag_h / 2), tag_w, tag_h, boxstyle="round,pad=0.05",
-                                         linewidth=0.6, edgecolor=BLUE, facecolor=BLUE, zorder=2))
+                                         linewidth=0.6, edgecolor=INK, facecolor=INK, zorder=2))
     ax.text(x + tag_w / 2, y, tag, fontsize=fs_tag, fontweight="bold", ha="center", va="center",
             color="white", zorder=3)
     cond_x = x + tag_w + 0.9
@@ -299,10 +307,10 @@ DRIVING_ROWS = [
 ]
 
 NURSING_ROWS = [
-    (GREEN, "circle", "通常授乳可", "AAP/イブプロフェン/無水カフェイン(通常量)"),
-    (ORANGE, "circle", "服薬後2-4h回避", "DXM/ジフェンヒドラミン(短期)"),
-    (RED, "circle", "搾乳破棄(半減期×3-4h)", "クロルフェニラミン(長期)/プロメタジン/ブロモバレリル尿素"),
-    (DARKRED, "square", "代替薬へ変更", "コデイン/ジヒドロコデイン(乳児モルヒネ代謝リスク)"),
+    ("circle", "通常授乳可", "AAP/イブプロフェン/無水カフェイン(通常量)"),
+    ("circle", "服薬後2-4h回避", "DXM/ジフェンヒドラミン(短期)"),
+    ("circle", "搾乳破棄(半減期×3-4h)", "クロルフェニラミン(長期)/プロメタジン/ブロモバレリル尿素"),
+    ("square", "代替薬へ変更", "コデイン/ジヒドロコデイン(乳児モルヒネ代謝リスク)"),
 ]
 
 
@@ -311,7 +319,7 @@ def draw_driving_table(x, y, w, rows, fs_tag, fs_tbl, line_h):
     tag_w = text_width(tag, fs_tag, "bold") + 1.2
     tag_h = line_h * 0.92
     ax.add_patch(patches.FancyBboxPatch((x, y - tag_h / 2), tag_w, tag_h, boxstyle="round,pad=0.05",
-                                         linewidth=0.6, edgecolor=BLUE, facecolor=BLUE, zorder=2))
+                                         linewidth=0.6, edgecolor=INK, facecolor=INK, zorder=2))
     ax.text(x + tag_w / 2, y, tag, fontsize=fs_tag, fontweight="bold", ha="center", va="center", color="white", zorder=3)
     ax.text(x + tag_w + 0.9, y, "運転前後の服用を心配されたら(半減期の長い成分ほど翌日に持ち越しやすい)",
             fontsize=fs_tag - 0.3, fontweight="bold", ha="left", va="center", color="#222222")
@@ -324,9 +332,11 @@ def draw_driving_table(x, y, w, rows, fs_tag, fs_tbl, line_h):
     y -= tbl_lh
     ax.hlines(y + tbl_lh * 0.55, x + 0.3, x + w - 0.3, colors="#dddddd", linewidth=0.5)
     for name, half, avoid in rows:
+        avoid_alert = ("NG" in avoid) or ("禁止" in avoid)
         ax.text(col1_x, y, name, fontsize=fs_tbl, ha="left", va="center", color="#333333")
         ax.text(col2_x, y, half, fontsize=fs_tbl, ha="left", va="center", color="#666666")
-        ax.text(col3_x, y, avoid, fontsize=fs_tbl, fontweight="bold", ha="left", va="center", color=RED)
+        ax.text(col3_x, y, avoid, fontsize=fs_tbl, fontweight="bold", ha="left", va="center",
+                color=RED if avoid_alert else "#222222")
         y -= tbl_lh
     y -= 0.12
     ax.hlines(y, x, x + w, colors="#cccccc", linewidth=0.6)
@@ -336,17 +346,19 @@ def draw_driving_table(x, y, w, rows, fs_tag, fs_tbl, line_h):
 def draw_nursing(x, y, w, rows, fs_tag, fs_body, line_h):
     ax.text(x, y, "授乳婦指導(成分別の目安)：", fontsize=fs_tag - 0.2, fontstyle="italic", ha="left", va="center", color=GRAY)
     y -= line_h
-    for mcolor, mshape, tag, ingr in rows:
+    for mshape, tag, ingr in rows:
+        is_alert = any(kw in tag for kw in ("搾乳破棄", "回避"))
+        tcolor = RED if is_alert else "#222222"
         msize = 0.24
         if mshape == "circle":
-            ax.add_patch(patches.Circle((x + 0.3, y), msize, facecolor=mcolor, edgecolor="black", linewidth=0.3, zorder=3))
+            ax.add_patch(patches.Circle((x + 0.3, y), msize, facecolor=tcolor, edgecolor="black", linewidth=0.3, zorder=3))
         else:
             ax.add_patch(patches.Rectangle((x + 0.06, y - msize), msize * 2, msize * 2,
-                                            facecolor=mcolor, edgecolor="black", linewidth=0.3, zorder=3))
+                                            facecolor=tcolor, edgecolor="black", linewidth=0.3, zorder=3))
         wrapped = wrap_to_width(f"{ingr}⇒{tag}", fs_body, w - 1.3)
         for wi, wline in enumerate(wrapped):
             ax.text(x + 0.9, y, wline, fontsize=fs_body, fontweight="bold" if wi == 0 else "normal",
-                    ha="left", va="center", color=mcolor if wi == 0 else "#333333")
+                    ha="left", va="center", color=tcolor if wi == 0 else "#333333")
             y -= line_h
     return y
 
@@ -397,9 +409,9 @@ FS_TAG, FS_BODY, FS_TBL, LINE_H = BASE_TAG * SCALE, BASE_BODY * SCALE, BASE_TBL 
 
 # --- ④パネル枠とヘッダー（内容量に合わせたQ4_Hで確定） ---
 ax.add_patch(patches.FancyBboxPatch((Q4_X, Q4_TOP - Q4_H), Q4_W, Q4_H,
-                                     boxstyle="round,pad=0.12", linewidth=1.3, edgecolor=RED, facecolor="#fffbfb", zorder=0))
+                                     boxstyle="round,pad=0.12", linewidth=1.3, edgecolor=INK, facecolor="#fbfbfb", zorder=0))
 ax.add_patch(patches.FancyBboxPatch((Q4_X, Q4_TOP - HEADER_H), Q4_W, HEADER_H,
-                                     boxstyle="round,pad=0.12", linewidth=0, facecolor=RED, zorder=1))
+                                     boxstyle="round,pad=0.12", linewidth=0, facecolor=INK, zorder=1))
 ax.text(Q4_X + Q4_W / 2, Q4_TOP - HEADER_H / 2, "④ 状況別対応のポイント", fontsize=6.4, fontweight="bold",
         ha="center", va="center", color="white", zorder=3)
 
