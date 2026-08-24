@@ -26,6 +26,7 @@ BLUE = "#1565c0"
 GREEN = "#2e7d32"
 ORANGE = "#e65100"
 DARKRED = "#8e0000"
+INK = "#1a1a1a"  # 白黒印刷を基本とし、×7/×5・成分判別マーカー・解釈層(☞)以外の見出し等はこの色に統一
 
 
 def extract_amount_unit(package_str):
@@ -139,7 +140,7 @@ for product, group in reference_df.groupby("product", sort=True):
     kubuns = [str(x).strip() for x in group["kubun"] if str(x).strip()]
     kubun_val = kubuns[0] if kubuns else ""
     if kubun_val == "＊〇":
-        status_text, status_color = "この商品名は【該当】", "#d32f2f"
+        status_text, status_color = "この商品名は【該当】", INK
     elif kubun_val in ["＊対象外", "△"]:
         status_text, status_color = "【対象外】", "#444444"
     else:
@@ -191,24 +192,24 @@ ax.text(0.5, current_y - 0.35, "確認順：①成分判別→②年齢確認→
 
 # --- 使い方・販売可否（①を年齢規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう最上部に配置） ---
 current_y -= 1.55
-ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
+ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.15
-ax.text(COL_NAME_X, current_y, "18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
+ax.text(COL_NAME_X, current_y, "18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
         fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量は通常販売可（他店購入状況確認は必須）。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
         fontsize=6.6, ha="left", va="center", color="#333333")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "② 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "② 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 12.0, current_y,
         "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
         fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "③ 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "③ 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬/", fontsize=6.6, ha="left", va="center", color="#333333")
@@ -220,22 +221,22 @@ ax.text(COL_NAME_X + 12.0, current_y,
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は、右下のQRからご確認いただけます", fontsize=5.6, ha="left", va="center", color="#888888")
 current_y -= 1.45
-ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 11.0, current_y,
         "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示が難しい→年齢・氏名を確認できる方法がないか丁寧に確認",
         fontsize=6.0, ha="left", va="center", color="#333333")
 current_y -= 1.5
-ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
+ax.hlines(current_y, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.35
 
 # --- 計算手順・成分判別・ブランド速断（実務でよく使う判別系を、本体テーブルの直前に集約） ---
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 9.5, current_y,
         "①分類で基準日数(×7=かぜ薬等/×5=それ以外)　②1日最大服用量を確認　③総量÷1日量=消費日数　④基準日数以下=小容量/超=大容量",
         fontsize=6.4, ha="left", va="center", color=GRAY)
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
 marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象(指定8成分)＝エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
@@ -306,11 +307,11 @@ row_height = 2.42
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0
 flow_nodes = [
-    (["18歳未満の疑い", "→身分証等で氏名・", "年齢を確認"], BLUE, "#eef4fc"),
-    (["小容量1個のみ", "購入？"], BLUE, "#eef4fc"),
-    (["【いいえ】大容量/複数個", "→18歳未満は一律禁止", "18歳以上は理由を確認"], RED, "#fdecea"),
-    (["【はい】小容量1個", "→18歳未満は氏名+周辺状況確認", "18歳以上は周辺状況確認"], ORANGE, "#fff3e6"),
-    (["条件を満たせば", "販売可"], GREEN, "#eaf5ea"),
+    (["18歳未満の疑い", "→身分証等で氏名・", "年齢を確認"], INK, "#f2f2f2", 1.3),
+    (["小容量1個のみ", "購入？"], INK, "#f2f2f2", 1.3),
+    (["【いいえ】大容量/複数個", "→18歳未満は一律禁止", "18歳以上は理由を確認"], INK, "#e2e2e2", 2.0),
+    (["【はい】小容量1個", "→18歳未満は氏名+周辺状況確認", "18歳以上は周辺状況確認"], INK, "#f2f2f2", 1.3),
+    (["条件を満たせば", "販売可"], INK, "#e8e8e8", 1.6),
 ]
 flow_top = 111.5
 flow_bottom = 64.5
@@ -318,17 +319,19 @@ n = len(flow_nodes)
 flow_gap = (flow_top - flow_bottom) / (n - 1)
 flow_box_h = flow_gap - 1.9
 prev_y = None
-for idx, (lines, edge_color, fill_color) in enumerate(flow_nodes):
+for idx, (lines, edge_color, fill_color, edge_w) in enumerate(flow_nodes):
     yc = flow_top - idx * flow_gap
     box = patches.FancyBboxPatch((FLOW_X - FLOW_HALF_W, yc - flow_box_h / 2), FLOW_HALF_W * 2, flow_box_h,
-                                  boxstyle="round,pad=0.3", linewidth=1.3, edgecolor=edge_color,
+                                  boxstyle="round,pad=0.3", linewidth=edge_w, edgecolor=edge_color,
                                   facecolor=fill_color, zorder=3)
     ax.add_patch(box)
     n_lines = len(lines)
     line_h = 1.55
     start_y = yc + (n_lines - 1) * line_h / 2
+    is_warning = edge_w > 1.5
     for li, line in enumerate(lines):
-        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=5.9, ha="center", va="center", color="#333333")
+        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=5.9, fontweight="bold" if is_warning else "normal",
+                ha="center", va="center", color="#222222" if is_warning else "#333333")
     if prev_y is not None:
         ax.annotate("", xy=(FLOW_X, yc + flow_box_h / 2 + 0.2), xytext=(FLOW_X, prev_y - flow_box_h / 2 - 0.2),
                     arrowprops=dict(arrowstyle="-|>", color="#999999", lw=1.3))
@@ -388,7 +391,7 @@ if ref_rows > 0:
     ax.hlines(current_y, 0, LOGICAL_W, colors="black", linewidth=1.1)
     current_y -= 1.84
 
-    ax.text(COL_NAME_X, current_y, "判定注意・参考", fontsize=10.37, fontweight="bold", ha="left", va="center", color=BLUE)
+    ax.text(COL_NAME_X, current_y, "判定注意・参考", fontsize=10.37, fontweight="bold", ha="left", va="center", color=INK)
     ax.text(COL_NAME_X + 10.5, current_y, "※該当はまれです", fontsize=5.0, fontstyle="italic",
             ha="left", va="center", color=LGRAY)
     ax.text(28.0, current_y, "指定濫用判定", fontsize=8.54, fontweight="bold", ha="center", va="center")
@@ -404,8 +407,9 @@ if ref_rows > 0:
             ax.add_patch(patches.Rectangle((0, current_y - 1.55), LOGICAL_W, ref_row_h, facecolor="#fafafa", edgecolor="none"))
         ax.text(COL_NAME_X, current_y, row["product"], fontsize=8.42, fontweight="bold", ha="left", va="center")
         ax.text(28.0, current_y, row["status_text"], fontsize=8.42, fontweight="bold", ha="center", va="center", color=row["status_color"])
-        note_color = RED if row["note"].startswith("対比") else GRAY
-        ax.text(41.0, current_y, row["note"], fontsize=7.34, ha="left", va="center", color=note_color)
+        is_taichi = row["note"].startswith("対比")
+        ax.text(41.0, current_y, row["note"], fontsize=7.34, fontweight="bold" if is_taichi else "normal",
+                ha="left", va="center", color=INK if is_taichi else GRAY)
         if row["ingr_detail"]:
             detail_text = row["ingr_detail"]
             if len(detail_text) > 34:
@@ -436,7 +440,7 @@ except Exception:
     ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr1_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
 qr1_y = qr1_center_y - qr_size/2 - 0.85
-ax.text(QR_X, qr1_y, "参考：商品検索", fontsize=6.8, ha="center", va="top", color=BLUE, fontweight="bold")
+ax.text(QR_X, qr1_y, "参考：商品検索", fontsize=6.8, ha="center", va="top", color=INK, fontweight="bold")
 qr1_y -= 1.05
 ax.text(QR_X, qr1_y, "(表にない商品はこちらから)", fontsize=5.0, ha="center", va="top", color="#999999")
 qr1_y -= 0.85
@@ -472,44 +476,49 @@ y -= 1.84
 # G. 必須質問（厚労省チェック項目に準拠。該当時は裏面の「状況別対応のポイント」を参照）
 y -= 0.5
 box_top = y + 0.7
-box_h = box_top - 5.9
+# box_hは内容量から決まる固定値（内容が伸びてbox_topが下がっても、
+# 下端が5.9固定だと後半の項目がはみ出すため、内容基準に変更）
+box_h = 19.9
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - box_h), LOGICAL_W - 2 * (COL_NAME_X - 0.5), box_h,
-                                     boxstyle="round,pad=0.2", linewidth=1.4, edgecolor=BLUE, facecolor="#f7fafd", zorder=2))
+                                     boxstyle="round,pad=0.2", linewidth=1.4, edgecolor=INK, facecolor="#f7f7f7", zorder=2))
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W - 2 * (COL_NAME_X - 0.5), 1.9,
-                                     boxstyle="round,pad=0.2", linewidth=0, facecolor=BLUE, zorder=2))
+                                     boxstyle="round,pad=0.2", linewidth=0, facecolor=INK, zorder=2))
 ax.text(LOGICAL_W / 2, box_top - 0.95, "④ レジでの確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
         fontsize=7.6, fontweight="bold", ha="center", va="center", color="white", zorder=3)
 
-qy = box_top - 3.7
-ax.text(COL_NAME_X + 1.0, qy, "①【年齢・氏名】18歳未満ですか？（※18歳未満への大容量・複数個は理由問わず一律販売不可。小容量1個のみ可。氏名・年齢の記録が必須）",
-        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 2.05
-ax.text(COL_NAME_X + 1.0, qy, "②【重複】本日、他店や他のレジで同じお薬（風邪薬、咳止め等）のご購入はありませんか？（譲り受けも含みます）",
-        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 2.45
-ax.text(COL_NAME_X + 1.0, qy, "以下は、お薬の安全な選択に関わります。", fontsize=6.2, fontstyle="italic",
-        ha="left", va="center", color=LGRAY, zorder=3)
-qy -= 1.85
-ax.text(COL_NAME_X + 1.0, qy, "③【体質】アレルギー歴（アスピリン喘息等）や、喘息、不整脈、緑内障、前立腺肥大の持病はありますか？",
-        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 2.25
-ax.text(COL_NAME_X + 1.0, qy, "④【併用】現在、病院で処方されたお薬や、他のお薬を飲まれていますか？（SSRI等との重複防止）",
-        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 2.25
-ax.text(COL_NAME_X + 1.0, qy, "⑤【妊婦】妊娠中、または授乳中ではありませんか？（妊娠後期のNSAIDs禁忌、授乳中のコデイン避止）",
-        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
-qy -= 2.35
+qy = box_top - 3.3
 ax.text(COL_NAME_X + 1.0, qy, "＋【使用者】今回のお薬は、どなた（ご本人様／12歳未満の小児等）が使われますか？",
-        fontsize=7.1, fontweight="bold", ha="left", va="center", color=BLUE, zorder=3)
-qy -= 2.15
+        fontsize=7.1, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.6
 ax.text(COL_NAME_X + 1.0, qy, "＋ いつから、どの程度の症状ですか？（適正な使用期間の確認、長引く場合は受診勧奨を判断します）",
         fontsize=7.1, ha="left", va="center", color=GRAY, zorder=3)
-qy -= 2.15
+qy -= 1.6
+ax.text(COL_NAME_X + 1.0, qy, "＋ すでに受診・服薬を開始していますか？（重複投与や飲み合わせ確認のため）",
+        fontsize=7.1, ha="left", va="center", color=GRAY, zorder=3)
+qy -= 1.75
+ax.text(COL_NAME_X + 1.0, qy, "①【年齢・氏名】18歳未満ですか？（※18歳未満への大容量・複数個は理由問わず一律販売不可。小容量1個のみ可。氏名・年齢の記録が必須）",
+        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.85
+ax.text(COL_NAME_X + 1.0, qy, "②【重複】他店や他のレジで同じお薬（風邪薬、咳止め等）のご購入はありませんか？（譲り受けも含みます）",
+        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.85
+ax.text(COL_NAME_X + 1.0, qy, "以下は、お薬の安全な選択に関わります。", fontsize=6.2, fontstyle="italic",
+        ha="left", va="center", color=LGRAY, zorder=3)
+qy -= 1.55
+ax.text(COL_NAME_X + 1.0, qy, "③【体質】アレルギー歴（アスピリン喘息等）や、喘息、不整脈、緑内障、前立腺肥大の持病はありますか？",
+        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.85
+ax.text(COL_NAME_X + 1.0, qy, "④【併用】現在、病院で処方されたお薬や、他のお薬を飲まれていますか？（SSRI等との重複防止）",
+        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.85
+ax.text(COL_NAME_X + 1.0, qy, "⑤【妊婦】妊娠中、または授乳中ではありませんか？（妊娠後期のNSAIDs禁忌、授乳中のコデイン避止）",
+        fontsize=7.3, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= 1.75
 ax.text(COL_NAME_X + 1.0, qy, "＋【大容量・複数個（成人）】ご事情をお伺いできますか？（※正当な使用理由が確認できない場合は販売不可）",
         fontsize=7.1, ha="left", va="center", color=GRAY, zorder=3)
 
-# === 【追加】必須質問ボックスの下辺（5.9）から1.1下がった位置に y を再設定 ===
-y = box_top - box_h - 1.1  # これにより y = 4.8 にリセットされます
+# === 【追加】必須質問ボックスの下辺から0.9下がった位置に y を再設定 ===
+y = box_top - box_h - 0.9
 
 y -= 0.25  # y = 4.55 (免責事項の描画位置)
 ax.text(COL_NAME_X, y, "免責: 過去に用法用量超過の自己判断服用で重篤な健康被害が生じた事例を踏まえた確認です。意図的な過量服薬は保証・救済制度の対象外です。", fontsize=6.1, ha="left", va="center", color=LGRAY)
