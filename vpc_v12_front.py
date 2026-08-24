@@ -185,6 +185,10 @@ ax.text(LOGICAL_W, current_y + 1.4, f"作成日: {today_str}", fontsize=7.93, ha
 ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最新の公式情報(添付文書等)を確認",
         fontsize=4.6, ha="right", va="center", color="#999999")
 
+# --- 確認順ガイド（解釈層）：実務での確認の流れを、タイトル左の余白に1行で先に示す ---
+ax.text(0.5, current_y - 0.35, "確認順：①成分判別→②年齢確認→③包装確認→④レジ確認",
+        fontsize=4.0, fontweight="bold", fontstyle="italic", ha="left", va="center", color=BLUE)
+
 # --- 使い方・販売可否（①を年齢規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう最上部に配置） ---
 current_y -= 1.55
 ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
@@ -199,12 +203,12 @@ ax.text(COL_NAME_X + 12.0, current_y,
         "小容量は通常販売可（他店購入状況確認は必須）。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
         fontsize=6.6, ha="left", va="center", color="#333333")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "① 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "② 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
         "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
         fontsize=6.3, ha="left", va="center", color="#333333")
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "② 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "③ 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬/", fontsize=6.6, ha="left", va="center", color="#333333")
@@ -231,7 +235,7 @@ ax.text(COL_NAME_X + 9.5, current_y,
         "①分類で基準日数(×7=かぜ薬等/×5=それ以外)　②1日最大服用量を確認　③総量÷1日量=消費日数　④基準日数以下=小容量/超=大容量",
         fontsize=6.4, ha="left", va="center", color=GRAY)
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象(指定8成分)＝エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
@@ -246,7 +250,10 @@ marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
         fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.5
+current_y -= 1.35
+draw_eye_guide(ax, COL_NAME_X + 9.9, current_y,
+               "↑順番が前後しますが、①はここです（商品が指定濫用対象かの確認）", color=BLUE, fontsize=5.2)
+current_y -= 1.35
 WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
         ha="left", va="center", color=WATERMARK_GRAY)
@@ -280,14 +287,14 @@ current_y -= 1.05
 ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に「成人(15歳以上)の1日量」で計算します（18歳未満の購入者でも同じ）",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 
-# --- 視線誘導（解釈層）：小/大の枠は①②の年齢ルールと合わせて確認する運用上のポイントを一言添える ---
-current_y -= 1.2
+# --- 視線誘導（解釈層）：小/大の枠は②③のルールと合わせて確認する運用上のポイントを一言添える ---
+current_y -= 1.3
 draw_eye_guide(ax, COL_NAME_X, current_y,
-               "小/大の枠は①②の年齢ルールと合わせて確認を", color=BLUE, fontsize=4.7)
-current_y -= 1.15
+               "小/大の枠は②③のルールと合わせて確認を", color=BLUE, fontsize=5.6)
+current_y -= 1.3
 draw_eye_guide(ax, COL_NAME_X, current_y,
                "新しめの包装は「要確認」の「要」に囲みがあるかも目安に(旧包装は記載がない場合も)",
-               color=BLUE, fontsize=4.3)
+               color=BLUE, fontsize=5.2)
 
 current_y -= 1.25
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
@@ -470,7 +477,7 @@ ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - box_h), LOGICAL
                                      boxstyle="round,pad=0.2", linewidth=1.4, edgecolor=BLUE, facecolor="#f7fafd", zorder=2))
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W - 2 * (COL_NAME_X - 0.5), 1.9,
                                      boxstyle="round,pad=0.2", linewidth=0, facecolor=BLUE, zorder=2))
-ax.text(LOGICAL_W / 2, box_top - 0.95, "レジでの必須確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
+ax.text(LOGICAL_W / 2, box_top - 0.95, "④ レジでの確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
         fontsize=7.6, fontweight="bold", ha="center", va="center", color="white", zorder=3)
 
 qy = box_top - 3.7
