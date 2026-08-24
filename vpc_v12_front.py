@@ -250,10 +250,10 @@ marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
         fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.35
+current_y -= 1.45
 draw_eye_guide(ax, COL_NAME_X + 9.9, current_y,
-               "↑順番が前後しますが、①はここです（商品が指定濫用対象かの確認）", color=BLUE, fontsize=5.2)
-current_y -= 1.35
+               "↑順番が前後しますが、①はここです（商品が指定濫用対象かの確認）", color=BLUE, fontsize=5.9)
+current_y -= 1.45
 WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
         ha="left", va="center", color=WATERMARK_GRAY)
@@ -288,13 +288,13 @@ ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 
 # --- 視線誘導（解釈層）：小/大の枠は②③のルールと合わせて確認する運用上のポイントを一言添える ---
-current_y -= 1.3
+current_y -= 1.45
 draw_eye_guide(ax, COL_NAME_X, current_y,
-               "小/大の枠は②③のルールと合わせて確認を", color=BLUE, fontsize=5.6)
-current_y -= 1.3
+               "小/大の枠は②③のルールと合わせて確認を", color=BLUE, fontsize=6.2)
+current_y -= 1.45
 draw_eye_guide(ax, COL_NAME_X, current_y,
                "新しめの包装は「要確認」の「要」に囲みがあるかも目安に(旧包装は記載がない場合も)",
-               color=BLUE, fontsize=5.2)
+               color=BLUE, fontsize=5.8)
 
 current_y -= 1.25
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
