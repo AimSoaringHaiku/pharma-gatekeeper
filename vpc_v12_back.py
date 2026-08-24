@@ -167,7 +167,7 @@ def draw_poster1(x, y_top, w, h):
                      subtitle="元資料：指定濫用防止医薬品をご購入時フリップ")
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - (y_top - h) - 0.3, IMG_POSTER1)
     draw_callout_note(img_x0 + img_w * 0.35, img_y1 - 0.370 * img_h,
-                       "☞理由確認は成人(18歳以上)のみ対象", img_w * 0.62, fontsize=4.0, line_h=1.5)
+                       "☞理由確認は成人(18歳以上)のみ対象", img_w * 0.62, fontsize=4.6, line_h=1.7)
 
 
 # ==========================================================
@@ -177,16 +177,16 @@ def draw_poster2(x, y_top, w, h):
     y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", ORANGE,
                      subtitle="元資料：薬物濫用ポスター「大切なお知らせ」")
     frame_bottom = y_top - h
-    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 5.4, IMG_POSTER2)
+    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 6.8, IMG_POSTER2)
     yy = img_y1 - img_h - 1.1
     yy = draw_callout_note(x + 0.4, yy,
                             "☞目印の傾向：外枠の「要確認」表示は小/大容量共通。大容量は「要」の文字にさらに囲みが付くことが多い",
-                            w - 0.8, fontsize=3.9, line_h=1.55, color=RED)
+                            w - 0.8, fontsize=4.5, line_h=1.8, color=RED)
     yy -= 0.25
     yy = draw_callout_note(x + 0.4, yy,
                             "パッケージ表記は数年かけて順次変更される予定。変更後もお客様へ正しくご案内できるよう、"
                             "情報にアンテナを張っておきましょう（村松早織先生／cheer-job.comコラム）",
-                            w - 0.8, fontsize=3.5, line_h=1.45, color="#666666")
+                            w - 0.8, fontsize=4.0, line_h=1.6, color="#666666")
 
 
 # ==========================================================
@@ -197,8 +197,8 @@ def draw_poster3_flow(x, y_top, w, h):
                      subtitle="元資料：販売可否判断フローチャート")
     frame_bottom = y_top - h
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.3, IMG_FLOWCHART)
-    draw_callout_note(img_x0 + img_w * 0.66, img_y1 - 0.838 * img_h,
-                       "☞販売しても「申し送り」が必要な場合あり", img_w * 0.33, fontsize=3.7, line_h=1.4)
+    draw_callout_note(img_x0 + img_w * 0.60, img_y1 - 0.838 * img_h,
+                       "☞販売しても「申し送り」が必要な場合あり", img_w * 0.40, fontsize=4.1, line_h=1.55)
 
 
 draw_poster1(Q1_X, ROW1_TOP, COL_W, ROW_H)
