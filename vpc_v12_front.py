@@ -55,6 +55,23 @@ def marker(ax, x, y, color, shape="circle", size=0.55):
                                         facecolor=color, edgecolor="none", zorder=3))
 
 
+def draw_point_seal(ax, cx, cy, label, r=1.1, color=RED, fontsize=3.4, rotation=-6):
+    """視線誘導用の「ハンコ風ポイントシール」。二重丸＋白抜き文字。
+    塗り色だけに頼らず二重の輪郭線で作るため、白黒印刷でも判別できる。"""
+    ax.add_patch(patches.Circle((cx, cy), r, facecolor=color, edgecolor="white", linewidth=0.9, zorder=6))
+    ax.add_patch(patches.Circle((cx, cy), r * 0.74, facecolor="none", edgecolor="white",
+                                 linewidth=0.5, linestyle=(0, (1, 1)), zorder=7))
+    ax.text(cx, cy, label, fontsize=fontsize, fontweight="bold", ha="center", va="center",
+            color="white", zorder=8, rotation=rotation)
+
+
+def draw_eye_guide(ax, x, y, text, color=RED, fontsize=5.0, ha="left"):
+    """短い道案内（解釈層）。「☞」＋断定しすぎない一言を、白抜き吹き出しで軽く強調する。"""
+    ax.text(x, y, f"☞{text}", fontsize=fontsize, fontweight="bold", ha=ha, va="center",
+            color=color, fontstyle="italic", zorder=8,
+            bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor=color, linewidth=0.7, alpha=0.92))
+
+
 CAPLET_PRODUCTS = {
     "ベンザブロックIP", "ベンザブロックL", "ベンザブロックS", "ベンザブロックTプレミアムDX",
     "ベンザブロックIPプレミアム", "ベンザブロックLプレミアムDX", "ベンザブロックSプレミアムDX",
@@ -263,6 +280,10 @@ current_y -= 1.05
 ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に「成人(15歳以上)の1日量」で計算します（18歳未満の購入者でも同じ）",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 
+# --- 視線誘導アイコン：この表の核心操作（小/大の枠と①②のルールの照合）に一言だけ誘導 ---
+draw_point_seal(ax, 62.3, current_y, "注目", r=0.85, fontsize=2.9)
+draw_eye_guide(ax, 63.6, current_y, "枠と①②を必ず照合", fontsize=4.3)
+
 current_y -= 1.25
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
@@ -444,6 +465,7 @@ ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 1.9), LOGICAL_W
                                      boxstyle="round,pad=0.2", linewidth=0, facecolor=BLUE, zorder=2))
 ax.text(LOGICAL_W / 2, box_top - 0.95, "レジでの必須確認事項　※該当する場合は裏面「状況別対応のポイント」を参照",
         fontsize=7.6, fontweight="bold", ha="center", va="center", color="white", zorder=3)
+draw_point_seal(ax, 96.3, box_top - 0.95, "必読", r=1.0, fontsize=3.4, rotation=8)
 
 qy = box_top - 3.7
 ax.text(COL_NAME_X + 1.0, qy, "①【年齢・氏名】18歳未満ですか？（※18歳未満への大容量・複数個は理由問わず一律販売不可。小容量1個のみ可。氏名・年齢の記録が必須）",
