@@ -180,7 +180,7 @@ def draw_poster2(x, y_top, w, h):
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 4.4, IMG_POSTER2)
     yy = img_y1 - img_h - 1.1
     yy = draw_callout_note(x + 0.4, yy,
-                            "☞目印の傾向：小容量は「要確認」全体を、大容量は「要」の一文字だけを枠で囲むことが多い",
+                            "☞目印の傾向：外枠の「要確認」表示は小/大容量共通。大容量は「要」の文字にさらに囲みが付くことが多い",
                             w - 0.8, fontsize=3.3, line_h=1.35, color=RED)
     yy -= 0.25
     yy = draw_callout_note(x + 0.4, yy,
