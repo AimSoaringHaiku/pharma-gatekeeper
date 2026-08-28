@@ -246,22 +246,41 @@ current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.35
 
-# --- 計算手順・成分判別・ブランド速断（実務でよく使う判別系を、本体テーブルの直前に集約） ---
-current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "計算ドリル:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 10.0, current_y, "包装数量", fontsize=6.4, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 15.6, current_y, "〇", fontsize=7.0, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 18.3, current_y, "÷1日量", fontsize=6.4, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 23.9, current_y, "〇", fontsize=7.0, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 26.6, current_y, "＝消費日数", fontsize=6.4, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 34.2, current_y, "□", fontsize=7.0, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 36.9, current_y,
-        "　→　基準日数(", fontsize=6.4, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 46.3, current_y, "×7＝7日", fontsize=6.4, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 51.9, current_y, "/", fontsize=6.4, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 52.6, current_y, "×5＝5日", fontsize=6.4, fontweight="bold", ha="left", va="center", color=ORANGE)
-ax.text(COL_NAME_X + 58.2, current_y, ")以下なら小容量・超なら大容量", fontsize=6.4, ha="left", va="center", color="#333333")
-current_y -= 1.55
+# --- 計算ドリル（実務でよく使う判別系を、本体テーブルの直前に集約。太枠で目立たせる） ---
+DRILL_FS, DRILL_LH = 7.6, 1.75
+drill_top = current_y + 1.0
+current_y -= 1.75
+ax.text(COL_NAME_X + 1.0, current_y, "計算ドリル", fontsize=8.3, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 15.0, current_y, "（下表を見ずに、ご自身で計算してみましょう）", fontsize=5.4, fontstyle="italic",
+        ha="left", va="center", color=LGRAY)
+current_y -= DRILL_LH
+ax.text(COL_NAME_X + 1.0, current_y, "①分類：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 9.5, current_y, "かぜ薬・解熱鎮痛薬・鼻炎用内服薬", fontsize=DRILL_FS - 0.4, ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 32.5, current_y, "＝", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 34.3, current_y, "×7", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 38.3, current_y, "／それ以外＝", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 51.8, current_y, "×5", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color=ORANGE)
+ax.text(COL_NAME_X + 55.8, current_y, "　②1日量(15歳以上基準)：", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 78.0, current_y, "〇", fontsize=DRILL_FS + 0.6, fontweight="bold", ha="left", va="center", color=INK)
+current_y -= DRILL_LH
+ax.text(COL_NAME_X + 1.0, current_y, "③計算：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 9.5, current_y, "包装数量", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 16.9, current_y, "〇", fontsize=DRILL_FS + 0.6, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 20.0, current_y, "÷1日量", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 26.3, current_y, "〇", fontsize=DRILL_FS + 0.6, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 29.4, current_y, "＝消費日数", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 37.9, current_y, "□", fontsize=DRILL_FS + 0.6, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 41.5, current_y, "日", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+current_y -= DRILL_LH
+ax.text(COL_NAME_X + 1.0, current_y, "④判定：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 9.5, current_y, "消費日数が①の基準日数(7日/5日)以下なら", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 44.0, current_y, "【小容量】", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 52.5, current_y, "・超えたら", fontsize=DRILL_FS - 0.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 62.0, current_y, "【大容量】", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color=INK)
+current_y -= 1.05
+ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y), LOGICAL_W - 2 * (COL_NAME_X - 1.0), drill_top - current_y,
+                                     boxstyle="round,pad=0.15", linewidth=1.6, edgecolor=INK, facecolor="none", zorder=6))
+current_y -= 0.55
 ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
 marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y, "対象(指定8成分)＝", fontsize=5.9, ha="left", va="center", color=GRAY)
@@ -335,7 +354,7 @@ ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.42
+row_height = 2.05
 
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0
@@ -372,10 +391,10 @@ for idx, (lines, edge_color, fill_color, edge_w) in enumerate(flow_nodes):
 
 for i, row in mart.iterrows():
     if i % 2 == 0:
-        ax.add_patch(patches.Rectangle((0, current_y - 1.9), LOGICAL_W, row_height, facecolor="#f5f5f5", edgecolor="none", zorder=0))
+        ax.add_patch(patches.Rectangle((0, current_y - row_height * 0.785), LOGICAL_W, row_height, facecolor="#f5f5f5", edgecolor="none", zorder=0))
 
     name_len = len(row["product"])
-    name_fontsize = 9.4 if name_len <= 8 else (8.5 if name_len <= 12 else 7.6)
+    name_fontsize = 8.6 if name_len <= 8 else (7.8 if name_len <= 12 else 7.0)
     name_text = row["product"] + ("※" if row["is_caplet"] else "")
     ax.text(COL_NAME_X, current_y, name_text, fontsize=name_fontsize, fontweight="bold", ha="left", va="center")
 
@@ -383,27 +402,24 @@ for i, row in mart.iterrows():
         clean_ingr = re.sub(r'(塩酸塩|リン酸塩|硫酸塩|臭化水素酸塩|マレイン酸塩|酒石酸塩|フマル酸塩)', '', row["ingredients"])
         if len(clean_ingr) > 26:
             clean_ingr = clean_ingr[:26] + "…"
-        ax.text(COL_INGR_X, current_y, clean_ingr, fontsize=5.8, ha="left", va="center", color="#666666")
+        ax.text(COL_INGR_X, current_y, clean_ingr, fontsize=5.4, ha="left", va="center", color="#666666")
     else:
-        ax.text(COL_INGR_X, current_y, "-", fontsize=7.93, ha="left", va="center", color="#aaaaaa")
+        ax.text(COL_INGR_X, current_y, "-", fontsize=7.2, ha="left", va="center", color="#aaaaaa")
 
-    ax.text(COL_DOSE_X, current_y, row["daily"], fontsize=10.37, ha="center", va="center")
+    ax.text(COL_DOSE_X, current_y, row["daily"], fontsize=9.4, ha="center", va="center")
 
     mult_color = "#1565c0" if row["limit"] == 7 else "#e65100"
-    ax.text(COL_MULT_X, current_y, f"×{row['limit']}", fontsize=8.54, ha="center", va="center",
+    ax.text(COL_MULT_X, current_y, f"×{row['limit']}", fontsize=7.8, ha="center", va="center",
             color=mult_color, fontweight="bold")
 
     if row["small"] != "-":
-        ax.text(COL_SMALL_X, current_y, row["small"], fontsize=8.91, ha="center", va="center",
-                bbox=dict(boxstyle="square,pad=0.3", facecolor="white", edgecolor="black", linewidth=0.8))
+        ax.text(COL_SMALL_X, current_y, row["small"], fontsize=8.1, fontweight="bold", ha="center", va="center")
 
-    ax.vlines(COL_BOUND_X, current_y - 0.95, current_y + 0.95, color="black", linewidth=1.1, zorder=1)
-    ax.text(COL_BOUND_X, current_y, row["boundary"], fontsize=8.54, ha="center", va="center",
-            bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="gray"), zorder=2)
+    ax.vlines(COL_BOUND_X, current_y - 0.78, current_y + 0.78, color="#bbbbbb", linewidth=1.0, zorder=1)
+    ax.text(COL_BOUND_X, current_y, row["boundary"], fontsize=6.9, ha="center", va="center", color=GRAY, zorder=2)
 
     if row["large"] != "-":
-        ax.text(COL_LARGE_X, current_y, row["large"], fontsize=8.91, ha="center", va="center",
-                bbox=dict(boxstyle="square,pad=0.3", facecolor="#d9d9d9", edgecolor="black", linestyle="--", linewidth=0.8))
+        ax.text(COL_LARGE_X, current_y, row["large"], fontsize=8.1, fontweight="bold", ha="center", va="center", color="#444444")
 
     current_y -= row_height
 

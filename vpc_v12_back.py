@@ -58,7 +58,7 @@ def wrap_to_width(text, fontsize, max_width):
     tokens, cur_token = [], ""
     for ch in text:
         cur_token += ch
-        if ch in "。、）)":
+        if ch in "。、）)」":
             tokens.append(cur_token)
             cur_token = ""
     if cur_token:
@@ -84,7 +84,7 @@ def wrap_to_width(text, fontsize, max_width):
 
     merged = []
     for line in final_lines:
-        if merged and len(line) <= 2 and all(c in "。、）)" for c in line):
+        if merged and len(line) <= 2 and all(c in "。、）)」" for c in line):
             merged[-1] += line
         else:
             merged.append(line)
@@ -138,9 +138,29 @@ def draw_magnifier_icon(cx, cy, r, handle_len, color, angle_deg=-40):
     dx, dy = math.cos(rad), math.sin(rad)
     edge_x, edge_y = cx + r * dx, cy + r * dy
     tip_x, tip_y = cx + (r + handle_len) * dx, cy + (r + handle_len) * dy
-    ax.add_patch(patches.Circle((cx, cy), r, facecolor="white", edgecolor=color, linewidth=1.0, zorder=5))
-    ax.plot([edge_x, tip_x], [edge_y, tip_y], color=color, linewidth=1.4, solid_capstyle="round", zorder=5)
+    ax.add_patch(patches.Circle((cx, cy), r, facecolor="none", edgecolor=color, linewidth=1.3, zorder=5))
+    ax.plot([edge_x, tip_x], [edge_y, tip_y], color=color, linewidth=1.5, solid_capstyle="round", zorder=5)
     return tip_x, tip_y
+
+
+def draw_focus_footnote(focus_x, focus_y, lens_r, foot_x, foot_y, text, w, fontsize=3.5, line_h=1.3,
+                         color=RED, halign="left"):
+    """元資料の言及箇所に虫眼鏡のレンズを重ね、持ち手を脚注ボックスまで伸ばして「」付きで説明する。
+    レンズ＝該当箇所に直接かぶせる円。脚注＝余白にボックスで独立配置。"""
+    import math
+    text = text.lstrip("☞")
+    ax.add_patch(patches.Circle((focus_x, focus_y), lens_r, facecolor="none", edgecolor=color, linewidth=1.4, zorder=6))
+    dx, dy = foot_x - focus_x, foot_y - focus_y
+    dist = math.hypot(dx, dy) or 1.0
+    ux, uy = dx / dist, dy / dist
+    edge_x, edge_y = focus_x + lens_r * ux, focus_y + lens_r * uy
+    ax.plot([edge_x, foot_x], [edge_y, foot_y], color=color, linewidth=1.2, linestyle=(0, (3, 2)), zorder=6)
+    lines = wrap_to_width(f"「{text}」", fontsize, w - 1.0)
+    for i, line in enumerate(lines):
+        ax.text(foot_x, foot_y - i * line_h, line, fontsize=fontsize, fontweight="bold",
+                ha=halign, va="center", color=color, fontstyle="italic", zorder=7,
+                bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor=color, linewidth=0.9, alpha=0.96))
+    return foot_y - len(lines) * line_h
 
 
 def draw_callout_note(cx, cy, text, w, fontsize=3.5, line_h=1.3, color=RED, halign="left"):
@@ -185,8 +205,10 @@ def draw_poster1(x, y_top, w, h):
     y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", INK,
                      subtitle="元資料：指定濫用防止医薬品をご購入時フリップ")
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - (y_top - h) - 0.3, IMG_POSTER1)
-    draw_callout_note(img_x0 + img_w * 0.35, img_y1 - 0.370 * img_h,
-                       "☞理由確認は成人(18歳以上)のみ対象", img_w * 0.62, fontsize=4.6, line_h=1.7)
+    focus_y = img_y1 - 0.370 * img_h
+    draw_focus_footnote(img_x0 + img_w * 0.145, focus_y, img_w * 0.045,
+                         img_x0 + img_w * 0.30, focus_y - img_w * 0.03,
+                         "理由確認は成人(18歳以上)のみ対象", img_w * 0.68, fontsize=4.6, line_h=1.7)
 
 
 # ==========================================================
@@ -197,10 +219,11 @@ def draw_poster2(x, y_top, w, h):
                      subtitle="元資料：薬物濫用ポスター「大切なお知らせ」")
     frame_bottom = y_top - h
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 6.8, IMG_POSTER2)
+    focus_x, focus_y = img_x0 + img_w * 0.64, img_y1 - 0.843 * img_h
     yy = img_y1 - img_h - 1.1
-    yy = draw_callout_note(x + 0.4, yy,
-                            "☞目印の傾向：外枠の「要確認」表示は小/大容量共通。大容量は「要」の文字にさらに囲みが付くことが多い",
-                            w - 0.8, fontsize=4.5, line_h=1.8, color=RED)
+    yy = draw_focus_footnote(focus_x, focus_y, img_w * 0.05, x + 0.4, yy,
+                              "目印の傾向：外枠の「要確認」表示は小/大容量共通。大容量は「要」の文字にさらに囲みが付くことが多い",
+                              w - 0.8, fontsize=4.5, line_h=1.8, color=RED)
     yy -= 0.25
     yy = draw_callout_note(x + 0.4, yy,
                             "パッケージ表記は数年かけて順次変更される予定。変更後もお客様へ正しくご案内できるよう、"
@@ -216,8 +239,10 @@ def draw_poster3_flow(x, y_top, w, h):
                      subtitle="元資料：販売可否判断フローチャート")
     frame_bottom = y_top - h
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.3, IMG_FLOWCHART)
-    draw_callout_note(img_x0 + img_w * 0.60, img_y1 - 0.838 * img_h,
-                       "☞販売しても「申し送り」が必要な場合あり", img_w * 0.40, fontsize=4.1, line_h=1.55)
+    focus_y = img_y1 - 0.803 * img_h
+    draw_focus_footnote(img_x0 + img_w * 0.70, focus_y, img_w * 0.055,
+                         img_x0 + img_w * 0.44, focus_y - img_w * 0.095,
+                         "販売しても申し送り要", img_w * 0.30, fontsize=4.0, line_h=1.5)
 
 
 draw_poster1(Q1_X, ROW1_TOP, COL_W, ROW_H)
