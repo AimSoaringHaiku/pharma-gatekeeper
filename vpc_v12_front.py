@@ -66,9 +66,26 @@ def draw_point_seal(ax, cx, cy, label, r=1.1, color=RED, fontsize=3.4, rotation=
             color="white", zorder=8, rotation=rotation)
 
 
+def draw_magnifier_icon(ax, x, y, r=0.62, handle_len=0.85, color=RED, angle_deg=-40):
+    """虫眼鏡アイコン：レンズ(円)＋斜めの持ち手。持ち手の先端座標を返す（そこから説明文を続ける）。"""
+    import math
+    rad = math.radians(angle_deg)
+    dx, dy = math.cos(rad), math.sin(rad)
+    edge_x, edge_y = x + r * dx, y + r * dy
+    tip_x, tip_y = x + (r + handle_len) * dx, y + (r + handle_len) * dy
+    ax.add_patch(patches.Circle((x, y), r, facecolor="white", edgecolor=color, linewidth=1.1, zorder=8))
+    ax.plot([edge_x, tip_x], [edge_y, tip_y], color=color, linewidth=1.6, solid_capstyle="round", zorder=8)
+    return tip_x, tip_y
+
+
 def draw_eye_guide(ax, x, y, text, color=RED, fontsize=5.0, ha="left"):
-    """短い道案内（解釈層）。「☞」＋断定しすぎない一言を、白抜き吹き出しで軽く強調する。"""
-    ax.text(x, y, f"☞{text}", fontsize=fontsize, fontweight="bold", ha=ha, va="center",
+    """短い道案内（解釈層）。虫眼鏡アイコン＋断定しすぎない一言を、白抜き吹き出しで軽く強調する。"""
+    icon_r = fontsize * 0.11
+    icon_cx = x + icon_r * 1.3 if ha == "left" else x - icon_r * 1.3
+    tip_x, _ = draw_magnifier_icon(ax, icon_cx, y + icon_r * 0.7, r=icon_r, handle_len=icon_r * 1.6,
+                                    color=color, angle_deg=-40 if ha == "left" else -140)
+    text_x = tip_x + icon_r * 0.6 if ha == "left" else tip_x - icon_r * 0.6
+    ax.text(text_x, y, text, fontsize=fontsize, fontweight="bold", ha=ha, va="center",
             color=color, fontstyle="italic", zorder=8,
             bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor=color, linewidth=0.7, alpha=0.92))
 
@@ -231,16 +248,26 @@ current_y -= 0.35
 
 # --- 計算手順・成分判別・ブランド速断（実務でよく使う判別系を、本体テーブルの直前に集約） ---
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 9.5, current_y,
-        "①分類で基準日数(×7=かぜ薬等/×5=それ以外)　②1日最大服用量を確認　③総量÷1日量=消費日数　④基準日数以下=小容量/超=大容量",
-        fontsize=6.4, ha="left", va="center", color=GRAY)
+ax.text(COL_NAME_X, current_y, "計算ドリル:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 10.0, current_y, "包装数量", fontsize=6.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 15.6, current_y, "〇", fontsize=7.0, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 18.3, current_y, "÷1日量", fontsize=6.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 23.9, current_y, "〇", fontsize=7.0, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 26.6, current_y, "＝消費日数", fontsize=6.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 34.2, current_y, "□", fontsize=7.0, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 36.9, current_y,
+        "　→　基準日数(", fontsize=6.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 46.3, current_y, "×7＝7日", fontsize=6.4, fontweight="bold", ha="left", va="center", color=BLUE)
+ax.text(COL_NAME_X + 51.9, current_y, "/", fontsize=6.4, ha="left", va="center", color="#333333")
+ax.text(COL_NAME_X + 52.6, current_y, "×5＝5日", fontsize=6.4, fontweight="bold", ha="left", va="center", color=ORANGE)
+ax.text(COL_NAME_X + 58.2, current_y, ")以下なら小容量・超なら大容量", fontsize=6.4, ha="left", va="center", color="#333333")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
 marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y,
-        "対象(指定8成分)＝エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
-        fontsize=5.9, ha="left", va="center", color=GRAY)
+ax.text(COL_NAME_X + 9.9, current_y, "対象(指定8成分)＝", fontsize=5.9, ha="left", va="center", color=GRAY)
+ax.text(COL_NAME_X + 17.3, current_y,
+        "エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
+        fontsize=5.9, fontweight="bold", ha="left", va="center", color=INK)
 current_y -= 1.4
 marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
@@ -276,6 +303,12 @@ ax.text(COL_SMALL_X, current_y, "小包装", fontweight="bold", fontsize=11.59, 
 ax.text(COL_BOUND_X, current_y, "境界", fontweight="bold", fontsize=10.37, ha="center", va="center", color="#666666")
 ax.text(COL_LARGE_X, current_y, "大包装", fontweight="bold", fontsize=11.59, ha="center", va="center")
 ax.text(FLOW_X, current_y, "レジ確認フロー", fontweight="bold", fontsize=8.3, ha="center", va="center", color="#666666")
+
+# --- 虫眼鏡フォーカス（解釈層）：小/大の枠が本当に照合すべき箇所であることを、
+#     本文中の該当見出しを直接囲む枠で示す。説明は下の視線誘導へ続く ---
+ax.add_patch(patches.FancyBboxPatch((COL_SMALL_X - 4.2, current_y - 1.15), COL_LARGE_X - COL_SMALL_X + 8.4, 2.3,
+                                     boxstyle="round,pad=0.15", linewidth=1.1, edgecolor=BLUE,
+                                     facecolor="none", linestyle=(0, (2, 1.5)), zorder=5))
 
 current_y -= 1.2
 ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量", fontsize=6.35, ha="left", va="center", color="#555555")

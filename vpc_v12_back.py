@@ -131,12 +131,30 @@ def panel_frame(x, y_top, w, h, title, color, subtitle=None):
     return y_top - bar_h - 0.7
 
 
+def draw_magnifier_icon(cx, cy, r, handle_len, color, angle_deg=-40):
+    """虫眼鏡アイコン：レンズ(円)＋斜めの持ち手。持ち手の先端座標を返す（そこから説明文を続ける）。"""
+    import math
+    rad = math.radians(angle_deg)
+    dx, dy = math.cos(rad), math.sin(rad)
+    edge_x, edge_y = cx + r * dx, cy + r * dy
+    tip_x, tip_y = cx + (r + handle_len) * dx, cy + (r + handle_len) * dy
+    ax.add_patch(patches.Circle((cx, cy), r, facecolor="white", edgecolor=color, linewidth=1.0, zorder=5))
+    ax.plot([edge_x, tip_x], [edge_y, tip_y], color=color, linewidth=1.4, solid_capstyle="round", zorder=5)
+    return tip_x, tip_y
+
+
 def draw_callout_note(cx, cy, text, w, fontsize=3.5, line_h=1.3, color=RED, halign="left"):
-    """元資料の画像上の余白に直接書き込む、手書きメモ風の短い注釈（☞＋断定しすぎない一言）。
+    """元資料の画像上の余白に直接書き込む、手書きメモ風の短い注釈（虫眼鏡アイコン＋断定しすぎない一言）。
     白黒印刷でも判別できるよう、枠線付きの吹き出し（fill無し）にする。"""
+    text = text.lstrip("☞")
+    icon_r = fontsize * 0.15
+    icon_cx = cx + icon_r * 1.3 if halign == "left" else cx - icon_r * 1.3
+    tip_x, _ = draw_magnifier_icon(icon_cx, cy + icon_r * 0.7, icon_r, icon_r * 1.5, color,
+                                    angle_deg=-40 if halign == "left" else -140)
+    text_x = tip_x + icon_r * 0.5 if halign == "left" else tip_x - icon_r * 0.5
     lines = wrap_to_width(text, fontsize, w)
     for i, line in enumerate(lines):
-        ax.text(cx, cy - i * line_h, line, fontsize=fontsize, fontweight="bold",
+        ax.text(text_x, cy - i * line_h, line, fontsize=fontsize, fontweight="bold",
                 ha=halign, va="center", color=color, fontstyle="italic", zorder=4,
                 bbox=dict(boxstyle="round,pad=0.08", facecolor="white", edgecolor=color, linewidth=0.5, alpha=0.92))
     return cy - len(lines) * line_h
