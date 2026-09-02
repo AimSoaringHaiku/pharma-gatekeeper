@@ -67,20 +67,22 @@ def draw_point_seal(ax, cx, cy, label, r=1.1, color=RED, fontsize=3.4, rotation=
 
 
 def draw_magnifier_icon(ax, x, y, r=0.62, handle_len=0.85, color=RED, angle_deg=-40):
-    """虫眼鏡アイコン：レンズ(円)＋斜めの持ち手。持ち手の先端座標を返す（そこから説明文を続ける）。"""
+    """虫眼鏡アイコン：レンズ(円)＋斜めの持ち手。持ち手の先端座標を返す（そこから説明文を続ける）。
+    解釈層であることが一目でわかるよう、やや大きめ・太めに描く。"""
     import math
     rad = math.radians(angle_deg)
     dx, dy = math.cos(rad), math.sin(rad)
     edge_x, edge_y = x + r * dx, y + r * dy
     tip_x, tip_y = x + (r + handle_len) * dx, y + (r + handle_len) * dy
-    ax.add_patch(patches.Circle((x, y), r, facecolor="white", edgecolor=color, linewidth=1.1, zorder=8))
-    ax.plot([edge_x, tip_x], [edge_y, tip_y], color=color, linewidth=1.6, solid_capstyle="round", zorder=8)
+    ax.add_patch(patches.Circle((x, y), r, facecolor="#fff5f5" if color == RED else "#f3f8fd",
+                                 edgecolor=color, linewidth=1.5, zorder=8))
+    ax.plot([edge_x, tip_x], [edge_y, tip_y], color=color, linewidth=2.1, solid_capstyle="round", zorder=8)
     return tip_x, tip_y
 
 
 def draw_eye_guide(ax, x, y, text, color=RED, fontsize=5.0, ha="left"):
     """短い道案内（解釈層）。虫眼鏡アイコン＋断定しすぎない一言を、白抜き吹き出しで軽く強調する。"""
-    icon_r = fontsize * 0.11
+    icon_r = fontsize * 0.17
     icon_cx = x + icon_r * 1.3 if ha == "left" else x - icon_r * 1.3
     tip_x, _ = draw_magnifier_icon(ax, icon_cx, y + icon_r * 0.7, r=icon_r, handle_len=icon_r * 1.6,
                                     color=color, angle_deg=-40 if ha == "left" else -140)
@@ -207,8 +209,27 @@ ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最�
 ax.text(0.5, current_y - 0.35, "確認順：①成分判別→②年齢確認→③包装確認→④レジ確認",
         fontsize=4.0, fontweight="bold", fontstyle="italic", ha="left", va="center", color=BLUE)
 
-# --- 使い方・販売可否（①を年齢規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう最上部に配置） ---
+# --- ① 成分判別（本当にこの表の対象品かどうかの一番最初の確認として最上部に配置） ---
 current_y -= 1.55
+ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
+marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y, "対象(指定8成分)＝", fontsize=5.9, ha="left", va="center", color=GRAY)
+ax.text(COL_NAME_X + 17.3, current_y,
+        "エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
+        fontsize=5.9, fontweight="bold", ha="left", va="center", color=INK)
+current_y -= 1.4
+marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.4
+marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.5
+
+# --- 使い方・販売可否（②③を年齢・包装規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう上部に配置） ---
 ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.15
 ax.text(COL_NAME_X, current_y, "18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
@@ -236,7 +257,7 @@ current_y -= 1.35
 ax.text(COL_NAME_X + 12.0, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
-ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は、右下のQRからご確認いただけます", fontsize=5.6, ha="left", va="center", color="#888888")
+ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は、KEGG_OTC検索欄を見て、計算式の手順で見て頂ければ判断できます", fontsize=5.4, ha="left", va="center", color="#888888")
 current_y -= 1.45
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 11.0, current_y,
@@ -263,8 +284,6 @@ DRILL_FS = 7.4
 drill_top = current_y + 1.0
 current_y -= 1.65
 ax.text(COL_NAME_X + 1.0, current_y, "計算ドリル", fontsize=8.6, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 15.5, current_y, "（下表を見ずに、ご自身で計算してみましょう）", fontsize=5.6, fontstyle="italic",
-        ha="left", va="center", color=LGRAY)
 current_y -= 2.1
 # --- ①分類の判定行 ---
 ax.text(COL_NAME_X + 1.0, current_y, "①分類：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
@@ -281,7 +300,7 @@ current_y -= 2.35
 bx = COL_NAME_X + 1.0
 ax.text(bx, current_y, "③④", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
 bx += 4.0
-bx = drill_chip(bx, current_y, "包装数量 〇", 11.5, fs=6.9)
+bx = drill_chip(bx, current_y, "包装数量 △", 11.5, fs=6.9)
 drill_op(bx + 1.1, current_y, "÷", fs=8.0)
 bx += 2.2
 bx = drill_chip(bx, current_y, "1日量 〇", 10.0, fs=6.9)
@@ -301,26 +320,6 @@ current_y -= 1.55
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y), LOGICAL_W - 2 * (COL_NAME_X - 1.0), drill_top - current_y,
                                      boxstyle="round,pad=0.15", linewidth=1.6, edgecolor=INK, facecolor="none", zorder=6))
 current_y -= 0.55
-ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
-marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y, "対象(指定8成分)＝", fontsize=5.9, ha="left", va="center", color=GRAY)
-ax.text(COL_NAME_X + 17.3, current_y,
-        "エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
-        fontsize=5.9, fontweight="bold", ha="left", va="center", color=INK)
-current_y -= 1.4
-marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
-        fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.4
-marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
-        fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.45
-draw_eye_guide(ax, COL_NAME_X + 9.9, current_y,
-               "↑順番が前後しますが、①はここです（商品が指定濫用対象かの確認）", color=BLUE, fontsize=5.9)
-current_y -= 1.45
 WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
         ha="left", va="center", color=WATERMARK_GRAY)
@@ -360,10 +359,7 @@ current_y -= 1.05
 ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に「成人(15歳以上)の1日量」で計算します（18歳未満の購入者でも同じ）",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 
-# --- 視線誘導（解釈層）：小/大の枠は②③のルールと合わせて確認する運用上のポイントを一言添える ---
-current_y -= 1.45
-draw_eye_guide(ax, COL_NAME_X, current_y,
-               "小/大の枠は②③のルールと合わせて確認を", color=BLUE, fontsize=6.2)
+# --- 視線誘導（解釈層）：新しめの包装の目印について一言添える ---
 current_y -= 1.45
 draw_eye_guide(ax, COL_NAME_X, current_y,
                "新しめの包装は「要確認」の「要」に囲みがあるかも目安に(旧包装は記載がない場合も)",
@@ -432,14 +428,20 @@ for i, row in mart.iterrows():
     ax.text(COL_MULT_X, current_y, f"×{row['limit']}", fontsize=8.6, ha="center", va="center",
             color=mult_color, fontweight="bold")
 
+    def pack_fontsize(text):
+        # 包装が複数個(カプセル等の長い単位が連なる場合)は、隣接列とぶつからないよう縮小
+        return 8.9 if len(text) <= 6 else (7.4 if len(text) <= 11 else 6.2)
+
     if row["small"] != "-":
-        ax.text(COL_SMALL_X, current_y, row["small"], fontsize=8.9, fontweight="bold", ha="center", va="center")
+        ax.text(COL_SMALL_X, current_y, row["small"], fontsize=pack_fontsize(row["small"]),
+                fontweight="bold", ha="center", va="center")
 
     ax.vlines(COL_BOUND_X, current_y - 0.85, current_y + 0.85, color="#bbbbbb", linewidth=1.0, zorder=1)
     ax.text(COL_BOUND_X, current_y, row["boundary"], fontsize=7.5, ha="center", va="center", color=GRAY, zorder=2)
 
     if row["large"] != "-":
-        ax.text(COL_LARGE_X, current_y, row["large"], fontsize=8.9, fontweight="bold", ha="center", va="center", color="#444444")
+        ax.text(COL_LARGE_X, current_y, row["large"], fontsize=pack_fontsize(row["large"]),
+                fontweight="bold", ha="center", va="center", color="#444444")
 
     current_y -= row_height
 
@@ -496,42 +498,35 @@ detail_top = current_y
 def wrap_by_width(text, chars_per_line):
     return [text[i:i + chars_per_line] for i in range(0, len(text), chars_per_line)]
 
-qr_size = 6.4
-QR_X = 89.5
+# --- QRコードは縦積みではなく横並びに配置（右側の縦スペースを節約） ---
+qr_size = 5.6
+QR_X1, QR_X2 = 87.3, 94.2
 
-qr1_top = detail_top - 0.2
-qr1_center_y = qr1_top - qr_size / 2
+qr_top = detail_top - 0.2
+qr_center_y = qr_top - qr_size / 2
 try:
     qr_img = mpimg.imread(QR_APP_PATH)
-    ax.imshow(qr_img, extent=[QR_X - qr_size/2, QR_X + qr_size/2,
-                              qr1_center_y - qr_size/2, qr1_center_y + qr_size/2], zorder=3)
+    ax.imshow(qr_img, extent=[QR_X1 - qr_size/2, QR_X1 + qr_size/2,
+                              qr_center_y - qr_size/2, qr_center_y + qr_size/2], zorder=3)
 except Exception:
-    ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr1_center_y - qr_size/2), qr_size, qr_size,
+    ax.add_patch(patches.Rectangle((QR_X1 - qr_size/2, qr_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
-qr1_y = qr1_center_y - qr_size/2 - 0.85
-ax.text(QR_X, qr1_y, "参考：商品検索", fontsize=6.8, ha="center", va="top", color=INK, fontweight="bold")
-qr1_y -= 1.05
-ax.text(QR_X, qr1_y, "(表にない商品はこちらから)", fontsize=5.0, ha="center", va="top", color="#999999")
-qr1_y -= 0.85
-ax.text(QR_X, qr1_y, APP_URL.replace("https://", ""), fontsize=3.7, ha="center", va="top", color="#999999")
-
-qr2_top = qr1_y - 1.7
-qr2_center_y = qr2_top - qr_size / 2
 try:
     qr_img2 = mpimg.imread(QR_FORM_PATH)
-    ax.imshow(qr_img2, extent=[QR_X - qr_size/2, QR_X + qr_size/2,
-                               qr2_center_y - qr_size/2, qr2_center_y + qr_size/2], zorder=3)
+    ax.imshow(qr_img2, extent=[QR_X2 - qr_size/2, QR_X2 + qr_size/2,
+                               qr_center_y - qr_size/2, qr_center_y + qr_size/2], zorder=3)
 except Exception:
-    ax.add_patch(patches.Rectangle((QR_X - qr_size/2, qr2_center_y - qr_size/2), qr_size, qr_size,
+    ax.add_patch(patches.Rectangle((QR_X2 - qr_size/2, qr_center_y - qr_size/2), qr_size, qr_size,
                                    fill=False, edgecolor="#cccccc", zorder=3))
-qr2_y = qr2_center_y - qr_size/2 - 0.85
-ax.text(QR_X, qr2_y, "ご意見・改善案", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
-qr2_y -= 1.05
-# FORM_URL_SHORT に短縮URL（例: qr.quel.jp等で発行したもの）を設定すると、QRの下にテキスト表示されます。
-FORM_URL_SHORT = ""
-if FORM_URL_SHORT:
-    ax.text(QR_X, qr2_y, FORM_URL_SHORT, fontsize=4.4, ha="center", va="top", color="#999999")
-    qr2_y -= 1.0
+
+qr_y = qr_center_y - qr_size/2 - 0.75
+ax.text(QR_X1, qr_y, "参考：商品検索", fontsize=5.8, ha="center", va="top", color=INK, fontweight="bold")
+ax.text(QR_X2, qr_y, "ご意見・改善案", fontsize=5.8, ha="center", va="top", color="#555555", fontweight="bold")
+qr_y -= 0.95
+ax.text(QR_X1, qr_y, "(表にない商品はこちら)", fontsize=4.3, ha="center", va="top", color="#999999")
+qr_y -= 0.75
+ax.text(QR_X1, qr_y, APP_URL.replace("https://", ""), fontsize=3.3, ha="center", va="top", color="#999999")
+qr2_y = qr_y
 
 # --- 詳細参考資料の要約（旧2ページ目を集約・QR列を避けて配置） ---
 DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
