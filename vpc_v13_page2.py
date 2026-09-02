@@ -269,9 +269,15 @@ def draw_driving_table(x, y, w, rows, fs_tag, fs_tbl, line_h):
     tbl_lh = line_h * 0.85
     col1_x, col2_x, col3_x, col4_x = x + 0.4, x + w * 0.30, x + w * 0.52, x + w * 0.68
     col5_x, col6_x = x + w * 0.79, x + w * 0.90
-    # 2列組で密度を上げる（全幅を使えるため、10行を2カラムに分けて表示）
-    half = (len(rows) + 1) // 2
-    left_rows, right_rows = rows[:half], rows[half:]
+
+    def is_avoid(avoid):
+        return ("NG" in avoid) or ("禁止" in avoid)
+
+    # 運転制限（当日NG/禁止）の成分を右側に縦でまとめ、一目で分かるようにする
+    left_rows = [r for r in rows if not is_avoid(r[2])]
+    right_rows = [r for r in rows if is_avoid(r[2])]
+    ax.text(col4_x, y, "■当日は運転を避ける成分", fontsize=fs_tbl, fontweight="bold", ha="left", va="center", color=RED)
+    y -= tbl_lh
     ax.text(col1_x, y, "成分(世代)", fontsize=fs_tbl, fontweight="bold", ha="left", va="center", color=GRAY)
     ax.text(col2_x, y, "半減期", fontsize=fs_tbl, fontweight="bold", ha="left", va="center", color=GRAY)
     ax.text(col3_x, y, "⇒回避目安", fontsize=fs_tbl, fontweight="bold", ha="left", va="center", color=GRAY)

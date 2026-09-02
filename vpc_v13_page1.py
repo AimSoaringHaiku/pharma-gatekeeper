@@ -209,6 +209,22 @@ ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最�
 ax.text(0.5, current_y - 0.35, "確認順：①成分判別→②年齢確認→③包装確認→④レジ確認",
         fontsize=4.0, fontweight="bold", fontstyle="italic", ha="left", va="center", color=BLUE)
 
+# --- 法解釈・実務鉄則（最重要の注意事項として最上部に明記） ---
+current_y -= 1.75
+rule_box_h = 2.55
+ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y - rule_box_h + 0.65),
+                                     LOGICAL_W - 2 * (COL_NAME_X - 1.0), rule_box_h,
+                                     boxstyle="round,pad=0.12", linewidth=1.4, edgecolor=RED,
+                                     facecolor="#fff5f5", zorder=6))
+ax.text(COL_NAME_X + 0.3, current_y,
+        "【法解釈・実務鉄則】小容量1個の販売時であっても、18歳未満には「氏名・年齢の確認」、成人には「他店での直近購入状況の確認」が法令上必須となります。",
+        fontsize=6.2, fontweight="bold", ha="left", va="center", color=DARKRED, zorder=7)
+current_y -= 1.1
+ax.text(COL_NAME_X + 0.3, current_y,
+        "※「適宜増減」や小児用量に関わらず、成人の1日最大服用量を計算基準とします。",
+        fontsize=5.7, ha="left", va="center", color=DARKRED, zorder=7)
+current_y -= 1.15
+
 # --- ① 成分判別（本当にこの表の対象品かどうかの一番最初の確認として最上部に配置） ---
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
@@ -234,12 +250,12 @@ ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.15
 ax.text(COL_NAME_X, current_y, "18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 12.0, current_y,
-        "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
+        "小容量1個のみ販売可。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
         fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(COL_NAME_X + 12.0, current_y,
-        "小容量は通常販売可（他店購入状況確認は必須）。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
+        "小容量は通常販売可。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
         fontsize=6.6, ha="left", va="center", color="#333333")
 current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "② 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
@@ -281,24 +297,23 @@ def drill_op(x, y, text, fs=8.5, color="#666666"):
 
 
 DRILL_FS = 7.4
-drill_top = current_y + 1.0
 current_y -= 1.65
 ax.text(COL_NAME_X + 1.0, current_y, "計算ドリル", fontsize=8.6, fontweight="bold", ha="left", va="center", color=INK)
 current_y -= 2.1
-# --- ①分類の判定行 ---
-ax.text(COL_NAME_X + 1.0, current_y, "①分類：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
+# --- ⑴分類の判定行 ---
+ax.text(COL_NAME_X + 1.0, current_y, "(1)分類：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
 x = drill_chip(COL_NAME_X + 9.3, current_y, "かぜ薬・解熱鎮痛薬・鼻炎用内服薬", 26.0, fs=6.6, ec=BLUE, tcolor=BLUE)
 drill_op(x + 1.3, current_y, "＝", fs=7.0)
 x = drill_chip(x + 2.6, current_y, "×7(7日)", 10.5, fs=6.8, ec=BLUE, tcolor=BLUE)
 drill_op(x + 1.3, current_y, "／それ以外＝", fs=6.0, color="#333333")
 x2 = x + 1.3 + 6.6
 x = drill_chip(x2, current_y, "×5(5日)", 10.5, fs=6.8, ec=ORANGE, tcolor=ORANGE)
-ax.text(x + 1.6, current_y, "②1日量(15歳以上基準)：", fontsize=6.6, ha="left", va="center", color="#333333")
+ax.text(x + 1.6, current_y, "(2)1日量(15歳以上基準)：", fontsize=6.6, ha="left", va="center", color="#333333")
 drill_chip(x + 17.6, current_y, "〇", 4.0, fs=8.0)
 current_y -= 2.35
-# --- ③④ 計算→判定を1本のブロック連結で表す ---
+# --- ⑶⑷ 計算→判定を1本のブロック連結で表す ---
 bx = COL_NAME_X + 1.0
-ax.text(bx, current_y, "③④", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
+ax.text(bx, current_y, "(3)(4)", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
 bx += 4.0
 bx = drill_chip(bx, current_y, "包装数量 △", 11.5, fs=6.9)
 drill_op(bx + 1.1, current_y, "÷", fs=8.0)
@@ -309,7 +324,7 @@ bx += 2.2
 bx = drill_chip(bx, current_y, "消費日数 □日", 12.5, fs=6.9)
 drill_op(bx + 1.5, current_y, "→", fs=9.0)
 bx += 3.0
-bx = drill_chip(bx, current_y, "①の基準日数と比較", 15.5, fs=6.6)
+bx = drill_chip(bx, current_y, "(1)の基準日数と比較", 15.5, fs=6.6)
 drill_op(bx + 1.5, current_y, "→", fs=9.0)
 bx += 3.0
 bx = drill_chip(bx, current_y, "以下：小容量", 12.0, fs=6.8, ec=BLUE, tcolor=BLUE)
@@ -317,9 +332,10 @@ drill_op(bx + 0.9, current_y, "／", fs=7.0)
 bx += 1.8
 drill_chip(bx, current_y, "超：大容量", 11.0, fs=6.8, ec=ORANGE, tcolor=ORANGE)
 current_y -= 1.55
-ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y), LOGICAL_W - 2 * (COL_NAME_X - 1.0), drill_top - current_y,
-                                     boxstyle="round,pad=0.15", linewidth=1.6, edgecolor=INK, facecolor="none", zorder=6))
-current_y -= 0.55
+ax.text(COL_NAME_X + 1.0, current_y,
+        "※消費日数が(1)の基準日数と同日数、またはそれ以下であれば小容量／基準日数を超過した場合のみ大容量です（境界日数ちょうどは小容量）",
+        fontsize=5.3, ha="left", va="center", color=LGRAY)
+current_y -= 0.9
 WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
         ha="left", va="center", color=WATERMARK_GRAY)
@@ -370,7 +386,7 @@ ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.25
+row_height = 2.10
 
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0

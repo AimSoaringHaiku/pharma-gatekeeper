@@ -242,6 +242,8 @@ def draw_poster3_flow(x, y_top, w, h):
     img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.3, IMG_FLOWCHART)
     focus_y = img_y1 - 0.803 * img_h
     draw_numbered_box(img_x0 + img_w * 0.70, focus_y, img_w * 0.15, img_w * 0.045, 3)
+    focus_y2 = img_y1 - 0.514 * img_h
+    draw_numbered_box(img_x0 + img_w * 0.29, focus_y2, img_w * 0.26, img_w * 0.032, 4)
 
 
 draw_poster1(Q1_X, ROW1_TOP, COL_W, ROW_H)
@@ -262,14 +264,21 @@ FOOTNOTES = [
      "外枠の「要確認」という表示自体は、小容量・大容量どちらの商品にも共通して付いています。違いは「要」の文字にさらに丸い囲みが付くかどうかで、"
      "大容量側のみ追加の囲みが付いていることが多いです（表示は製品や年代により異なり、旧い包装には記載がない場合もございますので、あわせてご確認ください）。"),
     (3, "参考③", "「販売実施」の後も、申し送りが必要な場合がございます",
-     "元資料のフローだけを拝見すると「販売実施」で対応完了のように見えますが、実際には販売後も、購入者様のご様子や理由のご説明状況によっては、"
+     "「販売実施」で対応完了のように見えますが、実際には販売後も、購入者様のご様子や理由のご説明状況によっては、"
      "「申し送り対応の実施」（購入者様の特徴・来店日時・購入商品等を帳簿等にご記載いただくこと）が必要になる場合がございます。"),
-    (4, "共通", "【大容量・複数個（成人）】のご案内文言",
-     "18歳以上であれば購入個数の制限はございませんが、ご理由を伺わなければならない厚労省の規則がございます"
-     "（2枚目「レジでの確認事項」にも同内容を記載しております）。"),
-    (5, "追加", "センソ・ブシを含む製剤にご注意ください",
-     "救心・六神丸等に含まれる「センソ」は、ジゴキシン等の医療用強心薬（ジギタリス製剤）との併用が禁忌とされています。"
-     "また、センソ・ブシ（附子）は妊娠中の使用に特にご注意いただきたい成分ですので、ご購入前に必ずご確認ください。"),
+    (4, "参考③", "赤枠「18歳以上への販売」について",
+     "大容量・複数個の購入理由を確認するのは、この「18歳以上への販売」の分岐に進んだ場合のみです。18歳未満は年齢確認の時点で一律に大容量・複数個が販売不可となるため、"
+     "理由確認はこの分岐に該当する成人のみが対象です。"),
+]
+
+NOTES = [
+    ("身分証明書提示について（自店ルール）",
+     "法律や国の通知に「学生証を提示させる」といった具体的な書類名の規定はありませんが、現場でのトラブルを防ぎ確実な確認を行うため、"
+     "当店では必ず「公的な身分証明書」（学生証・健康保険証・マイナンバーカード・運転免許証等）の提示をお願いするルールとしています。"),
+    ("この規制がある理由（免責事項の根拠）",
+     "かつて安全確認が不十分なまま販売され、規定量を上回る自己判断の服用により重篤な健康被害に至った事例がありました。今回の確認は個人ではなく社会構造的な問題として、"
+     "同じ事象を繰り返さないための取り組みです。市販薬は厳格な配合・最大量のルールの下で設計されており、用法用量を守ることで最大の効果と安全性が得られます。"
+     "意図的な過量服薬による健康被害は保証・救済制度の対象外となるため、複数の薬の同時服用についてもあわせてご確認をお願いしています。"),
 ]
 
 header_h4 = 2.6
@@ -277,7 +286,7 @@ ax.add_patch(patches.FancyBboxPatch((Q4_X, Q4_TOP - Q4_H), Q4_W, Q4_H,
                                      boxstyle="round,pad=0.12", linewidth=1.3, edgecolor=INK, facecolor="#fbfbfb", zorder=0))
 ax.add_patch(patches.FancyBboxPatch((Q4_X, Q4_TOP - header_h4), Q4_W, header_h4,
                                      boxstyle="round,pad=0.12", linewidth=0, facecolor=INK, zorder=1))
-ax.text(Q4_X + Q4_W / 2, Q4_TOP - header_h4 / 2, "④ 赤枠のふり番・脚注", fontsize=6.6, fontweight="bold",
+ax.text(Q4_X + Q4_W / 2, Q4_TOP - header_h4 / 2, "④ 赤枠のふり番・脚注／確認業務の補足", fontsize=6.6, fontweight="bold",
         ha="center", va="center", color="white", zorder=3)
 
 
@@ -298,10 +307,23 @@ def draw_footnote_entry(x, y, w, number, source, title, body, fs_num=6.5, fs_tit
     return y - 0.5
 
 
+def draw_note_entry(x, y, w, title, body, fs_title=6.0, fs_body=5.3, line_h=1.4):
+    ax.text(x, y, f"■ {title}", fontsize=fs_title, fontweight="bold", ha="left", va="center", color=BLUE)
+    y -= line_h * 1.15
+    for line in wrap_to_width(body, fs_body, w - 0.5):
+        ax.text(x, y, line, fontsize=fs_body, ha="left", va="center", color="#333333")
+        y -= line_h
+    y -= 0.35
+    ax.hlines(y, x, x + w, colors="#dddddd", linewidth=0.6)
+    return y - 0.5
+
+
 def render_footnotes(fs_num, fs_title, fs_body, line_h):
     y = Q4_TOP - header_h4 - line_h * 0.9
     for number, source, title, body in FOOTNOTES:
         y = draw_footnote_entry(Q4_X + 0.8, y, Q4_W - 1.6, number, source, title, body, fs_num, fs_title, fs_body, line_h)
+    for title, body in NOTES:
+        y = draw_note_entry(Q4_X + 0.8, y, Q4_W - 1.6, title, body, fs_title, fs_body, line_h)
     return y
 
 
