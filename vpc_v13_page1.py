@@ -38,6 +38,13 @@ def extract_amount_unit(package_str):
     return amount, unit
 
 
+def reorder_ingredients(ingr_str):
+    """対象成分の列は、依存性の観点で最も注意すべきジヒドロコデインを常に一番左に表示する。"""
+    tokens = [t.strip() for t in ingr_str.split(",") if t.strip()]
+    tokens.sort(key=lambda t: 0 if "ジヒドロコデイン" in t else 1)
+    return ", ".join(tokens)
+
+
 def shorten_note(text, max_len=60):
     text = str(text).replace("\\n", " ").replace("\n", " ")
     text = re.sub(r"\s+", " ", text).strip()
@@ -139,6 +146,14 @@ mart = pd.DataFrame(processed)
 GROUP_ORDER_OVERRIDE = {
     "改源": ("改源", 0),
     "新カイゲンせき止め液W": ("改源", 1),
+    "ベンザブロックIP": ("ベンザブロックIP", 0),
+    "ベンザブロックIP錠": ("ベンザブロックIP", 1),
+    "ベンザブロックIPプレミアム": ("ベンザブロックIP", 2),
+}
+
+# 表示名だけを差し替える（CAPLET_PRODUCTS等のキーはCSV上の商品名のまま保つ）
+DISPLAY_NAME_OVERRIDE = {
+    "ベンザブロックIPプレミアム": "ベンザブロックIPプレミアム(2025年廃版)",
 }
 
 
@@ -187,7 +202,7 @@ CUSTOM_NOTES = {
     "アレグラFX": "対比: FX(通常版)は対象外/プレミアムのみ血管収縮剤(プソイドエフェドリン)追加で該当。",
     "コリホグス": "中枢抑制作用による呼吸抑制リスク。アルコール・ベンゾ系併用/ODに要注意。",
     "トラベルミンR": "対比: R・ジュニア・ファミリー・「1」は対象外/無印(大人用)のみジフェンヒドラミン含有で該当。",
-    "ナロン錠": "対比: 該当はナロン錠(無印)とナロンエースTのみ（確認済）/顆粒・m・エースプレミアム等は対象外。",
+    "ナロン錠": "対比: 該当はナロン錠(無印)・ナロン顆粒・ナロンエースTのみ（確認済）/ナロンm・エースプレミアムは対象外。",
     "新コンタック鼻炎Z": "対比: 鼻炎Zのみ対象外(唯一制限成分なし)/600プラス・かぜ総合等は該当。※セチリジンは妊婦禁忌。",
     "新ルルAゴールドDXα": "対比: のど飴・トローチ(部外品)は対象外/内服かぜ薬・メディカルドロップは該当。",
     "葛根湯エキス錠S「コタロー」": "対比: 葛根湯・小青竜湯等の漢方製剤は対象外(マオウは化学成分外で規制対象外)。",
@@ -468,13 +483,14 @@ for i, row in mart.iterrows():
     if i % 2 == 0:
         ax.add_patch(patches.Rectangle((0, current_y - row_height * 0.785), LOGICAL_W, row_height, facecolor="#f5f5f5", edgecolor="none", zorder=0))
 
-    name_len = len(row["product"])
-    name_fontsize = 9.6 if name_len <= 8 else (8.7 if name_len <= 12 else 7.8)
-    name_text = row["product"] + ("※" if row["is_caplet"] else "")
+    display_name = DISPLAY_NAME_OVERRIDE.get(row["product"], row["product"])
+    name_len = len(display_name)
+    name_fontsize = 9.6 if name_len <= 8 else (8.7 if name_len <= 12 else (7.8 if name_len <= 18 else 6.6))
+    name_text = display_name + ("※" if row["is_caplet"] else "")
     ax.text(COL_NAME_X, current_y, name_text, fontsize=name_fontsize, fontweight="bold", ha="left", va="center")
 
     if row["ingredients"]:
-        clean_ingr = re.sub(r'(塩酸塩|リン酸塩|硫酸塩|臭化水素酸塩|マレイン酸塩|酒石酸塩|フマル酸塩)', '', row["ingredients"])
+        clean_ingr = re.sub(r'(塩酸塩|リン酸塩|硫酸塩|臭化水素酸塩|マレイン酸塩|酒石酸塩|フマル酸塩)', '', reorder_ingredients(row["ingredients"]))
         if len(clean_ingr) > 26:
             clean_ingr = clean_ingr[:26] + "…"
         ax.text(COL_INGR_X, current_y, clean_ingr, fontsize=6.0, ha="left", va="center", color="#666666")
@@ -507,10 +523,6 @@ for i, row in mart.iterrows():
 current_y -= 1.35
 ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
-        fontsize=6.1, ha="left", va="center", color="#888888")
-current_y -= 1.05
-ax.text(COL_NAME_X, current_y,
-        "※ナイトテクトはドリエルと同成分（ジフェンヒドラミン）で、ドリエルと併売。包装は12錠のみです。",
         fontsize=6.1, ha="left", va="center", color="#888888")
 
 current_y -= 0.55
