@@ -4,6 +4,7 @@ import matplotlib.image as mpimg
 import japanize_matplotlib
 
 OUTPUT_PNG = "atomic_card_table_v13_page3.png"
+OUTPUT_PDF = "atomic_card_table_v13_page3.pdf"
 IMG_POSTER1 = "ref_poster_kounyusha.png"   # 「指定濫用防止医薬品をご購入時フリップ」
 IMG_POSTER2 = "ref_poster_oshirase.png"    # 「大切なお知らせ」販売方法の変更
 IMG_FLOWCHART = "ref_flowchart.png"        # 「販売可否判断フローチャート」OTCマニュアル(第2版)
@@ -362,6 +363,7 @@ ax.text(LOGICAL_W / 2, 0.9,
         fontsize=4.0, ha="center", va="center", color="#aaaaaa")
 
 fig.savefig(OUTPUT_PNG, dpi=300)
+fig.savefig(OUTPUT_PDF)
 plt.close(fig)
 plt.close(_meas_fig)
 print(f"v13【3枚目】出力完了: {OUTPUT_PNG}")

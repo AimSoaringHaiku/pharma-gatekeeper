@@ -3,6 +3,7 @@ import matplotlib.patches as patches
 import japanize_matplotlib
 
 OUTPUT_PNG = "atomic_card_table_v13_page2.png"
+OUTPUT_PDF = "atomic_card_table_v13_page2.pdf"
 
 LOGICAL_W, LOGICAL_H = 100.0, 141.4
 fig, ax = plt.subplots(figsize=(10, 14.14))
@@ -210,6 +211,11 @@ CASES = [
         "緑内障=眼圧上昇、前立腺肥大=尿閉⇒単一成分薬を推奨。",
         "プソイドエフェドリン：上記に加え高血圧・心疾患・糖尿病・甲状腺機能亢進も対象。",
     ]),
+    ("※", "抗ヒスタミン薬の使い分け", "喘息の既往がある方への風邪薬・鼻炎薬の相談", [
+        "第一世代(市販の風邪薬・せき止め等)：原則避ける⇒気道を乾燥させ痰をドロドロにし「痰の嵌頓」を招く危険性(クロルフェニラミンマレイン酸塩等)。",
+        "第二世代(病院のアレルギー薬・一部の市販鼻炎薬)：比較的安全⇒気道を乾燥させる副作用がほとんどない(アレグラ/フェキソフェナジン、クラリチン/ロラタジン等)。",
+        "喘息タイプで判断：アレルギー性(花粉・ダニ由来、鼻炎を合併しやすい)は喘息が落ち着いていれば医師処方あり/非アレルギー性(冷気・感染由来)は抗ヒスタミンのメリットがなくデメリットのみのため不要。",
+    ]),
     ("④", "併用", "SSRI服用中/他剤併用", [
         "最重要：DXM×SSRIはセロトニン症候群リスク(致死率最高クラスの相互作用)。",
         "GFJでDXM血中濃度↑。マクロライド系/アゾール系はQT延長・心室頻拍に注意。",
@@ -391,6 +397,7 @@ ax.text(LOGICAL_W / 2, 1.1,
         fontsize=4.4, ha="center", va="center", color="#aaaaaa")
 
 fig.savefig(OUTPUT_PNG, dpi=300)
+fig.savefig(OUTPUT_PDF)
 plt.close(fig)
 plt.close(_meas_fig)
 print(f"v13【2枚目】出力完了: {OUTPUT_PNG}")

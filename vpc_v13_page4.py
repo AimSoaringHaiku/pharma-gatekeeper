@@ -3,6 +3,7 @@ import matplotlib.patches as patches
 import japanize_matplotlib
 
 OUTPUT_PNG = "atomic_card_table_v13_page4.png"
+OUTPUT_PDF = "atomic_card_table_v13_page4.pdf"
 
 LOGICAL_W, LOGICAL_H = 100.0, 141.4
 fig, ax = plt.subplots(figsize=(10, 14.14))
@@ -100,7 +101,7 @@ PAGE_BOTTOM = 2.0
 # 上段：新商品採用時チェックリスト
 # ==========================================================
 box_top = PAGE_TOP
-box_h = 38.0
+box_h = 47.0
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - box_h), LOGICAL_W - 2 * (COL_NAME_X - 0.5), box_h,
                                      boxstyle="round,pad=0.2", linewidth=1.4, edgecolor=INK, facecolor="#f7f7f7", zorder=2))
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 0.5, box_top - 2.6), LOGICAL_W - 2 * (COL_NAME_X - 0.5), 2.6,
@@ -137,8 +138,11 @@ qy -= 1.7
 qy = draw_step(COL_NAME_X + 1.0, qy, STEP_W, 3, "消費日数を計算し、小容量/大容量を判定",
                ["包装数量 ÷ 1日量 ＝ 消費日数。消費日数が基準日数（×7または×5）以下なら小容量、超過なら大容量（1枚目のドリルと同じ計算式）。"])
 qy -= 1.7
-qy = draw_step(COL_NAME_X + 1.0, qy, STEP_W, 4, "package_verification.csvへ入力",
-               ["入力例（改源 26包）：product=改源, kubun=〇, package=26包, days=8.7, judgment=大容量, limit=7, ingredients=メチルエフェドリン, daily_dose=3"])
+qy = draw_step(COL_NAME_X + 1.0, qy, STEP_W, 4, "管理表の作成",
+               ["（例）package_verification.csv",
+                "列の意味：product=商品名／kubun=区分記号(〇:対象品)／package=包装規格／days=消費日数(日)／judgment=容量判定(小容量,大容量)／"
+                "limit=基準日数(7日 or 5日)／note=備考／ingredients=対象成分／daily_dose=1日量(錠・包等)",
+                "入力例（改源 26包）：product=改源, kubun=〇, package=26包, days=8.7, judgment=大容量, limit=7, ingredients=メチルエフェドリン, daily_dose=3"])
 
 # ==========================================================
 # 下段：剤形・医薬品区分の基礎知識
@@ -180,7 +184,7 @@ CANDY_ROWS = [
 CLASS_ROWS = [
     ("要指導医薬品", "薬剤師による対面販売必須。ネット通販不可。購入時に書面での説明と確認がある最上位規制。", False),
     ("第1類医薬品", "薬剤師による販売必須。ネット通販は可能だが、購入前にメール等での確認ステップがある。", False),
-    ("指定第2類・第2類医薬品", "登録販売者でも販売可能。指定第2類は禁忌の確認が推奨される（妊婦・ぜんそく既往・依存リスク等）。", False),
+    ("指定第2類医薬品", "登録販売者でも販売可能。禁忌の確認が推奨される（妊婦・ぜんそく既往・依存リスク等）。", False),
     ("＝＝＝ここまでが「指定濫用防止成分を配合できる」区分＝＝＝", "", None),
     ("第2類医薬品", "強い禁忌や深刻な依存性はない成分。多くの漢方薬・胃腸薬・一部の目薬等が該当。", True),
     ("第3類医薬品", "購入時の法的制限が最も緩い、副作用リスクが低い日常的なお薬（ビタミン剤等）。", True),
@@ -290,6 +294,7 @@ ax.text(LOGICAL_W / 2, 1.1,
         fontsize=4.4, ha="center", va="center", color="#aaaaaa")
 
 fig.savefig(OUTPUT_PNG, dpi=300)
+fig.savefig(OUTPUT_PDF)
 plt.close(fig)
 plt.close(_meas_fig)
 print(f"v13【4枚目】出力完了: {OUTPUT_PNG}")

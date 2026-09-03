@@ -8,6 +8,7 @@ import japanize_matplotlib
 
 PACKAGE_CSV = "package_verification.csv"
 OUTPUT_PNG = "atomic_card_table_v13_page1.png"
+OUTPUT_PDF = "atomic_card_table_v13_page1.pdf"
 QR_APP_PATH = "QR_667832.png"
 QR_FORM_PATH = "QR_form.png"
 APP_URL = "https://aimsoaringhaiku.github.io/pharma-gatekeeper/"
@@ -621,6 +622,7 @@ ax.text(COL_NAME_X, y,
         fontsize=4.8, ha="left", va="center", color="#aaaaaa")
 
 plt.savefig(OUTPUT_PNG, dpi=300)
+plt.savefig(OUTPUT_PDF)
 plt.close()
 
 print("==========================================")
