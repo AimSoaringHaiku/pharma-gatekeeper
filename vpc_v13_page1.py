@@ -133,7 +133,44 @@ for product, group in judgment_df.groupby("product"):
         "small": " ".join(small) if small else "-", "large": " ".join(large) if large else "-",
         "ingredients": str(r.get("ingredients", "")), "is_caplet": product in CAPLET_PRODUCTS,
     })
-mart = pd.DataFrame(processed).sort_values("product").reset_index(drop=True)
+mart = pd.DataFrame(processed)
+
+# --- ブランドファミリーのグループ化（アルファベット順では離れてしまう関連商品を隣接表示） ---
+GROUP_ORDER_OVERRIDE = {
+    "改源": ("改源", 0),
+    "新カイゲンせき止め液W": ("改源", 1),
+}
+
+
+def merge_products(mart_df, names, new_name):
+    """同一成分・同一用量帯の兄弟品を、表では1行に統合して省スペース化する。"""
+    rows = mart_df[mart_df["product"].isin(names)]
+    if len(rows) < 2:
+        return mart_df
+
+    def merge_field(col):
+        seen = []
+        for v in rows[col]:
+            if v != "-":
+                for token in v.split(" "):
+                    if token not in seen:
+                        seen.append(token)
+        seen.sort(key=lambda t: extract_amount_unit(t)[0])
+        return " ".join(seen) if seen else "-"
+
+    merged = {
+        "product": new_name, "daily": rows.iloc[0]["daily"], "limit": rows.iloc[0]["limit"],
+        "boundary": rows.iloc[0]["boundary"], "small": merge_field("small"), "large": merge_field("large"),
+        "ingredients": rows.iloc[0]["ingredients"], "is_caplet": rows.iloc[0]["is_caplet"],
+    }
+    mart_df = mart_df[~mart_df["product"].isin(names)]
+    return pd.concat([mart_df, pd.DataFrame([merged])], ignore_index=True)
+
+
+mart = merge_products(mart, ["レスタミンコーワ糖衣錠", "レスタミンUコーワ錠"], "レスタミンコーワ糖衣錠/Uコーワ錠")
+mart.loc[mart["product"] == "レスタミンコーワ糖衣錠/Uコーワ錠", "ingredients"] = "ジフェンヒドラミン(Uはビタミン等配合)"
+mart["sort_key"] = mart["product"].map(lambda p: GROUP_ORDER_OVERRIDE.get(p, (p, 0)))
+mart = mart.sort_values("sort_key").drop(columns=["sort_key"]).reset_index(drop=True)
 
 reference_df = df[df["kubun"].isin(["＊〇", "＊対象外", "△"])].copy()
 reference_rows = []
@@ -150,10 +187,11 @@ CUSTOM_NOTES = {
     "アレグラFX": "対比: FX(通常版)は対象外/プレミアムのみ血管収縮剤(プソイドエフェドリン)追加で該当。",
     "コリホグス": "中枢抑制作用による呼吸抑制リスク。アルコール・ベンゾ系併用/ODに要注意。",
     "トラベルミンR": "対比: R・ジュニア・ファミリー・「1」は対象外/無印(大人用)のみジフェンヒドラミン含有で該当。",
-    "ナロン錠": "対比: ナロン錠・顆粒に加えナロンエースTもブロモバレリル尿素含有で該当（他商品は要確認）。",
+    "ナロン錠": "対比: 該当はナロン錠(無印)とナロンエースTのみ（確認済）/顆粒・m・エースプレミアム等は対象外。",
     "新コンタック鼻炎Z": "対比: 鼻炎Zのみ対象外(唯一制限成分なし)/600プラス・かぜ総合等は該当。※セチリジンは妊婦禁忌。",
     "新ルルAゴールドDXα": "対比: のど飴・トローチ(部外品)は対象外/内服かぜ薬・メディカルドロップは該当。",
     "葛根湯エキス錠S「コタロー」": "対比: 葛根湯・小青竜湯等の漢方製剤は対象外(マオウは化学成分外で規制対象外)。",
+    "パイロンPL錠(無印)": "対比: PL錠・PL錠Pro・PL顆粒・PL顆粒Proは対象外/PL錠ゴールド・溶かしてのむかぜ薬は該当。",
 }
 for product, group in reference_df.groupby("product", sort=True):
     kubuns = [str(x).strip() for x in group["kubun"] if str(x).strip()]
@@ -241,7 +279,12 @@ ax.text(COL_NAME_X + 9.9, current_y,
 current_y -= 1.4
 marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
+        "対象外(剤形)＝トローチ・含嗽剤・口腔用スプレーは「外用剤」扱いのため、指定成分を含んでいても対象外",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.4
+marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "要注意(剤形)＝ドロップ・舌下錠は「内服剤」扱いのため、指定成分を含めば対象（｢のど飴｣でも医薬品ドロップは要確認）",
         fontsize=5.9, ha="left", va="center", color=GRAY)
 current_y -= 1.5
 
@@ -386,7 +429,7 @@ ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.10
+row_height = 2.00
 
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0
@@ -465,6 +508,10 @@ current_y -= 1.35
 ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
         fontsize=6.1, ha="left", va="center", color="#888888")
+current_y -= 1.05
+ax.text(COL_NAME_X, current_y,
+        "※ナイトテクトはドリエルと同成分（ジフェンヒドラミン）で、ドリエルと併売。包装は12錠のみです。",
+        fontsize=6.1, ha="left", va="center", color="#888888")
 
 current_y -= 0.55
 zone_top = current_y + 0.55
@@ -488,7 +535,7 @@ if ref_rows > 0:
     ax.hlines(current_y, 0, LOGICAL_W, colors="#cccccc", linewidth=0.8)
     current_y -= 2.0
 
-    ref_row_h = 3.15
+    ref_row_h = 2.90
     for j, (_, row) in enumerate(reference.iterrows()):
         if j % 2 == 0:
             ax.add_patch(patches.Rectangle((0, current_y - 1.55), LOGICAL_W, ref_row_h, facecolor="#fafafa", edgecolor="none"))
