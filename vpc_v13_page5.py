@@ -144,19 +144,22 @@ blank(CONTENT_X + 79, cy - 0.4, 6, "日")
 
 # --- ④ 1日量 ---
 top = top - h3 - 1.2
-h4 = 11.8
+h4 = 14.0
 cy = step_frame(top, h4, 4, "「用法・用量」欄で成人（15歳以上）の1日最大量を出す")
 text(CONTENT_X, cy, "1回", color=INK, weight="bold")
 blank(CONTENT_X + 3.2, cy, 8, "（錠・包・mL・カプセル）")
-text(CONTENT_X + 31, cy, "×　1日", color=INK, weight="bold")
-blank(CONTENT_X + 37, cy, 6, "回")
+text(CONTENT_X + 29, cy, "×　1日最大", color=INK, weight="bold")
+blank(CONTENT_X + 38, cy, 5, "回")
 text(CONTENT_X + 47, cy, "＝　1日量", color=INK, weight="bold")
 blank(CONTENT_X + 55, cy, 10)
 cy -= 2.8
 text(CONTENT_X, cy, "※小児量・「適宜増減」は使わず、15歳以上の最大量で計算する（18歳未満が買う場合も同じ）。", fs=FS_NOTE, color=NOTE)
 cy -= 2.1
-text(CONTENT_X, cy, "※成分欄の「成分（N錠中）」は1日量とみなしてよい。就寝前追加などで回数が多い場合は、その回数で数え直す。",
+text(CONTENT_X, cy, "※成分欄の「成分（N錠中）」は1日量とみなしてよい。",
      fs=FS_NOTE, color=NOTE)
+cy -= 2.1
+text(CONTENT_X, cy, "※「就寝前にも服用可」「頓服可」など追加で飲める回数がある場合は、それも足した最大量を1日量とする。",
+     fs=FS_NOTE, color=RED)
 
 # --- ⑤ 消費日数 ---
 top = top - h4 - 1.2
@@ -221,7 +224,7 @@ text(LEFT, top - 7.2, "判定後は package_verification.csv に1包装＝1行�
      fs=FS_NOTE, color=NOTE)
 
 text(LOGICAL_W / 2, 1.6, "準拠：厚生労働省 局長通知「指定濫用防止医薬品の指定について」／JSMI「指定濫用防止医薬品の販売制度について」",
-     fs=7.0, color="#aaaaaa", ha="center")
+     fs=7.5, color="#999999", ha="center")
 
 fig.savefig(OUTPUT_PNG, dpi=300)
 fig.savefig(OUTPUT_PDF)
