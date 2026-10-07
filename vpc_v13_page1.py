@@ -204,9 +204,9 @@ CUSTOM_NOTES = {
     "アレグラFX": "対比: FX(通常版)は対象外/プレミアムのみ血管収縮剤(プソイドエフェドリン)追加で該当。",
     "コリホグス": "中枢抑制作用による呼吸抑制リスク。アルコール・ベンゾ系併用/ODに要注意。",
     "トラベルミンR": "対比: R・ジュニア・ファミリー・「1」は対象外/無印(大人用)のみジフェンヒドラミン含有で該当。",
-    "ナロン錠": "対比: 該当はナロン錠(無印)・ナロン顆粒・ナロンエースTのみ（確認済）/ナロンm・エースプレミアムは対象外。",
+    "ナロン錠": "ナロン系（確認済）: 該当＝ナロン錠(無印)・ナロン顆粒・ナロンエースT／対象外＝ナロンm・エースプレミアム。",
     "新コンタック鼻炎Z": "対比: 鼻炎Zのみ対象外(唯一制限成分なし)/600プラス・かぜ総合等は該当。※セチリジンは妊婦禁忌。",
-    "新ルルAゴールドDXα": "対比: ルルのど飴(医薬部外品)は対象外/内服かぜ薬・メディカルドロップ(医薬品)は該当。",
+    "新ルルAゴールドDXα": "対比: 同じ「ルル」でも、ルルのど飴(医薬部外品)は対象外。メディカルドロップ(医薬品)は成分で該当。",
     "葛根湯エキス錠S「コタロー」": "対比: 葛根湯・小青竜湯等の漢方製剤は対象外(マオウは化学成分外で規制対象外)。",
     "パイロンPL錠(無印)": "対比: PL錠・PL錠Pro・PL顆粒・PL顆粒Proは対象外/PL錠ゴールド・溶かしてのむかぜ薬は該当。",
 }
@@ -302,7 +302,7 @@ ax.text(0.6, current_y - 0.45, "　　　→③包装確認→④レジ確認", 
 
 # --- 法解釈・実務鉄則（最重要の注意事項として最上部に明記） ---
 current_y -= 1.95
-rule_box_h = 2.75
+rule_box_h = 4.0
 ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y - rule_box_h + 0.75),
                                      LOGICAL_W - 2 * (COL_NAME_X - 1.0), rule_box_h,
                                      boxstyle="round,pad=0.12", linewidth=1.4, edgecolor=RED,
@@ -312,8 +312,13 @@ ax.text(COL_NAME_X + 0.3, current_y,
         fontsize=MIN_FS, fontweight="bold", ha="left", va="center", color=DARKRED, zorder=7)
 current_y -= 1.25
 ax.text(COL_NAME_X + 0.3, current_y,
-        "※「適宜増減」や小児用量に関わらず、成人の1日最大服用量を計算基準とします。",
+        "※1日量は「適宜増減」や小児用量に関わらず、成人の1日最大服用量で計算。「就寝前にも服用可」「頓服可」で回数が増える場合は、その分も足した最大量で計算します。",
         fontsize=MIN_FS, ha="left", va="center", color=DARKRED, zorder=7)
+current_y -= 1.25
+text_run(COL_NAME_X + 0.3, current_y, [
+    ("★前提：新しい包装なら、まずパッケージの「要」の囲み（大容量の目印）を見る。", {"fontweight": "bold", "color": INK}),
+    ("囲みのない旧包装の判断や、お客様からの質問対応にこの表を使います。", {"color": "#333333"}),
+], fontsize=MIN_FS, zorder=7)
 current_y -= 1.15
 
 # --- ① 成分判別（本当にこの表の対象品かどうかの一番最初の確認として最上部に配置） ---
@@ -323,24 +328,30 @@ ING_X = COL_NAME_X + 9.6
 ING_LH = 1.3
 ing_lines = [
     (RED, [("対象(指定8成分)＝", {"color": GRAY}),
-           ("エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/"
-            "ジフェンヒドラミン/ブロモバレリル尿素", {"fontweight": "bold", "color": INK})]),
-    (GREEN, [("対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
+           ("エフェドリン類3種：エフェドリン/メチルエフェドリン/プソイドエフェドリン", {"fontweight": "bold", "color": INK})]),
+    (None, [("　　　　　　　　 ＋", {"color": GRAY}),
+            ("その他5種：コデイン/ジヒドロコデイン/デキストロメトルファン(DXM)/ジフェンヒドラミン/ブロモバレリル尿素",
+             {"fontweight": "bold", "color": INK})]),
+    (GREEN, [("対象外(紛らわしい)＝", {"color": GRAY}),
+             ("生薬マオウ（エフェドリンを含むが生薬主体の製剤は通知で除外）／無水カフェイン／プロメタジン等の他の抗ヒス／"
+              "アリルイソプロピルアセチル尿素（8成分外）", {"color": GRAY})]),
+    (GREEN, [("対象外(外用剤)＝", {"color": GRAY}),
+             ("トローチ・舌下錠などの口腔用錠剤、含嗽剤、口腔用スプレー、軟膏、目薬等（通知で外用剤と明記。8成分はすべて外用剤を除く）",
               {"color": GRAY})]),
-    (GREEN, [("対象外(外用剤)＝含嗽剤（うがい薬）・口腔用スプレー・軟膏・目薬等は、指定成分を含んでいても対象外",
-              {"color": GRAY})]),
-    (RED, [("要注意(剤形)＝", {"color": GRAY}),
-           ("トローチ・ドロップ・舌下錠は剤形で一律に対象外とせず、成分で判定", {"fontweight": "bold", "color": INK}),
-           ("（指定成分を含めば対象／医薬部外品・食品ののど飴は対象外）", {"color": GRAY})]),
+    (RED, [("要注意(のど飴)＝", {"color": GRAY}),
+           ("医薬品のドロップはトローチと違い内服扱い。成分で判定（例：ルルメディカルドロップ＝メチルエフェドリン配合）",
+            {"fontweight": "bold", "color": INK}),
+           ("（医薬部外品・食品ののど飴は対象外）", {"color": GRAY})]),
 ]
 for mcolor, parts in ing_lines:
-    marker(ax, ING_X - 0.75, current_y, mcolor, "circle", 0.38)
+    if mcolor:
+        marker(ax, ING_X - 0.75, current_y, mcolor, "circle", 0.38)
     text_run(ING_X, current_y, parts, fontsize=MIN_FS)
     current_y -= ING_LH
 current_y -= 0.15
 
 # --- 使い方・販売可否（②③を年齢・包装規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう上部に配置） ---
-ROW_LH = 1.42
+ROW_LH = 1.38
 BODY_X = COL_NAME_X + 12.0
 ax.hlines(current_y + 0.75, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.15
@@ -351,13 +362,17 @@ ax.text(BODY_X, current_y,
 current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(BODY_X, current_y,
-        "小容量は通常販売可。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
+        "小容量は通常販売可。成人であれば購入個数の制限はないが、大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
         fontsize=MIN_FS, ha="left", va="center", color="#333333")
 current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "② 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 ax.text(BODY_X, current_y,
         "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
         fontsize=MIN_FS, ha="left", va="center", color="#333333")
+current_y -= ROW_LH * 0.95
+ax.text(BODY_X, current_y,
+        "※見た目の判断には個人差があります。確認漏れは店舗の法令上の遵守事項違反になりうるため、迷ったら確認する",
+        fontsize=MIN_FS, ha="left", va="center", color=DARKRED)
 current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "③ 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
 text_run(BODY_X, current_y, [
@@ -383,66 +398,61 @@ current_y -= 1.35
 ax.hlines(current_y, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.35
 
-# --- 計算ドリル（ブロック連結表記：各ステップをボックス+矢印でつなぎ、流れを目で追えるようにする） ---
-def drill_chip(x, y, text, w, h=2.0, fc="white", ec=INK, fs=7.2, tcolor=INK, bold=True):
-    ax.add_patch(patches.FancyBboxPatch((x, y - h / 2), w, h, boxstyle="round,pad=0.09",
-                                         linewidth=1.3, edgecolor=ec, facecolor=fc, zorder=7))
-    ax.text(x + w / 2, y, text, fontsize=fs, fontweight="bold" if bold else "normal",
-            ha="center", va="center", color=tcolor, zorder=8)
-    return x + w
-
-
-def drill_op(x, y, text, fs=8.5, color="#666666"):
-    ax.text(x, y, text, fontsize=fs, fontweight="bold", ha="center", va="center", color=color, zorder=8)
-
-
-DRILL_FS = 7.4
-current_y -= 1.65
-ax.text(COL_NAME_X + 1.0, current_y, "計算ドリル", fontsize=8.6, fontweight="bold", ha="left", va="center", color=INK)
-current_y -= 2.1
-# --- ⑴分類の判定行 ---
-ax.text(COL_NAME_X + 1.0, current_y, "(1)分類：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
-CHIP_FS = 7.4  # ドリルのボックス内文字（印刷約6.1pt）
-x = drill_chip(COL_NAME_X + 9.3, current_y, "かぜ薬・解熱鎮痛薬・鼻炎用内服薬", 22.0, fs=CHIP_FS, ec=BLUE, tcolor=BLUE)
-drill_op(x + 1.3, current_y, "＝", fs=8.0)
-x = drill_chip(x + 2.6, current_y, "×7(7日)", 8.5, fs=CHIP_FS, ec=BLUE, tcolor=BLUE)
-ax.text(x + 0.8, current_y, "／それ以外＝", fontsize=MIN_FS, fontweight="bold", ha="left", va="center", color="#333333")
-x2 = x + 0.8 + text_width("／それ以外＝", MIN_FS, "bold") + 0.8
-x = drill_chip(x2, current_y, "×5(5日)", 8.5, fs=CHIP_FS, ec=ORANGE, tcolor=ORANGE)
-ax.text(x + 1.6, current_y, "(2)1日量(15歳以上基準)：", fontsize=MIN_FS, ha="left", va="center", color="#333333")
-drill_chip(x + 1.6 + text_width("(2)1日量(15歳以上基準)：", MIN_FS) + 0.6, current_y, "〇", 4.0, fs=8.0)
-current_y -= 2.35
-# --- ⑶⑷ 計算→判定を1本のブロック連結で表す ---
-bx = COL_NAME_X + 1.0
-ax.text(bx, current_y, "(3)(4)", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
-bx += 4.0
-bx = drill_chip(bx, current_y, "包装数量 △", 11.5, fs=CHIP_FS)
-drill_op(bx + 1.1, current_y, "÷", fs=8.0)
-bx += 2.2
-bx = drill_chip(bx, current_y, "1日量 〇", 10.0, fs=CHIP_FS)
-drill_op(bx + 1.1, current_y, "＝", fs=8.0)
-bx += 2.2
-bx = drill_chip(bx, current_y, "消費日数 □日", 12.5, fs=CHIP_FS)
-drill_op(bx + 1.5, current_y, "→", fs=9.0)
-bx += 3.0
-bx = drill_chip(bx, current_y, "(1)の基準日数と比較", 15.5, fs=CHIP_FS)
-drill_op(bx + 1.5, current_y, "→", fs=9.0)
-bx += 3.0
-bx = drill_chip(bx, current_y, "以下：小容量", 12.0, fs=CHIP_FS, ec=BLUE, tcolor=BLUE)
-drill_op(bx + 0.9, current_y, "／", fs=8.0)
-bx += 1.8
-drill_chip(bx, current_y, "超：大容量", 11.0, fs=CHIP_FS, ec=ORANGE, tcolor=ORANGE)
-current_y -= 1.65
-ax.text(COL_NAME_X + 1.0, current_y,
-        "※消費日数が(1)の基準日数と同日数、またはそれ以下であれば小容量／基準日数を超過した場合のみ大容量です（境界日数ちょうどは小容量）",
-        fontsize=MIN_FS, ha="left", va="center", color=LGRAY)
+# --- 計算ドリル（3つのステップカードを横に並べ、左から順に読めば判定できる形にする） ---
+current_y -= 1.45
+ax.text(COL_NAME_X, current_y, "計算ドリル", fontsize=8.6, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(COL_NAME_X + 8.6, current_y, "表にない商品も、この3ステップで小容量／大容量を判定できます", fontsize=MIN_FS,
+        ha="left", va="center", color=LGRAY)
+current_y -= 1.0
+CARD_GAP = 1.6
+CARD_W = (LOGICAL_W - 2 * COL_NAME_X - 2 * CARD_GAP) / 3
+CARD_H = 5.6
+CARD_FS = 8.0
+card_top = current_y
+DRILL_CARDS = [
+    ("1", "基準日数を決める", [
+        [("かぜ薬・解熱鎮痛薬・鼻炎用内服薬 → ", {}), ("×7（7日）", {"fontweight": "bold", "color": BLUE})],
+        [("それ以外（せき止め・乗り物酔い薬等） → ", {}), ("×5（5日）", {"fontweight": "bold", "color": ORANGE})],
+    ]),
+    ("2", "消費日数を計算する", [
+        [("包装数量 ÷ 1日量 ＝ 消費日数", {"fontweight": "bold", "fontsize": CARD_FS + 0.6})],
+        [("1日量＝成人(15歳以上)の最大量（就寝前・頓服も足す）", {"fontsize": MIN_FS, "color": "#555555"})],
+    ]),
+    ("3", "基準日数と比べる", [
+        [("消費日数 ≦ 基準日数 → ", {}), ("小容量", {"fontweight": "bold", "color": BLUE})],
+        [("消費日数 ＞ 基準日数 → ", {}), ("大容量", {"fontweight": "bold", "color": ORANGE}),
+         ("（同日数は小容量）", {"fontsize": MIN_FS, "color": "#555555"})],
+    ]),
+]
+for ci, (num, title, lines) in enumerate(DRILL_CARDS):
+    cx = COL_NAME_X + ci * (CARD_W + CARD_GAP)
+    ax.add_patch(patches.FancyBboxPatch((cx, card_top - CARD_H), CARD_W, CARD_H, boxstyle="round,pad=0.2",
+                                         linewidth=1.0, edgecolor="#bbbbbb", facecolor="#fafafa", zorder=5))
+    ty = card_top - 1.0
+    ax.add_patch(patches.Circle((cx + 1.0, ty), 0.75, facecolor=INK, edgecolor="none", zorder=6))
+    ax.text(cx + 1.0, ty, num, fontsize=CARD_FS, fontweight="bold", ha="center", va="center", color="white", zorder=7)
+    ax.text(cx + 2.2, ty, title, fontsize=CARD_FS + 0.4, fontweight="bold", ha="left", va="center", color=INK, zorder=7)
+    ly = ty - 1.75
+    for parts in lines:
+        text_run(cx + 0.8, ly, parts, fontsize=CARD_FS, color="#222222", zorder=7)
+        ly -= 1.45
+    if ci < len(DRILL_CARDS) - 1:
+        ax.annotate("", xy=(cx + CARD_W + CARD_GAP - 0.15, card_top - CARD_H / 2),
+                    xytext=(cx + CARD_W + 0.15, card_top - CARD_H / 2),
+                    arrowprops=dict(arrowstyle="-|>", color="#888888", lw=1.4), zorder=8)
+current_y = card_top - CARD_H - 1.05
+text_run(COL_NAME_X, current_y, [
+    ("例）改源 26包：", {"fontweight": "bold", "color": INK}),
+    ("かぜ薬 → ×7（7日）／ 26包 ÷ 3包 ＝ 8.7日 ＞ 7日 → ", {"color": "#333333"}),
+    ("大容量", {"fontweight": "bold", "color": ORANGE}),
+], fontsize=MIN_FS)
 current_y -= 1.3
 WATERMARK_GRAY = "#999999"  # alpha合成は印刷時に消えることがあるため、不透明なグレー+斜体で「参考情報」を表現（6pt印刷でも読める濃さ）
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=MIN_FS, fontweight="bold", fontstyle="italic",
         ha="left", va="center", color=WATERMARK_GRAY)
 ax.text(COL_NAME_X + text_width("ブランド速断:", MIN_FS, "bold") + 0.6, current_y,
-        "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ"
-        "　※正式ルールではなく参考の目安",
+        "原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ"
+        "　※表の作成時に調べた範囲の目安。新発売品は反映されていないため、迷ったら成分で確認",
         fontsize=MIN_FS, fontstyle="italic", ha="left", va="center", color=WATERMARK_GRAY)
 current_y -= 1.3
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
@@ -476,18 +486,13 @@ ax.text(COL_NAME_X, current_y, "1日量＝成人(15歳以上)の1日最大服用
 text_run(46.5, current_y, [("×5", {"fontweight": "bold", "color": ORANGE}), ("＝それ以外", {"color": "#555555"})],
          fontsize=MIN_FS)
 
-# --- 視線誘導（解釈層）：新しめの包装の目印について一言添える ---
-current_y -= 1.8
-draw_eye_guide(ax, COL_NAME_X, current_y,
-               "新しめの包装は「要確認」の「要」に囲みがあるかも目安に(旧包装は記載がない場合も)",
-               color=BLUE, fontsize=MIN_FS)
-
+current_y -= 0.3
 current_y -= 1.1
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.00
+row_height = 1.95
 ROW_H_TWO_LINES = 2.45  # 成分名が2行になる行だけ少し高くする
 INGR_X_GAP = 0.7
 
@@ -631,7 +636,7 @@ if ref_rows > 0:
     ax.hlines(current_y, 0, LOGICAL_W, colors="#cccccc", linewidth=0.8)
     current_y -= 2.0
 
-    ref_row_h = 2.85
+    ref_row_h = 2.65
     for j, (_, row) in enumerate(reference.iterrows()):
         if j % 2 == 0:
             ax.add_patch(patches.Rectangle((0, current_y - 1.55), LOGICAL_W, ref_row_h, facecolor="#fafafa", edgecolor="none"))
