@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.image as mpimg
 import japanize_matplotlib
+from print_style import MIN_FS, check_min_font
 
 PACKAGE_CSV = "package_verification.csv"
 OUTPUT_PNG = "atomic_card_table_v13_page1.png"
@@ -90,9 +91,9 @@ def draw_magnifier_icon(ax, x, y, r=0.62, handle_len=0.85, color=RED, angle_deg=
 
 def draw_eye_guide(ax, x, y, text, color=RED, fontsize=5.0, ha="left"):
     """短い道案内（解釈層）。虫眼鏡アイコン＋断定しすぎない一言を、白抜き吹き出しで軽く強調する。"""
-    icon_r = fontsize * 0.17
+    icon_r = min(fontsize * 0.17, 0.85)  # 文字を大きくしても虫眼鏡が上の行に食い込まないよう上限を設ける
     icon_cx = x + icon_r * 1.3 if ha == "left" else x - icon_r * 1.3
-    tip_x, _ = draw_magnifier_icon(ax, icon_cx, y + icon_r * 0.7, r=icon_r, handle_len=icon_r * 1.6,
+    tip_x, _ = draw_magnifier_icon(ax, icon_cx, y + icon_r * 0.3, r=icon_r, handle_len=icon_r * 1.6,
                                     color=color, angle_deg=-40 if ha == "left" else -140)
     text_x = tip_x + icon_r * 0.6 if ha == "left" else tip_x - icon_r * 0.6
     ax.text(text_x, y, text, fontsize=fontsize, fontweight="bold", ha=ha, va="center",
@@ -205,7 +206,7 @@ CUSTOM_NOTES = {
     "トラベルミンR": "対比: R・ジュニア・ファミリー・「1」は対象外/無印(大人用)のみジフェンヒドラミン含有で該当。",
     "ナロン錠": "対比: 該当はナロン錠(無印)・ナロン顆粒・ナロンエースTのみ（確認済）/ナロンm・エースプレミアムは対象外。",
     "新コンタック鼻炎Z": "対比: 鼻炎Zのみ対象外(唯一制限成分なし)/600プラス・かぜ総合等は該当。※セチリジンは妊婦禁忌。",
-    "新ルルAゴールドDXα": "対比: のど飴・トローチ(部外品)は対象外/内服かぜ薬・メディカルドロップは該当。",
+    "新ルルAゴールドDXα": "対比: ルルのど飴(医薬部外品)は対象外/内服かぜ薬・メディカルドロップ(医薬品)は該当。",
     "葛根湯エキス錠S「コタロー」": "対比: 葛根湯・小青竜湯等の漢方製剤は対象外(マオウは化学成分外で規制対象外)。",
     "パイロンPL錠(無印)": "対比: PL錠・PL錠Pro・PL顆粒・PL顆粒Proは対象外/PL錠ゴールド・溶かしてのむかぜ薬は該当。",
 }
@@ -241,104 +242,144 @@ ax.set_position([0, 0, 1, 1])
 ax.set_xlim(0, LOGICAL_W)
 ax.set_ylim(0, LOGICAL_H)
 ax.axis("off")
+fig.canvas.draw()
+_renderer = fig.canvas.get_renderer()
+
+
+def text_width(text, fontsize, weight="normal"):
+    """論理座標での文字列の幅（並べて描く要素の位置計算用）。"""
+    t = ax.text(0, -50, text, fontsize=fontsize, fontweight=weight)
+    w = t.get_window_extent(renderer=_renderer).width / fig.bbox.width * LOGICAL_W
+    t.remove()
+    return w
+
+
+def text_run(x, y, parts, **common):
+    """色や太さの違う文字列を、実測した幅で左から順に並べて描く。描き終わりのx座標を返す。"""
+    for text, kw in parts:
+        opts = dict(common)
+        opts.update(kw)
+        ax.text(x, y, text, ha="left", va="center", **opts)
+        x += text_width(text, opts["fontsize"], opts.get("fontweight", "normal"))
+    return x
+
+
+def split_two_lines(text, fontsize, max_w, sep):
+    """1行に収まらない場合だけ、区切り文字で2行に分ける（文字を縮めずに収めるため）。"""
+    if text_width(text, fontsize) <= max_w or sep not in text:
+        return [text]
+    tokens = text.split(sep)
+    best = None
+    for k in range(1, len(tokens)):
+        a, b = sep.join(tokens[:k]), sep.join(tokens[k:])
+        score = max(text_width(a, fontsize), text_width(b, fontsize))
+        if best is None or score < best[0]:
+            best = (score, [a.strip(), b.strip()])
+    return best[1]
 
 COL_NAME_X = 2.0
-COL_INGR_X = 28.0
-COL_DOSE_X = 48.0
+COL_INGR_X = 26.5
+COL_DOSE_X = 49.0
 COL_MULT_X = 55.0
 COL_SMALL_X = 61.0
 COL_BOUND_X = 71.0
-COL_LARGE_X = 81.5
+COL_LARGE_X = 80.5
 FLOW_X = 92.5
 
 # --- タイトル ---
 current_y = LOGICAL_H - 1.7
 ax.text(LOGICAL_W / 2, current_y, "薬剤別 包装区分 早見表", fontsize=18.91, fontweight="bold", ha="center", va="center")
 today_str = datetime.date.today().strftime("%Y/%m/%d")
-ax.text(LOGICAL_W, current_y + 1.4, f"作成日: {today_str}", fontsize=7.93, ha="right", va="center", color="#888888")
-ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最新の公式情報(添付文書等)を確認",
-        fontsize=4.6, ha="right", va="center", color="#999999")
+ax.text(LOGICAL_W - 0.6, current_y + 0.75, f"作成日: {today_str}", fontsize=7.93, ha="right", va="center", color="#888888")
+ax.text(LOGICAL_W - 0.6, current_y - 0.45, "※AIによる試作品/使用前に最新の添付文書等を確認",
+        fontsize=MIN_FS, ha="right", va="center", color="#888888")
 
-# --- 確認順ガイド（解釈層）：実務での確認の流れを、タイトル左の余白に1行で先に示す ---
-ax.text(0.5, current_y - 0.35, "確認順：①成分判別→②年齢確認→③包装確認→④レジ確認",
-        fontsize=4.0, fontweight="bold", fontstyle="italic", ha="left", va="center", color=BLUE)
+# --- 確認順ガイド（解釈層）：実務での確認の流れを、タイトル左の余白に先に示す ---
+ax.text(0.6, current_y + 0.75, "確認順：①成分判別→②年齢確認", fontsize=MIN_FS, fontweight="bold",
+        fontstyle="italic", ha="left", va="center", color=BLUE)
+ax.text(0.6, current_y - 0.45, "　　　→③包装確認→④レジ確認", fontsize=MIN_FS, fontweight="bold",
+        fontstyle="italic", ha="left", va="center", color=BLUE)
 
 # --- 法解釈・実務鉄則（最重要の注意事項として最上部に明記） ---
-current_y -= 1.75
-rule_box_h = 2.55
-ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y - rule_box_h + 0.65),
+current_y -= 1.95
+rule_box_h = 2.75
+ax.add_patch(patches.FancyBboxPatch((COL_NAME_X - 1.0, current_y - rule_box_h + 0.75),
                                      LOGICAL_W - 2 * (COL_NAME_X - 1.0), rule_box_h,
                                      boxstyle="round,pad=0.12", linewidth=1.4, edgecolor=RED,
                                      facecolor="#fff5f5", zorder=6))
 ax.text(COL_NAME_X + 0.3, current_y,
         "【法解釈・実務鉄則】小容量1個の販売時であっても、18歳未満には「氏名・年齢の確認」、成人には「他店での直近購入状況の確認」が法令上必須となります。",
-        fontsize=6.2, fontweight="bold", ha="left", va="center", color=DARKRED, zorder=7)
-current_y -= 1.1
+        fontsize=MIN_FS, fontweight="bold", ha="left", va="center", color=DARKRED, zorder=7)
+current_y -= 1.25
 ax.text(COL_NAME_X + 0.3, current_y,
         "※「適宜増減」や小児用量に関わらず、成人の1日最大服用量を計算基準とします。",
-        fontsize=5.7, ha="left", va="center", color=DARKRED, zorder=7)
+        fontsize=MIN_FS, ha="left", va="center", color=DARKRED, zorder=7)
 current_y -= 1.15
 
 # --- ① 成分判別（本当にこの表の対象品かどうかの一番最初の確認として最上部に配置） ---
 current_y -= 1.55
-ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=INK)
-marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y, "対象(指定8成分)＝", fontsize=5.9, ha="left", va="center", color=GRAY)
-ax.text(COL_NAME_X + 17.3, current_y,
-        "エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
-        fontsize=5.9, fontweight="bold", ha="left", va="center", color=INK)
-current_y -= 1.4
-marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
-        fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.4
-marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(剤形)＝トローチ・含嗽剤・口腔用スプレーは「外用剤」扱いのため、指定成分を含んでいても対象外",
-        fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.4
-marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
-ax.text(COL_NAME_X + 9.9, current_y,
-        "要注意(剤形)＝ドロップ・舌下錠は「内服剤」扱いのため、指定成分を含めば対象（｢のど飴｣でも医薬品ドロップは要確認）",
-        fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.5
+ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
+ING_X = COL_NAME_X + 9.6
+ING_LH = 1.3
+ing_lines = [
+    (RED, [("対象(指定8成分)＝", {"color": GRAY}),
+           ("エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/"
+            "ジフェンヒドラミン/ブロモバレリル尿素", {"fontweight": "bold", "color": INK})]),
+    (GREEN, [("対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
+              {"color": GRAY})]),
+    (GREEN, [("対象外(外用剤)＝含嗽剤（うがい薬）・口腔用スプレー・軟膏・目薬等は、指定成分を含んでいても対象外",
+              {"color": GRAY})]),
+    (RED, [("要注意(剤形)＝", {"color": GRAY}),
+           ("トローチ・ドロップ・舌下錠は剤形で一律に対象外とせず、成分で判定", {"fontweight": "bold", "color": INK}),
+           ("（指定成分を含めば対象／医薬部外品・食品ののど飴は対象外）", {"color": GRAY})]),
+]
+for mcolor, parts in ing_lines:
+    marker(ax, ING_X - 0.75, current_y, mcolor, "circle", 0.38)
+    text_run(ING_X, current_y, parts, fontsize=MIN_FS)
+    current_y -= ING_LH
+current_y -= 0.15
 
 # --- 使い方・販売可否（②③を年齢・包装規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう上部に配置） ---
-ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=INK, linewidth=1.2)
+ROW_LH = 1.42
+BODY_X = COL_NAME_X + 12.0
+ax.hlines(current_y + 0.75, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.15
 ax.text(COL_NAME_X, current_y, "18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 12.0, current_y,
+ax.text(BODY_X, current_y,
         "小容量1個のみ販売可。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
-        fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
-current_y -= 1.55
+        fontsize=MIN_FS, ha="left", va="center", color="#333333", fontweight="bold")
+current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 12.0, current_y,
+ax.text(BODY_X, current_y,
         "小容量は通常販売可。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
-        fontsize=6.6, ha="left", va="center", color="#333333")
-current_y -= 1.55
+        fontsize=MIN_FS, ha="left", va="center", color="#333333")
+current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "② 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 12.0, current_y,
+ax.text(BODY_X, current_y,
         "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認",
-        fontsize=6.3, ha="left", va="center", color="#333333")
-current_y -= 1.55
+        fontsize=MIN_FS, ha="left", va="center", color="#333333")
+current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "③ 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬/", fontsize=6.6, ha="left", va="center", color="#333333")
-ax.text(COL_NAME_X + 56.8, current_y, "×5", fontsize=7.2, fontweight="bold", ha="left", va="center", color=ORANGE)
-ax.text(COL_NAME_X + 58.8, current_y, "＝それ以外）", fontsize=6.6, ha="left", va="center", color="#333333")
-current_y -= 1.35
-ax.text(COL_NAME_X + 12.0, current_y,
+text_run(BODY_X, current_y, [
+    ("下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", {}),
+    ("×7", {"fontsize": 7.6, "fontweight": "bold", "color": BLUE}),
+    ("＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬／", {}),
+    ("×5", {"fontsize": 7.6, "fontweight": "bold", "color": ORANGE}),
+    ("＝それ以外）", {}),
+], fontsize=MIN_FS, color="#333333")
+current_y -= ROW_LH * 0.95
+ax.text(BODY_X, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
-        fontsize=5.6, ha="left", va="center", color=LGRAY)
-ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は、KEGG_OTC検索欄を見て、計算式の手順で見て頂ければ判断できます", fontsize=5.4, ha="left", va="center", color="#888888")
-current_y -= 1.45
-ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=INK)
-ax.text(COL_NAME_X + 11.0, current_y,
+        fontsize=MIN_FS, ha="left", va="center", color=LGRAY)
+current_y -= ROW_LH * 0.95
+ax.text(BODY_X, current_y, "※表にない商品は、KEGG_OTC検索欄で成分・用量を見て、下の計算ドリルの手順で判定できます",
+        fontsize=MIN_FS, ha="left", va="center", color=LGRAY)
+current_y -= ROW_LH
+ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
+ax.text(BODY_X, current_y,
         "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示が難しい→年齢・氏名を確認できる方法がないか丁寧に確認",
-        fontsize=6.0, ha="left", va="center", color="#333333")
-current_y -= 1.5
+        fontsize=MIN_FS, ha="left", va="center", color="#333333")
+current_y -= 1.35
 ax.hlines(current_y, 0, LOGICAL_W, colors=INK, linewidth=1.2)
 current_y -= 0.35
 
@@ -361,48 +402,49 @@ ax.text(COL_NAME_X + 1.0, current_y, "計算ドリル", fontsize=8.6, fontweight
 current_y -= 2.1
 # --- ⑴分類の判定行 ---
 ax.text(COL_NAME_X + 1.0, current_y, "(1)分類：", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
-x = drill_chip(COL_NAME_X + 9.3, current_y, "かぜ薬・解熱鎮痛薬・鼻炎用内服薬", 26.0, fs=6.6, ec=BLUE, tcolor=BLUE)
-drill_op(x + 1.3, current_y, "＝", fs=7.0)
-x = drill_chip(x + 2.6, current_y, "×7(7日)", 10.5, fs=6.8, ec=BLUE, tcolor=BLUE)
-drill_op(x + 1.3, current_y, "／それ以外＝", fs=6.0, color="#333333")
-x2 = x + 1.3 + 6.6
-x = drill_chip(x2, current_y, "×5(5日)", 10.5, fs=6.8, ec=ORANGE, tcolor=ORANGE)
-ax.text(x + 1.6, current_y, "(2)1日量(15歳以上基準)：", fontsize=6.6, ha="left", va="center", color="#333333")
-drill_chip(x + 17.6, current_y, "〇", 4.0, fs=8.0)
+CHIP_FS = 7.4  # ドリルのボックス内文字（印刷約6.1pt）
+x = drill_chip(COL_NAME_X + 9.3, current_y, "かぜ薬・解熱鎮痛薬・鼻炎用内服薬", 22.0, fs=CHIP_FS, ec=BLUE, tcolor=BLUE)
+drill_op(x + 1.3, current_y, "＝", fs=8.0)
+x = drill_chip(x + 2.6, current_y, "×7(7日)", 8.5, fs=CHIP_FS, ec=BLUE, tcolor=BLUE)
+ax.text(x + 0.8, current_y, "／それ以外＝", fontsize=MIN_FS, fontweight="bold", ha="left", va="center", color="#333333")
+x2 = x + 0.8 + text_width("／それ以外＝", MIN_FS, "bold") + 0.8
+x = drill_chip(x2, current_y, "×5(5日)", 8.5, fs=CHIP_FS, ec=ORANGE, tcolor=ORANGE)
+ax.text(x + 1.6, current_y, "(2)1日量(15歳以上基準)：", fontsize=MIN_FS, ha="left", va="center", color="#333333")
+drill_chip(x + 1.6 + text_width("(2)1日量(15歳以上基準)：", MIN_FS) + 0.6, current_y, "〇", 4.0, fs=8.0)
 current_y -= 2.35
 # --- ⑶⑷ 計算→判定を1本のブロック連結で表す ---
 bx = COL_NAME_X + 1.0
 ax.text(bx, current_y, "(3)(4)", fontsize=DRILL_FS, fontweight="bold", ha="left", va="center", color="#333333")
 bx += 4.0
-bx = drill_chip(bx, current_y, "包装数量 △", 11.5, fs=6.9)
+bx = drill_chip(bx, current_y, "包装数量 △", 11.5, fs=CHIP_FS)
 drill_op(bx + 1.1, current_y, "÷", fs=8.0)
 bx += 2.2
-bx = drill_chip(bx, current_y, "1日量 〇", 10.0, fs=6.9)
+bx = drill_chip(bx, current_y, "1日量 〇", 10.0, fs=CHIP_FS)
 drill_op(bx + 1.1, current_y, "＝", fs=8.0)
 bx += 2.2
-bx = drill_chip(bx, current_y, "消費日数 □日", 12.5, fs=6.9)
+bx = drill_chip(bx, current_y, "消費日数 □日", 12.5, fs=CHIP_FS)
 drill_op(bx + 1.5, current_y, "→", fs=9.0)
 bx += 3.0
-bx = drill_chip(bx, current_y, "(1)の基準日数と比較", 15.5, fs=6.6)
+bx = drill_chip(bx, current_y, "(1)の基準日数と比較", 15.5, fs=CHIP_FS)
 drill_op(bx + 1.5, current_y, "→", fs=9.0)
 bx += 3.0
-bx = drill_chip(bx, current_y, "以下：小容量", 12.0, fs=6.8, ec=BLUE, tcolor=BLUE)
-drill_op(bx + 0.9, current_y, "／", fs=7.0)
+bx = drill_chip(bx, current_y, "以下：小容量", 12.0, fs=CHIP_FS, ec=BLUE, tcolor=BLUE)
+drill_op(bx + 0.9, current_y, "／", fs=8.0)
 bx += 1.8
-drill_chip(bx, current_y, "超：大容量", 11.0, fs=6.8, ec=ORANGE, tcolor=ORANGE)
-current_y -= 1.55
+drill_chip(bx, current_y, "超：大容量", 11.0, fs=CHIP_FS, ec=ORANGE, tcolor=ORANGE)
+current_y -= 1.65
 ax.text(COL_NAME_X + 1.0, current_y,
         "※消費日数が(1)の基準日数と同日数、またはそれ以下であれば小容量／基準日数を超過した場合のみ大容量です（境界日数ちょうどは小容量）",
-        fontsize=5.3, ha="left", va="center", color=LGRAY)
-current_y -= 0.9
-WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
-ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
+        fontsize=MIN_FS, ha="left", va="center", color=LGRAY)
+current_y -= 1.3
+WATERMARK_GRAY = "#999999"  # alpha合成は印刷時に消えることがあるため、不透明なグレー+斜体で「参考情報」を表現（6pt印刷でも読める濃さ）
+ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=MIN_FS, fontweight="bold", fontstyle="italic",
         ha="left", va="center", color=WATERMARK_GRAY)
-ax.text(COL_NAME_X + 9.0, current_y,
+ax.text(COL_NAME_X + text_width("ブランド速断:", MIN_FS, "bold") + 0.6, current_y,
         "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ"
         "　※正式ルールではなく参考の目安",
-        fontsize=5.5, fontstyle="italic", ha="left", va="center", color=WATERMARK_GRAY)
-current_y -= 1.45
+        fontsize=MIN_FS, fontstyle="italic", ha="left", va="center", color=WATERMARK_GRAY)
+current_y -= 1.3
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
 current_y -= 0.35
 
@@ -423,44 +465,66 @@ ax.add_patch(patches.FancyBboxPatch((COL_SMALL_X - 4.2, current_y - 1.15), COL_L
                                      boxstyle="round,pad=0.15", linewidth=1.1, edgecolor=BLUE,
                                      facecolor="none", linestyle=(0, (2, 1.5)), zorder=5))
 
-current_y -= 1.2
-ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量", fontsize=6.35, ha="left", va="center", color="#555555")
-ax.text(52.3, current_y, "×7", fontsize=6.3, fontweight="bold", ha="left", va="center", color=BLUE)
-ax.text(53.7, current_y, "＝かぜ薬等", fontsize=5.7, ha="left", va="center", color="#555555")
-current_y -= 1.05
-ax.text(52.3, current_y, "×5", fontsize=6.3, fontweight="bold", ha="left", va="center", color=ORANGE)
-ax.text(53.7, current_y, "＝それ以外", fontsize=5.7, ha="left", va="center", color="#555555")
-current_y -= 1.05
-ax.text(COL_NAME_X, current_y, "※年齢に関わらず、この判別は常に「成人(15歳以上)の1日量」で計算します（18歳未満の購入者でも同じ）",
-        fontsize=5.6, ha="left", va="center", color=LGRAY)
+current_y -= 1.6
+ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可／大包装＝18歳未満へ不可",
+        fontsize=MIN_FS, ha="left", va="center", color="#555555")
+text_run(46.5, current_y, [("×7", {"fontweight": "bold", "color": BLUE}), ("＝かぜ薬等", {"color": "#555555"})],
+         fontsize=MIN_FS)
+current_y -= 1.15
+ax.text(COL_NAME_X, current_y, "1日量＝成人(15歳以上)の1日最大服用量（18歳未満の購入者でも、常にこの量で計算）",
+        fontsize=MIN_FS, ha="left", va="center", color="#555555")
+text_run(46.5, current_y, [("×5", {"fontweight": "bold", "color": ORANGE}), ("＝それ以外", {"color": "#555555"})],
+         fontsize=MIN_FS)
 
 # --- 視線誘導（解釈層）：新しめの包装の目印について一言添える ---
-current_y -= 1.45
+current_y -= 1.8
 draw_eye_guide(ax, COL_NAME_X, current_y,
                "新しめの包装は「要確認」の「要」に囲みがあるかも目安に(旧包装は記載がない場合も)",
-               color=BLUE, fontsize=5.8)
+               color=BLUE, fontsize=MIN_FS)
 
-current_y -= 1.25
+current_y -= 1.1
 ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
 row_height = 2.00
+ROW_H_TWO_LINES = 2.45  # 成分名が2行になる行だけ少し高くする
+INGR_X_GAP = 0.7
+
+
+def clean_ingredients(ingr):
+    return re.sub(r'(塩酸塩|リン酸塩|硫酸塩|臭化水素酸塩|マレイン酸塩|酒石酸塩|フマル酸塩)', '', reorder_ingredients(ingr))
+
+
+def ingr_max_w(daily):
+    """成分名に使える幅＝1日量の文字の左端まで（1日量の文字幅は行ごとに違う）。"""
+    return COL_DOSE_X - text_width(daily, 10.3) / 2 - INGR_X_GAP - COL_INGR_X
+
+
+mart["ingr_lines"] = [split_two_lines(clean_ingredients(r["ingredients"]), MIN_FS, ingr_max_w(r["daily"]), ",")
+                      if r["ingredients"] else [] for _, r in mart.iterrows()]
+mart["row_h"] = [ROW_H_TWO_LINES if len(v) > 1 else row_height for v in mart["ingr_lines"]]
+rows_top_y = current_y
+rows_bottom_y = current_y - (mart["row_h"].sum() - mart["row_h"].iloc[-1] / 2 - mart["row_h"].iloc[0] / 2)
 
 # --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
+#     表の1行目〜最終行の高さに合わせて配置する（上の計算ドリルと重ならないよう、位置は表から算出）
 FLOW_HALF_W = 7.0
+FLOW_FS = MIN_FS
 flow_nodes = [
-    (["18歳未満の疑い", "→身分証等で氏名・", "年齢を確認"], INK, "#f2f2f2", 1.3),
-    (["小容量1個のみ", "購入？"], INK, "#f2f2f2", 1.3),
-    (["【いいえ】大容量/複数個", "→18歳未満は一律禁止", "18歳以上は理由を確認"], INK, "#e2e2e2", 2.0),
-    (["【はい】小容量1個", "→18歳未満は氏名+周辺状況確認", "18歳以上は周辺状況確認"], INK, "#f2f2f2", 1.3),
+    (["18歳未満の疑い", "→身分証等で", "氏名・年齢を確認"], INK, "#f2f2f2", 1.3),
+    (["小容量1個のみ", "の購入？"], INK, "#f2f2f2", 1.3),
+    (["【いいえ】", "大容量/複数個", "18歳未満→一律禁止", "18歳以上→理由確認"], INK, "#e2e2e2", 2.0),
+    (["【はい】小容量1個", "18歳未満→氏名＋", "周辺状況確認", "18歳以上→周辺状況確認"], INK, "#f2f2f2", 1.3),
     (["条件を満たせば", "販売可"], INK, "#e8e8e8", 1.6),
 ]
-flow_top = 111.5
-flow_bottom = 64.5
 n = len(flow_nodes)
-flow_gap = (flow_top - flow_bottom) / (n - 1)
-flow_box_h = flow_gap - 1.9
+FLOW_ARROW_GAP = 1.9
+flow_region_top = rows_top_y + 0.9
+flow_region_bottom = rows_bottom_y - 0.9
+flow_box_h = (flow_region_top - flow_region_bottom - (n - 1) * FLOW_ARROW_GAP) / n
+flow_gap = flow_box_h + FLOW_ARROW_GAP
+flow_top = flow_region_top - flow_box_h / 2
 prev_y = None
 for idx, (lines, edge_color, fill_color, edge_w) in enumerate(flow_nodes):
     yc = flow_top - idx * flow_gap
@@ -469,32 +533,53 @@ for idx, (lines, edge_color, fill_color, edge_w) in enumerate(flow_nodes):
                                   facecolor=fill_color, zorder=3)
     ax.add_patch(box)
     n_lines = len(lines)
-    line_h = 1.55
+    line_h = 1.3
     start_y = yc + (n_lines - 1) * line_h / 2
     is_warning = edge_w > 1.5
     for li, line in enumerate(lines):
-        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=5.9, fontweight="bold" if is_warning else "normal",
-                ha="center", va="center", color="#222222" if is_warning else "#333333")
+        ax.text(FLOW_X, start_y - li * line_h, line, fontsize=FLOW_FS, fontweight="bold" if is_warning else "normal",
+                ha="center", va="center", color="#222222" if is_warning else "#333333", zorder=4)
     if prev_y is not None:
         ax.annotate("", xy=(FLOW_X, yc + flow_box_h / 2 + 0.2), xytext=(FLOW_X, prev_y - flow_box_h / 2 - 0.2),
                     arrowprops=dict(arrowstyle="-|>", color="#999999", lw=1.3))
     prev_y = yc
 
+# 1行に収まらない成分名・包装規格は、文字を縮めずに2行へ分ける（印刷6pt未満にしないため）
+SMALL_MAX_W = 2 * min(COL_SMALL_X - (COL_MULT_X + 1.2), (COL_BOUND_X - 2.2) - COL_SMALL_X)
+LARGE_MAX_W = 2 * min(COL_LARGE_X - (COL_BOUND_X + 2.4), (FLOW_X - FLOW_HALF_W - 0.5) - COL_LARGE_X)
+TWO_LINE_OFFSET = 0.52
+
+
+def draw_cell(x, y, lines, ha, **kw):
+    if len(lines) == 1:
+        ax.text(x, y, lines[0], ha=ha, va="center", **kw)
+    else:
+        ax.text(x, y + TWO_LINE_OFFSET, lines[0], ha=ha, va="center", **kw)
+        ax.text(x, y - TWO_LINE_OFFSET, lines[1], ha=ha, va="center", **kw)
+
+
+def pack_fontsize(text):
+    # 包装が複数個(カプセル等の長い単位が連なる場合)は小さめに。ただし印刷6pt(MIN_FS)は下回らない
+    return 8.9 if len(text) <= 6 else (7.6 if len(text) <= 11 else MIN_FS)
+
+
+prev_h = None
 for i, row in mart.iterrows():
+    rh = row["row_h"]
+    if prev_h is not None:
+        current_y -= (prev_h + rh) / 2
+    prev_h = rh
     if i % 2 == 0:
-        ax.add_patch(patches.Rectangle((0, current_y - row_height * 0.785), LOGICAL_W, row_height, facecolor="#f5f5f5", edgecolor="none", zorder=0))
+        ax.add_patch(patches.Rectangle((0, current_y - rh / 2), LOGICAL_W, rh, facecolor="#f5f5f5", edgecolor="none", zorder=0))
 
     display_name = DISPLAY_NAME_OVERRIDE.get(row["product"], row["product"])
     name_len = len(display_name)
-    name_fontsize = 9.6 if name_len <= 8 else (8.7 if name_len <= 12 else (7.8 if name_len <= 18 else 6.6))
+    name_fontsize = 9.6 if name_len <= 8 else (8.7 if name_len <= 12 else (7.8 if name_len <= 18 else MIN_FS))
     name_text = display_name + ("※" if row["is_caplet"] else "")
     ax.text(COL_NAME_X, current_y, name_text, fontsize=name_fontsize, fontweight="bold", ha="left", va="center")
 
-    if row["ingredients"]:
-        clean_ingr = re.sub(r'(塩酸塩|リン酸塩|硫酸塩|臭化水素酸塩|マレイン酸塩|酒石酸塩|フマル酸塩)', '', reorder_ingredients(row["ingredients"]))
-        if len(clean_ingr) > 26:
-            clean_ingr = clean_ingr[:26] + "…"
-        ax.text(COL_INGR_X, current_y, clean_ingr, fontsize=6.0, ha="left", va="center", color="#666666")
+    if row["ingr_lines"]:
+        draw_cell(COL_INGR_X, current_y, row["ingr_lines"], "left", fontsize=MIN_FS, color="#555555")
     else:
         ax.text(COL_INGR_X, current_y, "-", fontsize=7.8, ha="left", va="center", color="#aaaaaa")
 
@@ -504,27 +589,25 @@ for i, row in mart.iterrows():
     ax.text(COL_MULT_X, current_y, f"×{row['limit']}", fontsize=8.6, ha="center", va="center",
             color=mult_color, fontweight="bold")
 
-    def pack_fontsize(text):
-        # 包装が複数個(カプセル等の長い単位が連なる場合)は、隣接列とぶつからないよう縮小
-        return 8.9 if len(text) <= 6 else (7.4 if len(text) <= 11 else 6.2)
-
     if row["small"] != "-":
-        ax.text(COL_SMALL_X, current_y, row["small"], fontsize=pack_fontsize(row["small"]),
-                fontweight="bold", ha="center", va="center")
+        fs = pack_fontsize(row["small"])
+        draw_cell(COL_SMALL_X, current_y, split_two_lines(row["small"], fs, SMALL_MAX_W, " "), "center",
+                  fontsize=fs, fontweight="bold")
 
     ax.vlines(COL_BOUND_X, current_y - 0.85, current_y + 0.85, color="#bbbbbb", linewidth=1.0, zorder=1)
     ax.text(COL_BOUND_X, current_y, row["boundary"], fontsize=7.5, ha="center", va="center", color=GRAY, zorder=2)
 
     if row["large"] != "-":
-        ax.text(COL_LARGE_X, current_y, row["large"], fontsize=pack_fontsize(row["large"]),
-                fontweight="bold", ha="center", va="center", color="#444444")
+        fs = pack_fontsize(row["large"])
+        draw_cell(COL_LARGE_X, current_y, split_two_lines(row["large"], fs, LARGE_MAX_W, " "), "center",
+                  fontsize=fs, fontweight="bold", color="#444444")
 
-    current_y -= row_height
+current_y -= prev_h
 
 current_y -= 1.35
 ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
-        fontsize=6.1, ha="left", va="center", color="#888888")
+        fontsize=MIN_FS, ha="left", va="center", color="#888888")
 
 current_y -= 0.55
 zone_top = current_y + 0.55
@@ -539,7 +622,7 @@ if ref_rows > 0:
     current_y -= 1.84
 
     ax.text(COL_NAME_X, current_y, "判定注意・参考", fontsize=10.37, fontweight="bold", ha="left", va="center", color=INK)
-    ax.text(COL_NAME_X + 10.5, current_y, "※該当はまれです", fontsize=5.0, fontstyle="italic",
+    ax.text(COL_NAME_X + 11.2, current_y, "※該当はまれです", fontsize=MIN_FS, fontstyle="italic",
             ha="left", va="center", color=LGRAY)
     ax.text(28.0, current_y, "指定濫用判定", fontsize=8.54, fontweight="bold", ha="center", va="center")
     ax.text(41.0, current_y, "同ブランド内比較・注釈（「対比:」＝取り違え注意ポイント）", fontsize=8.54, fontweight="bold", ha="left", va="center")
@@ -548,7 +631,7 @@ if ref_rows > 0:
     ax.hlines(current_y, 0, LOGICAL_W, colors="#cccccc", linewidth=0.8)
     current_y -= 2.0
 
-    ref_row_h = 2.90
+    ref_row_h = 2.85
     for j, (_, row) in enumerate(reference.iterrows()):
         if j % 2 == 0:
             ax.add_patch(patches.Rectangle((0, current_y - 1.55), LOGICAL_W, ref_row_h, facecolor="#fafafa", edgecolor="none"))
@@ -558,69 +641,49 @@ if ref_rows > 0:
         ax.text(41.0, current_y, row["note"], fontsize=7.34, fontweight="bold" if is_taichi else "normal",
                 ha="left", va="center", color=INK if is_taichi else GRAY)
         if row["ingr_detail"]:
-            detail_text = row["ingr_detail"]
-            if len(detail_text) > 34:
-                detail_text = detail_text[:34] + "…"
-            ax.text(COL_NAME_X, current_y - 1.25, detail_text, fontsize=5.1, ha="left", va="center", color="#999999")
+            # 成分詳細は商品名・判定の下の行に全幅で書く（同じ高さに他の文字がないため省略せずに載せられる）
+            ax.text(COL_NAME_X, current_y - 1.25, row["ingr_detail"], fontsize=MIN_FS, ha="left", va="center", color="#777777")
         current_y -= ref_row_h
 
 current_y -= 0.65
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.7)
 current_y -= 1.08
 
-# --- QR（右側に縦積み。詳細参考テキストと横並びにして高さを共有） ---
+# --- フッター：左に免責・出典・アプリURL、右にQR（横並び） ---
 detail_top = current_y
+ax.hlines(detail_top, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 
-def wrap_by_width(text, chars_per_line):
-    return [text[i:i + chars_per_line] for i in range(0, len(text), chars_per_line)]
-
-# --- QRコードは縦積みではなく横並びに配置（右側の縦スペースを節約） ---
 qr_size = 5.6
-QR_X1, QR_X2 = 87.3, 94.2
-
-qr_top = detail_top - 0.2
+QR_X1, QR_X2 = 85.0, 94.0  # キャプション(印刷6pt)同士が重ならない間隔
+qr_top = detail_top - 0.6
 qr_center_y = qr_top - qr_size / 2
-try:
-    qr_img = mpimg.imread(QR_APP_PATH)
-    ax.imshow(qr_img, extent=[QR_X1 - qr_size/2, QR_X1 + qr_size/2,
-                              qr_center_y - qr_size/2, qr_center_y + qr_size/2], zorder=3)
-except Exception:
-    ax.add_patch(patches.Rectangle((QR_X1 - qr_size/2, qr_center_y - qr_size/2), qr_size, qr_size,
-                                   fill=False, edgecolor="#cccccc", zorder=3))
-try:
-    qr_img2 = mpimg.imread(QR_FORM_PATH)
-    ax.imshow(qr_img2, extent=[QR_X2 - qr_size/2, QR_X2 + qr_size/2,
-                               qr_center_y - qr_size/2, qr_center_y + qr_size/2], zorder=3)
-except Exception:
-    ax.add_patch(patches.Rectangle((QR_X2 - qr_size/2, qr_center_y - qr_size/2), qr_size, qr_size,
-                                   fill=False, edgecolor="#cccccc", zorder=3))
+for qx, path in ((QR_X1, QR_APP_PATH), (QR_X2, QR_FORM_PATH)):
+    try:
+        ax.imshow(mpimg.imread(path), extent=[qx - qr_size / 2, qx + qr_size / 2,
+                                              qr_center_y - qr_size / 2, qr_center_y + qr_size / 2], zorder=3)
+    except Exception:
+        ax.add_patch(patches.Rectangle((qx - qr_size / 2, qr_center_y - qr_size / 2), qr_size, qr_size,
+                                       fill=False, edgecolor="#cccccc", zorder=3))
+qr_y = qr_center_y - qr_size / 2 - 0.45
+ax.text(QR_X1, qr_y, "参考：商品検索", fontsize=MIN_FS, ha="center", va="top", color=INK, fontweight="bold")
+ax.text(QR_X2, qr_y, "ご意見・改善案", fontsize=MIN_FS, ha="center", va="top", color="#555555", fontweight="bold")
 
-qr_y = qr_center_y - qr_size/2 - 0.75
-ax.text(QR_X1, qr_y, "参考：商品検索", fontsize=5.8, ha="center", va="top", color=INK, fontweight="bold")
-ax.text(QR_X2, qr_y, "ご意見・改善案", fontsize=5.8, ha="center", va="top", color="#555555", fontweight="bold")
-qr_y -= 0.95
-ax.text(QR_X1, qr_y, "(表にない商品はこちら)", fontsize=4.3, ha="center", va="top", color="#999999")
-qr_y -= 0.75
-ax.text(QR_X1, qr_y, APP_URL.replace("https://", ""), fontsize=3.3, ha="center", va="top", color="#999999")
-qr2_y = qr_y
+FOOT_LH = 1.2
+y = detail_top - 1.6
+ax.text(COL_NAME_X, y, "免責: 過去に用法用量超過の自己判断服用で重篤な健康被害が生じた事例を踏まえた確認です。意図的な過量服薬は保証・救済制度の対象外です。",
+        fontsize=MIN_FS, ha="left", va="center", color=LGRAY)
+y -= FOOT_LH
+text_run(COL_NAME_X, y, [("参考：商品検索（表にない商品はこちら）　", {"fontweight": "bold", "color": "#555555"}),
+                         (APP_URL.replace("https://", ""), {"color": "#555555"})], fontsize=MIN_FS)
+y -= FOOT_LH
+ax.text(COL_NAME_X, y, "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」・厚生労働大臣が定める数量（告示）",
+        fontsize=MIN_FS, ha="left", va="center", color="#999999")
+y -= FOOT_LH
+ax.text(COL_NAME_X, y, "　　　JSMI「指定濫用防止医薬品の販売制度について」／兵庫県 薬務課 制度改正資料",
+        fontsize=MIN_FS, ha="left", va="center", color="#999999")
+y = min(y, qr_y - 1.0)
 
-# --- 詳細参考資料の要約（旧2ページ目を集約・QR列を避けて配置） ---
-DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
-y = detail_top
-ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
-y -= 1.62
-ax.text(COL_NAME_X, y, "",
-        fontsize=9.15, fontweight="bold", ha="left", va="center")
-y -= 1.84
-
-# 「レジでの確認事項」はページ2へ移動したため、ここでは免責・出典のみ
-y -= 1.5
-ax.text(COL_NAME_X, y, "免責: 過去に用法用量超過の自己判断服用で重篤な健康被害が生じた事例を踏まえた確認です。意図的な過量服薬は保証・救済制度の対象外です。", fontsize=6.1, ha="left", va="center", color=LGRAY)
-y -= 0.85  # y = 3.70 (準拠資料の描画位置)
-ax.text(COL_NAME_X, y,
-        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」・厚生労働大臣が定める数量（告示）/JSMI「指定濫用防止医薬品の販売制度について」/兵庫県 薬務課 制度改正資料",
-        fontsize=4.8, ha="left", va="center", color="#aaaaaa")
-
+check_min_font(fig, "1枚目")
 plt.savefig(OUTPUT_PNG, dpi=300)
 plt.savefig(OUTPUT_PDF)
 plt.close()
@@ -628,5 +691,5 @@ plt.close()
 print("==========================================")
 print("v13【1枚目】A4 早見表生成完了")
 print(f"出力ファイル: {OUTPUT_PNG}")
-print(f"最終y座標(0付近が理想): {y:.2f}")
+print(f"フッター最下端y(0.6以上で用紙内): {y:.2f}")
 print("==========================================")
