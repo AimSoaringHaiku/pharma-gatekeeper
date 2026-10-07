@@ -104,7 +104,7 @@ ax.hlines(LOGICAL_H - 5.3, 2.0, 98.0, colors="#999999", linewidth=1.2)
 GRID_LEFT, GRID_RIGHT = 2.0, 98.0
 GRID_TOP = LOGICAL_H - 6.3
 GRID_BOTTOM = 3.0
-GUTTER = 2.0
+GUTTER = 1.2
 COL_W = (GRID_RIGHT - GRID_LEFT - GUTTER) / 2
 ROW_H = (GRID_TOP - GRID_BOTTOM - GUTTER) / 2
 
@@ -118,19 +118,16 @@ def panel_frame(x, y_top, w, h, title, color, subtitle=None):
     y_bottom = y_top - h
     ax.add_patch(patches.FancyBboxPatch((x, y_bottom), w, h, boxstyle="round,pad=0.12",
                                          linewidth=1.2, edgecolor=color, facecolor="white", zorder=1))
-    sub_fs = MIN_FS
-    sub_lines = wrap_to_width(subtitle, sub_fs, w - 2.0) if subtitle else []
-    bar_h = 2.6 + (1.25 * len(sub_lines) if sub_lines else 0)
+    # 画像をできるだけ大きく載せるため、見出しと元資料名を1行のバーにまとめ、余白も最小にする
+    bar_h = 2.2
     ax.add_patch(patches.FancyBboxPatch((x, y_top - bar_h), w, bar_h, boxstyle="round,pad=0.12",
                                          linewidth=0, facecolor=color, zorder=2))
-    title_y = y_top - (1.35 if sub_lines else bar_h / 2)
-    ax.text(x + w / 2, title_y, title, fontsize=BODY_FS, fontweight="bold",
-            ha="center", va="center", color="white", zorder=3)
-    sy = title_y - 1.45
-    for line in sub_lines:
-        ax.text(x + w / 2, sy, line, fontsize=sub_fs, ha="center", va="center", color="#eef4fb", zorder=3)
-        sy -= 1.25
-    return y_top - bar_h - 0.7
+    title_y = y_top - bar_h / 2
+    ax.text(x + 0.8, title_y, title, fontsize=BODY_FS, fontweight="bold",
+            ha="left", va="center", color="white", zorder=3)
+    if subtitle:
+        ax.text(x + w - 0.8, title_y, subtitle, fontsize=MIN_FS, ha="right", va="center", color="#eef4fb", zorder=3)
+    return y_top - bar_h - 0.25
 
 
 def draw_magnifier_icon(cx, cy, r, handle_len, color, angle_deg=-40):
@@ -217,7 +214,7 @@ def draw_poster_image_fit(x, y_top, w, h_avail, img_path):
 def draw_poster1(x, y_top, w, h):
     y = panel_frame(x, y_top, w, h, "参考① 購入者への掲示例", INK,
                      subtitle="元資料：指定濫用防止医薬品をご購入時フリップ")
-    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - (y_top - h) - 0.3, IMG_POSTER1)
+    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - (y_top - h) - 0.15, IMG_POSTER1)
     focus_y = img_y1 - 0.485 * img_h
     draw_numbered_box(img_x0 + img_w * 0.42, focus_y, img_w * 0.72, img_w * 0.045, 1)
 
@@ -229,7 +226,7 @@ def draw_poster2(x, y_top, w, h):
     y = panel_frame(x, y_top, w, h, "参考② 制度改正のお知らせ", INK,
                      subtitle="元資料：薬物濫用ポスター「大切なお知らせ」")
     frame_bottom = y_top - h
-    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.3, IMG_POSTER2)
+    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.15, IMG_POSTER2)
     focus_x, focus_y = img_x0 + img_w * 0.64, img_y1 - 0.843 * img_h
     draw_numbered_box(focus_x, focus_y, img_w * 0.10, img_w * 0.055, 2)
 
@@ -241,11 +238,10 @@ def draw_poster3_flow(x, y_top, w, h):
     y = panel_frame(x, y_top, w, h, "参考③ 来店〜販売可否フロー", INK,
                      subtitle="元資料：販売可否判断フローチャート")
     frame_bottom = y_top - h
-    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.3, IMG_FLOWCHART)
-    focus_y = img_y1 - 0.803 * img_h
-    draw_numbered_box(img_x0 + img_w * 0.70, focus_y, img_w * 0.15, img_w * 0.045, 3)
+    img_x0, img_y1, img_w, img_h = draw_poster_image_fit(x, y, w, y - frame_bottom - 0.15, IMG_FLOWCHART)
+    # 「18歳以上への販売」の分岐＝参考①の赤枠と同じ内容のため、同じ番号①を付ける
     focus_y2 = img_y1 - 0.514 * img_h
-    draw_numbered_box(img_x0 + img_w * 0.29, focus_y2, img_w * 0.26, img_w * 0.032, 4)
+    draw_numbered_box(img_x0 + img_w * 0.29, focus_y2, img_w * 0.26, img_w * 0.032, 1)
 
 
 draw_poster1(Q1_X, ROW1_TOP, COL_W, ROW_H)
@@ -259,28 +255,21 @@ draw_poster3_flow(Q1_X, ROW2_TOP, COL_W, ROW_H)
 Q4_X, Q4_TOP, Q4_W, Q4_H = Q2_X, ROW2_TOP, COL_W, ROW_H
 
 FOOTNOTES = [
-    (1, "参考①", "「理由確認」欄は成人（18歳以上）のみが対象です",
-     "赤枠の「大容量製品又は複数個の購入に該当する場合、その理由」は、18歳以上の購入者様にのみご確認いただく項目です。"
-     "18歳未満の方は、理由の如何を問わず一律で販売不可となりますので、あわせてご留意ください。"),
-    (2, "参考②", "「大容量」の目印について",
-     "外枠の「要確認」という表示自体は、小容量・大容量どちらの商品にも共通して付いています。違いは「要」の文字にさらに丸い囲みが付くかどうかで、"
-     "大容量側のみ追加の囲みが付いていることが多いです（表示は製品や年代により異なり、旧い包装には記載がない場合もございますので、あわせてご確認ください）。"),
-    (3, "参考③", "「販売実施」の後も、申し送りが必要な場合がございます",
-     "「販売実施」で対応完了のように見えますが、実際には販売後も、購入者様のご様子や理由のご説明状況によっては、"
-     "「申し送り対応の実施」（購入者様の特徴・来店日時・購入商品等を帳簿等にご記載いただくこと）が必要になる場合がございます。"),
-    (4, "参考③", "赤枠「18歳以上への販売」について",
-     "大容量・複数個の購入理由を確認するのは、この「18歳以上への販売」の分岐に進んだ場合のみです。18歳未満は年齢確認の時点で一律に大容量・複数個が販売不可となるため、"
-     "理由確認はこの分岐に該当する成人のみが対象です。"),
+    (1, "参考①③", "理由確認は18歳以上のみが対象",
+     "参考①の赤枠「大容量製品又は複数個の購入に該当する場合、その理由」と、参考③の「18歳以上への販売」の分岐は同じことを示しています。"
+     "理由を確認するのは18歳以上の購入者だけです。18歳未満は年齢確認の時点で、大容量・複数個が理由を問わず販売不可です。"),
+    (2, "参考②", "「大容量」の目印",
+     "「要確認」の外枠は、小容量・大容量どちらの商品にも付いています。大容量側は「要」の字にさらに丸い囲みが付くことが多いです"
+     "（表示は製品や年代により異なり、旧い包装には記載がない場合もあります）。"),
 ]
 
 NOTES = [
     ("身分証明書提示について（自店ルール）",
-     "法律や国の通知に「学生証を提示させる」といった具体的な書類名の規定はありませんが、現場でのトラブルを防ぎ確実な確認を行うため、"
-     "当店では必ず「公的な身分証明書」（学生証・健康保険証・マイナンバーカード・運転免許証等）の提示をお願いするルールとしています。"),
+     "法令に提示させる書類名の規定はありませんが、確実に確認するため、当店では「公的な身分証明書」"
+     "（学生証・健康保険証・マイナンバーカード・運転免許証等）の提示をお願いしています。"),
     ("この規制がある理由（免責事項の根拠）",
-     "かつて安全確認が不十分なまま販売され、規定量を上回る自己判断の服用により重篤な健康被害に至った事例がありました。今回の確認は個人ではなく社会構造的な問題として、"
-     "同じ事象を繰り返さないための取り組みです。市販薬は厳格な配合・最大量のルールの下で設計されており、用法用量を守ることで最大の効果と安全性が得られます。"
-     "意図的な過量服薬による健康被害は保証・救済制度の対象外となるため、複数の薬の同時服用についてもあわせてご確認をお願いしています。"),
+     "過去に安全確認が不十分なまま販売され、自己判断の過量服用で重篤な健康被害に至った事例がありました。"
+     "用法用量を守れば効果と安全性が得られる一方、意図的な過量服薬による健康被害は救済制度の対象外です。"),
 ]
 
 header_h4 = 2.6

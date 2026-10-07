@@ -122,7 +122,7 @@ qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "①【年齢・氏名】18歳未満ですか？",
         fontsize=Q_FS_MAIN, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
 qy -= Q_LH * 0.85
-ax.text(COL_NAME_X + 3.0, qy, "（※18歳未満への大容量・複数個は理由問わず一律販売不可。小容量1個のみ可。氏名・年齢の記録が必須）",
+ax.text(COL_NAME_X + 3.0, qy, "（※法令上の確認。18歳未満への大容量・複数個は一律販売不可。お客様には「お薬を安全にお使いいただくための確認です」と説明）",
         fontsize=Q_FS_SUB - 1.2, ha="left", va="center", color=GRAY, zorder=3)
 qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "②【重複】他店や他のレジで同じお薬（風邪薬、咳止め等）のご購入はありませんか？（譲り受けも含みます）",
@@ -205,9 +205,9 @@ CASES = [
         "12歳未満：コデイン系(ジヒドロコデイン含)絶対禁忌⇒他成分の咳止めへ。",
         "身分証拒否：年齢確認不能のため販売不可。",
     ]),
-    ("③", "体質(アレルギー)", "解熱鎮痛薬でアレルギー歴", [
-        "ピリン疹：NSAIDs(ロキソプロフェン等)へ代替可。",
-        "アスピリン喘息：NSAIDs全般に交差耐性で全てNG⇒AAP単剤のみ提案。",
+    ("③", "体質(アレルギー)", "解熱鎮痛薬でアレルギー歴⇒皮膚か呼吸器かを確認", [
+        "皮膚(ピリン疹などの発疹)：ピリン系以外のNSAIDs(ロキソプロフェン等)へ代替可。",
+        "呼吸器(アスピリン喘息)：NSAIDs全般に交差反応で全てNG⇒アセトアミノフェン(AAP)単剤のみ提案。",
     ]),
     ("③", "体質(喘息・不整脈等)", "喘息/不整脈/緑内障/前立腺肥大/高血圧・糖尿病", [
         "抗コリン薬・第一世代抗ヒス：喘息=痰粘稠化、不整脈=頻脈・QT延長。",
@@ -220,15 +220,15 @@ CASES = [
         "喘息タイプで判断：アレルギー性(花粉・ダニ由来、鼻炎を合併しやすい)は喘息が落ち着いていれば医師処方あり/非アレルギー性(冷気・感染由来)は抗ヒスタミンのメリットがなくデメリットのみのため不要。",
     ]),
     ("④", "併用", "SSRI服用中/他剤併用", [
-        "最重要：DXM×SSRIはセロトニン症候群リスク(致死率最高クラスの相互作用)。",
-        "GFJでDXM血中濃度↑。マクロライド系/アゾール系はQT延長・心室頻拍に注意。",
+        "最重要：DXM(デキストロメトルファン)とSSRI等の併用はセロトニン症候群のおそれ(頻度はまれだが重篤化しうる)⇒服用中なら医師・薬剤師へ相談。",
+        "グレープフルーツジュース(GFJ)でDXM血中濃度↑。マクロライド系/アゾール系はQT延長・心室頻拍に注意。",
     ]),
     ("⑤", "妊婦・授乳", "妊娠中/授乳中と判明", [
-        "禁忌：妊娠後期のコデイン系⇒新生児呼吸抑制。メジコン等単剤(DXM)を提案。",
-        "抗コリン薬(ブスコパン等)はOTC一律不可。授乳中は母乳分泌↓・乳児頻脈で中断。",
+        "妊娠後期のコデイン系は避ける⇒新生児呼吸抑制。DXM単剤(メジコン等)が候補だが、指定成分なので購入制限は同じ。妊婦への可否は添付文書で確認。",
+        "抗コリン薬(ブスコパン等)：授乳中の可否は、製品の添付文書の記載で判断する。",
         "コンタック鼻炎Z(セチリジン)は妊婦投与禁忌。第1世代クロルフェニラミンは比較的安全。",
     ]),
-    ("※", "強心薬(センソ含有)", "救心・六神丸等の購入/併用歴の確認", [
+    ("【参考】", "強心薬(センソ含有)", "救心・六神丸等の購入/併用歴の確認", [
         "併用禁忌：センソ含有薬(救心・六神丸等)と医療用強心薬(ジゴキシン等ジギタリス製剤)は併用禁忌⇒不整脈・中毒のおそれ。",
         "妊婦は特に注意：センソ・ブシ(附子)は妊娠中の使用に注意を要する成分⇒購入前に必ず確認。",
     ]),
@@ -239,10 +239,16 @@ CASES = [
     ]),
     ("※", "外用薬・アンナカ", "外用薬/無水カフェインの質問", [
         "対象外：軟膏・クリーム・目薬等の外用剤(成分含有でも規制対象外)。",
-        "対象外：含嗽剤・口腔用スプレーは外用剤。※トローチ・ドロップ(医薬品)は剤形で除外せず成分で判定(詳細は4枚目)。",
+        "対象外：トローチ・舌下錠などの口腔用錠剤、含嗽剤、口腔用スプレー(通知で外用剤と明記)。医薬品ドロップは内服扱いで成分次第(4枚目)。",
         "対象外：アンナカ(無水カフェイン)。お茶等にも含有、一律規制が非現実的。",
     ]),
 ]
+
+CASES.insert(1, ("※", "使用期間の目安", "「いつから・どの程度の症状か」で長引いているかを判断", [
+    "かぜの症状は通常、数日でピークを越え1週間前後で改善に向かう(×7区分の根拠)。",
+    "かぜ薬・せき止め・解熱鎮痛薬の添付文書は多くが「5〜6回服用しても改善しなければ中止して相談」。",
+    "せき：3週間以上続けば遷延性、8週以上は慢性咳嗽(咳嗽・喀痰の診療ガイドライン)⇒受診勧奨。",
+]))
 
 DRIVING_ROWS = [
     ("クロルフェニラミン(1)", "12〜24h", "翌日まで"),
@@ -346,10 +352,38 @@ SEC_HEADER_H = 3.2
 DISCLAIMER_FS = MIN_FS
 
 
+LEGEND = ("表記：■赤字＝特に重大な注意（禁忌・販売不可など）／▶黒字＝一般的な注意。"
+          "「禁忌」はOTC添付文書の「してはいけないこと」に相当（医療用で「慎重投与」の成分でも、OTCでは「してはいけないこと」になる場合がある）。")
+
+
+def case_height(w, category, condition, bullets, fs_tag, fs_body, line_h, q_num):
+    tag_w = text_width(f"{q_num}{category}", fs_tag, "bold") + 1.4
+    n = len(wrap_to_width(condition, fs_tag, w - tag_w - 1.0)) or 1
+    for b in bullets:
+        n += len(wrap_fill(f"■{b}", fs_body, w - 1.0, text_width))
+    return n * line_h + 0.55
+
+
 def render_section(fs_tag, fs_body, fs_tbl, line_h):
     y = SEC_TOP - SEC_HEADER_H - line_h * 0.9
-    for q_num, category, condition, bullets in CASES:
-        y = draw_case(SEC_LEFT + 0.8, y, SEC_RIGHT - SEC_LEFT - 1.6, q_num, category, condition, bullets, fs_tag, fs_body, line_h)
+    full_w = SEC_RIGHT - SEC_LEFT - 1.6
+    for i, line in enumerate(wrap_fill(LEGEND, fs_body, full_w, text_width)):
+        ax.text(SEC_LEFT + 0.8, y, line, fontsize=fs_body, ha="left", va="center", color=GRAY)
+        y -= line_h
+    y -= 0.2
+    # 状況別の注意は2列に分けて右側の余白も使う（左右の高さが近くなる位置で分割）
+    col_gap = 1.6
+    col_w = (full_w - col_gap) / 2
+    heights = [case_height(col_w, c, cond, b, fs_tag, fs_body, line_h, q) for q, c, cond, b in CASES]
+    split = min(range(1, len(CASES)), key=lambda k: max(sum(heights[:k]), sum(heights[k:])))
+    yl = yr = y
+    for idx, (q_num, category, condition, bullets) in enumerate(CASES):
+        if idx < split:
+            yl = draw_case(SEC_LEFT + 0.8, yl, col_w, q_num, category, condition, bullets, fs_tag, fs_body, line_h)
+        else:
+            yr = draw_case(SEC_LEFT + 0.8 + col_w + col_gap, yr, col_w, q_num, category, condition, bullets,
+                           fs_tag, fs_body, line_h)
+    y = min(yl, yr)
     y = draw_driving_table(SEC_LEFT + 0.8, y, SEC_RIGHT - SEC_LEFT - 1.6, DRIVING_ROWS, fs_tag, fs_tbl, line_h)
     y = draw_nursing(SEC_LEFT + 0.8, y, SEC_RIGHT - SEC_LEFT - 1.6, NURSING_ROWS, fs_tag, fs_body, line_h)
     return y
