@@ -371,7 +371,7 @@ ax.text(BODY_X, current_y,
         fontsize=MIN_FS, ha="left", va="center", color="#333333")
 current_y -= ROW_LH * 0.95
 ax.text(BODY_X, current_y,
-        "※見た目の判断には個人差があります。確認漏れは店舗の法令上の遵守事項違反になりうるため、迷ったら確認する",
+        "※見た目の判断には個人差があります。年齢の確認は薬機法第36条の11に基づく確認義務の一部のため、迷ったら確認する",
         fontsize=MIN_FS, ha="left", va="center", color=DARKRED)
 current_y -= ROW_LH
 ax.text(COL_NAME_X, current_y, "③ 包装制限の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=INK)
