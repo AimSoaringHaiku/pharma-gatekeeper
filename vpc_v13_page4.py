@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import japanize_matplotlib
+from print_style import MIN_FS, SOURCE_TEXT, check_min_font
 
 OUTPUT_PNG = "atomic_card_table_v13_page4.png"
 OUTPUT_PDF = "atomic_card_table_v13_page4.pdf"
@@ -18,6 +19,7 @@ INK = "#1a1a1a"
 LGRAY = "#888888"
 
 _meas_fig, _meas_ax = plt.subplots(figsize=(10, 14.14))
+_meas_ax.set_position([0, 0, 1, 1])  # 本体と同じ全面配置にしないと、文字幅を約1.3倍に見積もってしまう
 _meas_ax.set_xlim(0, LOGICAL_W)
 _meas_ax.set_ylim(0, LOGICAL_H)
 _meas_ax.axis("off")
@@ -26,7 +28,6 @@ _meas_fig.canvas.draw()
 
 def text_width(text, fontsize, weight="normal", style="normal"):
     t = _meas_ax.text(0, -200, text, fontsize=fontsize, fontweight=weight, fontstyle=style, ha="left", va="center")
-    _meas_fig.canvas.draw()
     bbox = t.get_window_extent(renderer=_meas_fig.canvas.get_renderer())
     inv = _meas_ax.transData.inverted()
     (x0, _), (x1, _) = inv.transform([[bbox.x0, bbox.y0], [bbox.x1, bbox.y1]])
@@ -91,7 +92,7 @@ COL_NAME_X = 2.0
 ax.text(LOGICAL_W / 2, LOGICAL_H - 2.4, "【4枚目】社内限定・データ整備リファレンス", fontsize=13.5, fontweight="bold",
         ha="center", va="center", color="#222222")
 ax.text(LOGICAL_W / 2, LOGICAL_H - 4.1, "（上段＝新商品採用時チェックリスト　／　下段＝剤形・医薬品区分の基礎知識）",
-        fontsize=6.6, ha="center", va="center", color="#777777")
+        fontsize=MIN_FS, ha="center", va="center", color="#777777")
 ax.hlines(LOGICAL_H - 5.3, 2.0, 98.0, colors="#999999", linewidth=1.2)
 
 PAGE_TOP = LOGICAL_H - 6.3
@@ -111,10 +112,15 @@ ax.text(LOGICAL_W / 2, box_top - 1.3, "新商品採用時チェックリスト�
 
 
 def draw_step(x, y, w, num, title, lines, fs_title=9.6, fs_body=8.2, line_h=2.4):
-    badge_r = 1.15
-    ax.add_patch(patches.Circle((x + badge_r, y), badge_r, facecolor=INK, edgecolor="none", zorder=3))
-    ax.text(x + badge_r, y, f"STEP{num}", fontsize=5.0, fontweight="bold", ha="center", va="center",
+    # 丸バッジに「STEP1」を収めると文字が小さくなりすぎるため、文字幅に合わせた角丸ラベルにする
+    badge_fs = MIN_FS
+    badge_w = text_width(f"STEP{num}", badge_fs, "bold") + 1.0
+    badge_h = 2.0
+    ax.add_patch(patches.FancyBboxPatch((x, y - badge_h / 2), badge_w, badge_h, boxstyle="round,pad=0.1",
+                                         facecolor=INK, edgecolor="none", zorder=3))
+    ax.text(x + badge_w / 2, y, f"STEP{num}", fontsize=badge_fs, fontweight="bold", ha="center", va="center",
             color="white", zorder=4)
+    badge_r = badge_w / 2  # 以降の字下げ計算用
     tx = x + badge_r * 2 + 1.2
     ax.text(tx, y, title, fontsize=fs_title, fontweight="bold", ha="left", va="center", color=INK)
     y -= line_h * 1.05
@@ -142,7 +148,8 @@ qy = draw_step(COL_NAME_X + 1.0, qy, STEP_W, 4, "管理表の作成",
                ["（例）package_verification.csv",
                 "列の意味：product=商品名／kubun=区分記号(〇:対象品)／package=包装規格／days=消費日数(日)／judgment=容量判定(小容量,大容量)／"
                 "limit=基準日数(7日 or 5日)／note=備考／ingredients=対象成分／daily_dose=1日量(錠・包等)",
-                "入力例（改源 26包）：product=改源, kubun=〇, package=26包, days=8.7, judgment=大容量, limit=7, ingredients=メチルエフェドリン, daily_dose=3"])
+                "入力例（改源 26包）：product=改源, kubun=〇, package=26包, days=8.7, judgment=大容量,",
+                "　limit=7, ingredients=メチルエフェドリン, daily_dose=3"])
 
 # ==========================================================
 # 下段：剤形・医薬品区分の基礎知識
@@ -166,19 +173,19 @@ def draw_block(x, y, w, title, lines, fs_title, fs_body, line_h, title_color=INK
 
 
 SHAPE_BLOCKS = [
-    ("トローチ剤／含嗽剤／口腔用スプレー＝「外用剤」（耳鼻咽喉科用剤）", [
-        "のど粘膜への局所作用が目的のため「外用」扱いとなり、規制から除外される（参考：医療用ニトロスプレー・アフタッチも外用扱い）。",
-    ], BLUE),
-    ("ドロップ剤・舌下錠＝「内服剤」（経口投与される製剤）", [
-        "糖をベースに作られ、唾液とともに胃や腸へ流れ込み全身（脳の咳中枢や気管支等）に作用させる目的も併せ持つため、液体・錠剤と同じ「内服薬」に分類される。指定成分が入っていれば販売制限の対象。舌下錠も同グループ（参考：医療用ニトロ舌下錠は錠剤形状のため内服扱い）。",
-        "例：「ルルメディカルドロップ」のようなドロップ剤は製法が飴に近いが、全身に成分が回るため内服薬分類。濫用成分を含めば販売制限の対象。",
+    ("トローチ・ドロップ・舌下錠＝剤形で一律に除外しない（成分で判定）", [
+        "トローチ・のど飴の形でも「医薬品」であれば、他の剤形と同じく成分欄を確認する。指定成分（デキストロメトルファン・ジヒドロコデイン・メチルエフェドリン等）が入っていれば販売制限の対象。",
+        "例：せき止め成分入りのトローチ・医薬品ドロップ（浅田飴、ルルメディカルドロップ等）は対象になりうる／殺菌・消炎成分のみのトローチ（セチルピリジニウム等）は指定成分がないため対象外。",
     ], RED),
+    ("含嗽剤（うがい薬）／口腔用スプレー＝「外用剤」", [
+        "のど粘膜への局所作用が目的の外用剤。軟膏・目薬等と同じく、成分によらず販売制限の対象外。",
+    ], BLUE),
 ]
 
 CANDY_ROWS = [
-    ("医薬品ドロップ（内服）", "浅田飴、ルルメディカルドロップ等", "指定成分があれば規制対象", RED),
-    ("指定医薬部外品（のど飴）", "ヴィックスメディケイテッドドロップ、ルルのど飴等", "強い指定成分（メチルエフェドリン等）を配合できないルールのため100%対象外", GRAY),
-    ("食品（普通の飴）", "龍角散ののど飴、カンロのど飴等", "お菓子のため100%対象外", GRAY),
+    ("医薬品（トローチ・ドロップ）", "せき止めトローチ、浅田飴、ルルメディカルドロップ等", "指定成分があれば規制対象（剤形で除外しない）", RED),
+    ("指定医薬部外品（のど飴）", "ヴィックスメディケイテッドドロップ、ルルのど飴等", "医薬品ではない（指定成分を配合できない）ため対象外", GRAY),
+    ("食品（普通の飴）", "龍角散ののど飴、カンロのど飴等", "お菓子のため対象外", GRAY),
 ]
 
 CLASS_ROWS = [
@@ -196,7 +203,7 @@ def render_lower(fs_h, fs_title, fs_body, fs_tbl, line_h):
     y = SEC_TOP - SEC_HEADER_H - line_h * 0.9
 
     # --- 剤形の基本ルール（外用/内服の分岐） ---
-    ax.text(SEC_LEFT + 0.8, y, "剤形の基本ルール：トローチと「内服のドロップ」は扱いが異なります",
+    ax.text(SEC_LEFT + 0.8, y, "剤形の基本ルール：トローチ・のど飴も「剤形」ではなく「成分」で判定します",
             fontsize=fs_h, fontweight="bold", ha="left", va="center", color=INK)
     y -= line_h * 1.3
     for title, lines, tcolor in SHAPE_BLOCKS:
@@ -204,7 +211,7 @@ def render_lower(fs_h, fs_title, fs_body, fs_tbl, line_h):
 
     # --- のど飴3グラデーション ---
     y -= 0.2
-    ax.text(SEC_LEFT + 0.8, y, "「市販ののど飴」の3つのグラデーション",
+    ax.text(SEC_LEFT + 0.8, y, "「トローチ・のど飴」の3つのグラデーション",
             fontsize=fs_h, fontweight="bold", ha="left", va="center", color=INK)
     y -= line_h * 1.3
     tag_w = max(text_width(t, fs_tbl, "bold") for t, _, _, _ in CANDY_ROWS) + 1.6
@@ -222,8 +229,8 @@ def render_lower(fs_h, fs_title, fs_body, fs_tbl, line_h):
         y -= max(tag_h, len(wrapped) * line_h * 0.85) + 0.35
     y -= 0.1
     for wline in wrap_to_width(
-            "＊店頭で「ドロップ・のど飴」を見るときは、パッケージに「第2類医薬品」（または指定第2類医薬品）と書かれているものだけ、"
-            "内服ルールの網を被せて成分チェックすればOK。",
+            "＊店頭で「トローチ・ドロップ・のど飴」を見るときは、パッケージに「第○類医薬品」の表示があるかをまず確認し、"
+            "医薬品なら成分欄をチェックする（医薬部外品・食品は対象外）。",
             fs_body, SEC_RIGHT - SEC_LEFT - 1.6):
         ax.text(SEC_LEFT + 0.8, y, wline, fontsize=fs_body, fontstyle="italic", ha="left", va="center", color=LGRAY)
         y -= line_h * 0.85
@@ -241,7 +248,7 @@ def render_lower(fs_h, fs_title, fs_body, fs_tbl, line_h):
                     fontsize=fs_tbl, fontweight="bold", ha="center", va="center", color=RED)
             y -= line_h * 1.1
             continue
-        name_w = 22.0
+        name_w = max(22.0, max(text_width(n, fs_tbl, "bold") for n, _, b in CLASS_ROWS if b is not None) + 1.5)
         ax.text(SEC_LEFT + 0.8, y, name, fontsize=fs_tbl, fontweight="bold", ha="left", va="center",
                 color=GRAY if below_line else INK)
         wrapped = wrap_to_width(body, fs_body, SEC_RIGHT - SEC_LEFT - name_w - 1.6)
@@ -290,9 +297,10 @@ sec_end = render_lower(FS_H, FS_TITLE, FS_BODY, FS_TBL, LINE_H)
 
 # --- 下部出典 ---
 ax.text(LOGICAL_W / 2, 1.1,
-        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」/JSMI「指定濫用防止医薬品の販売制度について」/兵庫県 薬務課 制度改正資料",
-        fontsize=4.4, ha="center", va="center", color="#aaaaaa")
+        SOURCE_TEXT,
+        fontsize=MIN_FS, ha="center", va="center", color="#aaaaaa")
 
+check_min_font(fig, "4枚目")
 fig.savefig(OUTPUT_PNG, dpi=300)
 fig.savefig(OUTPUT_PDF)
 plt.close(fig)

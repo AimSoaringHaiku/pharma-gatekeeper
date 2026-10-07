@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.image as mpimg
 import japanize_matplotlib
+from print_style import MIN_FS, BODY_FS, SOURCE_TEXT, check_min_font, wrap_fill
 
 OUTPUT_PNG = "atomic_card_table_v13_page3.png"
 OUTPUT_PDF = "atomic_card_table_v13_page3.pdf"
@@ -24,6 +25,7 @@ INK = "#1a1a1a"  # 白黒印刷を基本とし、解釈層(☞)と赤字指定�
 
 # テキスト幅測定専用の figure（本体 fig とは別）。
 _meas_fig, _meas_ax = plt.subplots(figsize=(10, 14.14))
+_meas_ax.set_position([0, 0, 1, 1])  # 本体と同じ全面配置にしないと、文字幅を約1.3倍に見積もってしまう
 _meas_ax.set_xlim(0, 100.0)
 _meas_ax.set_ylim(0, 141.4)
 _meas_ax.axis("off")
@@ -32,7 +34,6 @@ _meas_fig.canvas.draw()
 
 def text_width(text, fontsize, weight="normal", style="normal"):
     t = _meas_ax.text(0, -200, text, fontsize=fontsize, fontweight=weight, fontstyle=style, ha="left", va="center")
-    _meas_fig.canvas.draw()
     bbox = t.get_window_extent(renderer=_meas_fig.canvas.get_renderer())
     inv = _meas_ax.transData.inverted()
     (x0, _), (x1, _) = inv.transform([[bbox.x0, bbox.y0], [bbox.x1, bbox.y1]])
@@ -96,7 +97,7 @@ def wrap_to_width(text, fontsize, max_width):
 ax.text(LOGICAL_W / 2, LOGICAL_H - 2.4, "【3枚目】社内マニュアル参考資料集", fontsize=14, fontweight="bold",
         ha="center", va="center", color="#222222")
 ax.text(LOGICAL_W / 2, LOGICAL_H - 4.1, "（厚労省・薬局配布資料の要点を再構成　／　右下＝赤枠のふり番・脚注）",
-        fontsize=6.6, ha="center", va="center", color="#777777")
+        fontsize=MIN_FS, ha="center", va="center", color="#777777")
 ax.hlines(LOGICAL_H - 5.3, 2.0, 98.0, colors="#999999", linewidth=1.2)
 
 # --- 2x2グリッド配置 ---
@@ -117,18 +118,18 @@ def panel_frame(x, y_top, w, h, title, color, subtitle=None):
     y_bottom = y_top - h
     ax.add_patch(patches.FancyBboxPatch((x, y_bottom), w, h, boxstyle="round,pad=0.12",
                                          linewidth=1.2, edgecolor=color, facecolor="white", zorder=1))
-    sub_fs = 3.9
+    sub_fs = MIN_FS
     sub_lines = wrap_to_width(subtitle, sub_fs, w - 2.0) if subtitle else []
-    bar_h = 2.2 + (0.8 * len(sub_lines) if sub_lines else 0)
+    bar_h = 2.6 + (1.25 * len(sub_lines) if sub_lines else 0)
     ax.add_patch(patches.FancyBboxPatch((x, y_top - bar_h), w, bar_h, boxstyle="round,pad=0.12",
                                          linewidth=0, facecolor=color, zorder=2))
-    title_y = y_top - (1.1 if sub_lines else bar_h / 2)
-    ax.text(x + w / 2, title_y, title, fontsize=6.4, fontweight="bold",
+    title_y = y_top - (1.35 if sub_lines else bar_h / 2)
+    ax.text(x + w / 2, title_y, title, fontsize=BODY_FS, fontweight="bold",
             ha="center", va="center", color="white", zorder=3)
-    sy = title_y - 1.0
+    sy = title_y - 1.45
     for line in sub_lines:
         ax.text(x + w / 2, sy, line, fontsize=sub_fs, ha="center", va="center", color="#eef4fb", zorder=3)
-        sy -= 0.8
+        sy -= 1.25
     return y_top - bar_h - 0.7
 
 
@@ -144,7 +145,7 @@ def draw_magnifier_icon(cx, cy, r, handle_len, color, angle_deg=-40):
     return tip_x, tip_y
 
 
-def draw_focus_footnote(focus_x, focus_y, lens_r, foot_x, foot_y, text, w, fontsize=3.5, line_h=1.3,
+def draw_focus_footnote(focus_x, focus_y, lens_r, foot_x, foot_y, text, w, fontsize=MIN_FS, line_h=1.5,
                          color=RED, halign="left"):
     """元資料の言及箇所に虫眼鏡のレンズを重ね、持ち手を脚注ボックスまで伸ばして「」付きで説明する。
     レンズ＝該当箇所に直接かぶせる円。脚注＝余白にボックスで独立配置。"""
@@ -168,14 +169,14 @@ def draw_numbered_box(cx, cy, w, h, number, color=RED):
     """元資料の該当箇所を赤枠で囲み、隅に丸数字バッジを付ける（脚注はQ4に別記）。"""
     x0, y0 = cx - w / 2, cy - h / 2
     ax.add_patch(patches.Rectangle((x0, y0), w, h, fill=False, edgecolor=color, linewidth=1.7, zorder=6))
-    badge_r = min(w, h) * 0.22
+    badge_r = 0.95  # ふり番の数字を印刷6pt以上で読めるよう、枠の大きさによらず一定サイズにする
     bx, by = x0, y0 + h
     ax.add_patch(patches.Circle((bx, by), badge_r, facecolor=color, edgecolor="white", linewidth=0.8, zorder=7))
-    ax.text(bx, by, str(number), fontsize=badge_r * 5.2, fontweight="bold", ha="center", va="center",
+    ax.text(bx, by, str(number), fontsize=MIN_FS, fontweight="bold", ha="center", va="center",
             color="white", zorder=8)
 
 
-def draw_callout_note(cx, cy, text, w, fontsize=3.5, line_h=1.3, color=RED, halign="left"):
+def draw_callout_note(cx, cy, text, w, fontsize=MIN_FS, line_h=1.5, color=RED, halign="left"):
     """元資料の画像上の余白に直接書き込む、手書きメモ風の短い注釈（虫眼鏡アイコン＋断定しすぎない一言）。
     白黒印刷でも判別できるよう、枠線付きの吹き出し（fill無し）にする。"""
     text = text.lstrip("☞")
@@ -287,7 +288,7 @@ ax.add_patch(patches.FancyBboxPatch((Q4_X, Q4_TOP - Q4_H), Q4_W, Q4_H,
                                      boxstyle="round,pad=0.12", linewidth=1.3, edgecolor=INK, facecolor="#fbfbfb", zorder=0))
 ax.add_patch(patches.FancyBboxPatch((Q4_X, Q4_TOP - header_h4), Q4_W, header_h4,
                                      boxstyle="round,pad=0.12", linewidth=0, facecolor=INK, zorder=1))
-ax.text(Q4_X + Q4_W / 2, Q4_TOP - header_h4 / 2, "④ 赤枠のふり番・脚注／確認業務の補足", fontsize=6.6, fontweight="bold",
+ax.text(Q4_X + Q4_W / 2, Q4_TOP - header_h4 / 2, "④ 赤枠のふり番・脚注／確認業務の補足", fontsize=BODY_FS, fontweight="bold",
         ha="center", va="center", color="white", zorder=3)
 
 
@@ -300,7 +301,7 @@ def draw_footnote_entry(x, y, w, number, source, title, body, fs_num=6.5, fs_tit
     tx = x + badge_r * 2.6
     ax.text(tx, y, f"{source}／{title}", fontsize=fs_title, fontweight="bold", ha="left", va="center", color=INK)
     y -= line_h * 1.15
-    for line in wrap_to_width(body, fs_body, w - badge_r * 2.6 - 0.5):
+    for line in wrap_fill(body, fs_body, w - badge_r * 2.6 - 0.5, text_width):
         ax.text(tx, y, line, fontsize=fs_body, ha="left", va="center", color="#333333")
         y -= line_h
     y -= 0.35
@@ -311,7 +312,7 @@ def draw_footnote_entry(x, y, w, number, source, title, body, fs_num=6.5, fs_tit
 def draw_note_entry(x, y, w, title, body, fs_title=6.0, fs_body=5.3, line_h=1.4):
     ax.text(x, y, f"■ {title}", fontsize=fs_title, fontweight="bold", ha="left", va="center", color=BLUE)
     y -= line_h * 1.15
-    for line in wrap_to_width(body, fs_body, w - 0.5):
+    for line in wrap_fill(body, fs_body, w - 0.5, text_width):
         ax.text(x, y, line, fontsize=fs_body, ha="left", va="center", color="#333333")
         y -= line_h
     y -= 0.35
@@ -335,10 +336,12 @@ _dry_ax.axis("off")
 
 _real_ax = ax
 ax = _dry_ax
-BASE_NUM, BASE_TITLE, BASE_BODY, BASE_LH = 6.5, 6.0, 5.3, 1.4
+# 本文は印刷6pt（MIN_FS）を下限に、行送りは本文の約1.45倍（1論理単位＝7.2pt）
+BASE_NUM, BASE_TITLE, BASE_BODY = MIN_FS * 1.1, MIN_FS * 1.08, MIN_FS
+BASE_LH = BASE_BODY * 1.45 / 7.2
 avail_h4 = Q4_TOP - header_h4 - (Q4_TOP - Q4_H) - 0.4
 
-lo, hi = 0.6, 1.35
+lo, hi = 1.0, 1.35  # 下限1.0＝本文が印刷6pt未満にならない
 for _ in range(16):
     mid = (lo + hi) / 2
     _dry_ax.cla()
@@ -356,12 +359,13 @@ _dry_fig.clf()
 render_footnotes(BASE_NUM * SCALE4, BASE_TITLE * SCALE4, BASE_BODY * SCALE4, BASE_LH * SCALE4)
 
 # --- 下部免責・出典 ---
-ax.text(LOGICAL_W / 2, 1.9, "※本マニュアルは一次的対応の目安であり、個別の診断を行うものではありません。最終判断は薬剤師・登録販売者の専門的知見に基づき実施してください。",
-        fontsize=5.0, ha="center", va="center", color=GRAY)
-ax.text(LOGICAL_W / 2, 0.9,
-        "準拠: 厚生労働省 局長通知「指定濫用防止医薬品の指定について」/JSMI「指定濫用防止医薬品の販売制度について」/兵庫県 薬務課 制度改正資料",
-        fontsize=4.0, ha="center", va="center", color="#aaaaaa")
+ax.text(LOGICAL_W / 2, 2.15, "※本マニュアルは一次対応の目安であり、個別の診断ではありません。最終判断は薬剤師・登録販売者の専門的知見に基づき行ってください。",
+        fontsize=MIN_FS, ha="center", va="center", color=GRAY)
+ax.text(LOGICAL_W / 2, 0.95,
+        SOURCE_TEXT,
+        fontsize=MIN_FS, ha="center", va="center", color="#aaaaaa")
 
+check_min_font(fig, "3枚目")
 fig.savefig(OUTPUT_PNG, dpi=300)
 fig.savefig(OUTPUT_PDF)
 plt.close(fig)
