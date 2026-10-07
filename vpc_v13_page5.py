@@ -122,7 +122,7 @@ for i, (name, alias) in enumerate(INGREDIENTS):
 cy -= 4 * 3.5 + 0.3
 text(CONTENT_X, cy, "→ 1つでもチェックがあれば【対象品】として③へ。", color=INK, weight="bold")
 cy -= 2.6
-text(CONTENT_X, cy, "※剤形では判断しない：トローチ・のど飴・ドロップ・液剤・カプセルも、医薬品で成分に上記があれば③へ進む。",
+text(CONTENT_X, cy, "※トローチは外用剤のため対象外。医薬品のドロップは内服扱いなので、液剤・カプセルと同じく成分で判断して③へ。",
      fs=FS_NOTE, color=RED)
 cy -= 2.1
 text(CONTENT_X, cy, "※紛らわしい対象外：生薬のマオウ／無水カフェイン／プロメタジン等ほかの抗ヒスタミン薬／アリルイソプロピルアセチル尿素",
