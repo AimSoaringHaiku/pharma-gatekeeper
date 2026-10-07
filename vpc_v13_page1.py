@@ -295,12 +295,12 @@ ax.text(COL_NAME_X + 9.9, current_y,
 current_y -= 1.4
 marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
-        "対象外(剤形)＝トローチ・含嗽剤・口腔用スプレーは「外用剤」扱いのため、指定成分を含んでいても対象外",
+        "対象外(剤形)＝トローチ・舌下錠等の口腔用剤/含嗽剤/口腔用スプレーは「外用剤」扱いのため、指定成分を含んでいても対象外",
         fontsize=5.9, ha="left", va="center", color=GRAY)
 current_y -= 1.4
 marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
-        "要注意(剤形)＝ドロップ・舌下錠は「内服剤」扱いのため、指定成分を含めば対象（｢のど飴｣でも医薬品ドロップは要確認）",
+        "要注意(剤形)＝医薬品のドロップ(のど飴形状)は「内服剤」扱いのため、指定成分を含めば対象（トローチとは別扱い。詳細は4枚目）",
         fontsize=5.9, ha="left", va="center", color=GRAY)
 current_y -= 1.5
 
