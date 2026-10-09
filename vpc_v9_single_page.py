@@ -15,7 +15,7 @@ FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf7A1Hz3jx1FpkuV-3V7X69qNcN
 
 TARGET_INGREDIENTS_LEGEND = (
     "指定8成分: エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/"
-    "デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素 ｜ "
+    "デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素　｜　"
     "非対象（紛らわしい）: 生薬マオウ/無水カフェイン/プロメタジン等の抗ヒス/アリルイソプロピルアセチル尿素"
 )
 
@@ -61,7 +61,7 @@ CAPLET_PRODUCTS = {
 }
 
 # ==========================================================
-# 1. データの読み込み・集計
+# 1. データの読み込み・集計（vpc_v8と同一ロジック）
 # ==========================================================
 df = pd.read_csv(PACKAGE_CSV, encoding="utf-8-sig")
 df["kubun"] = df["kubun"].fillna("").astype(str).str.strip()
@@ -130,7 +130,7 @@ if not reference.empty:
     reference = reference.sort_values("product").reset_index(drop=True)
 
 # ==========================================================
-# 2. 描画 (A4 1枚固定レイアウト・情報密度調整版)
+# 2. 描画 (A4 1枚固定レイアウト・情報量2ページ分を集約)
 # ==========================================================
 LOGICAL_W = 100.0
 LOGICAL_H = 141.4
@@ -158,68 +158,68 @@ ax.text(LOGICAL_W, current_y + 1.4, f"作成日: {today_str}", fontsize=7.93, ha
 ax.text(LOGICAL_W, current_y + 0.3, "※AIによる試作品/実使用前に最新の公式情報(添付文書等)を確認",
         fontsize=4.6, ha="right", va="center", color="#999999")
 
-# --- 使い方・販売可否 ---
-current_y -= 1.45
+# --- 使い方・販売可否（①を年齢規制＝この表の根幹に。ルール未経験者でもこの1枚で可否判断できるよう最上部に配置） ---
+current_y -= 1.55
 ax.hlines(current_y + 0.85, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.15
 ax.text(COL_NAME_X, current_y, "① 18歳未満:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=RED)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量1個のみ販売可（氏名・年齢確認＋他店購入状況確認が必須）。大容量・複数個(種類違いの対象薬も合算)は家族用でも理由問わず一律禁止（販売不可）",
         fontsize=6.3, ha="left", va="center", color="#333333", fontweight="bold")
-current_y -= 1.45
+current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "② 18歳以上:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
         "小容量は通常販売可（他店購入状況確認は必須）。大容量・複数個の購入は理由確認が必須（正当な理由がなければ販売不可）",
         fontsize=6.6, ha="left", va="center", color="#333333")
-current_y -= 1.45
+current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "③ 年齢確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y,
         "見た目で18歳以上と判断できない場合、学生証・健康保険証・マイナンバーカード・運転免許証等の身分証で氏名・年齢を確認。提示がなければ販売不可",
         fontsize=6.3, ha="left", va="center", color="#333333")
-current_y -= 1.45
+current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "④ 商品の確認:", fontsize=7.4, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, current_y, "下表で商品名を検索し「小包装/大包装」どちらの区分か確認（", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 38.1, current_y, "×7", fontsize=7.2, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 40.1, current_y, "＝かぜ薬・解熱鎮痛薬・鼻炎用内服薬/", fontsize=6.6, ha="left", va="center", color="#333333")
 ax.text(COL_NAME_X + 56.8, current_y, "×5", fontsize=7.2, fontweight="bold", ha="left", va="center", color=ORANGE)
 ax.text(COL_NAME_X + 58.8, current_y, "＝それ以外）", fontsize=6.6, ha="left", va="center", color="#333333")
-current_y -= 1.25
+current_y -= 1.35
 ax.text(COL_NAME_X + 12.0, current_y,
         "※×7区分は、風邪の諸症状や長引く頭痛・鼻炎など症状が1週間程度続くことが臨床上多いための設定です",
         fontsize=5.6, ha="left", va="center", color=LGRAY)
 ax.text(COL_NAME_X + 53.0, current_y, "表にない商品は判定アプリ(右下QR)で確認", fontsize=5.6, ha="left", va="center", color="#888888")
-current_y -= 1.35
+current_y -= 1.45
 ax.text(COL_NAME_X, current_y, "よくある質問:", fontsize=6.6, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 11.0, current_y,
         "対象薬を種類違いで1個ずつ購入→複数個扱いで販売不可/身分証の提示を拒否された→年齢確認不能のため販売不可",
         fontsize=6.0, ha="left", va="center", color="#333333")
-current_y -= 1.4
+current_y -= 1.5
 ax.hlines(current_y, 0, LOGICAL_W, colors=BLUE, linewidth=1.2)
 current_y -= 0.35
 
-# --- 計算手順・ブランド速断・成分判別 ---
-current_y -= 1.45
+# --- 計算手順・ブランド速断・成分判別（実務でよく使う判別系を、本体テーブルの直前に集約） ---
+current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "計算手順:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 9.5, current_y,
         "①分類で基準日数(×7=かぜ薬等/×5=それ以外)②1日最大服用量を確認③総量÷1日量=消費日数④基準日数以下=小容量/超=大容量",
         fontsize=6.4, ha="left", va="center", color=GRAY)
-current_y -= 1.4
+current_y -= 1.5
 ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 10.5, current_y,
         "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ",
         fontsize=6.4, ha="left", va="center", color=GRAY)
-current_y -= 1.45
+current_y -= 1.55
 ax.text(COL_NAME_X, current_y, "成分判別:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 marker(ax, COL_NAME_X + 9.0, current_y, RED, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象(指定8成分)＝エフェドリン/メチルエフェドリン/プソイドエフェドリン/コデイン/ジヒドロコデイン/デキストロメトルファン/ジフェンヒドラミン/ブロモバレリル尿素",
         fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.3
+current_y -= 1.4
 marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
         fontsize=5.9, ha="left", va="center", color=GRAY)
-current_y -= 1.35
+current_y -= 1.45
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
 current_y -= 0.35
 
@@ -235,7 +235,7 @@ ax.text(COL_LARGE_X, current_y, "大包装", fontweight="bold", fontsize=11.59, 
 ax.text(FLOW_X, current_y, "レジ確認フロー", fontweight="bold", fontsize=8.3, ha="center", va="center", color="#666666")
 
 current_y -= 1.2
-ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可 ｜ 1日量＝成人(15歳以上)の1日最大服用量", fontsize=6.35, ha="left", va="center", color="#555555")
+ax.text(COL_NAME_X, current_y, "小包装＝単品1個は18歳未満も可/大包装＝18歳未満へ不可　｜　1日量＝成人(15歳以上)の1日最大服用量", fontsize=6.35, ha="left", va="center", color="#555555")
 ax.text(52.3, current_y, "×7", fontsize=6.3, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(53.7, current_y, "＝かぜ薬等", fontsize=5.7, ha="left", va="center", color="#555555")
 current_y -= 1.05
@@ -250,9 +250,9 @@ ax.hlines(current_y, 0, LOGICAL_W, linewidth=1.6)
 current_y -= 1.6
 
 main_rows = len(mart)
-row_height = 2.38 # 圧縮
+row_height = 2.42
 
-# --- レジ確認フロー ---
+# --- レジ確認フロー（本体テーブル右の空きスペースに縦長ミニフローチャート） ---
 FLOW_HALF_W = 7.0
 flow_nodes = [
     (["18歳未満の疑い", "→身分証で氏名・", "年齢を確認"], BLUE, "#eef4fc"),
@@ -261,8 +261,8 @@ flow_nodes = [
     (["【はい】小容量1個", "→18歳未満は氏名+", "他店確認、以上は他店確認"], ORANGE, "#fff3e6"),
     (["条件を満たせば", "販売可"], GREEN, "#eaf5ea"),
 ]
-flow_top = 113.0
-flow_bottom = 66.0
+flow_top = 111.5
+flow_bottom = 64.5
 n = len(flow_nodes)
 flow_gap = (flow_top - flow_bottom) / (n - 1)
 flow_box_h = flow_gap - 1.9
@@ -325,7 +325,7 @@ ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
         fontsize=6.1, ha="left", va="center", color="#888888")
 
-# --- ゾーン区分 ---
+# --- ゾーン区分：ここから下は「精査ゾーン」（安全確認業務の質を担保する詳細情報） ---
 current_y -= 1.1
 zone_top = current_y + 0.55
 ax.add_patch(patches.Rectangle((0, -3), LOGICAL_W, zone_top + 3, facecolor="#eaecef", edgecolor="none", zorder=-2))
@@ -355,13 +355,13 @@ if ref_rows > 0:
         ax.text(28.0, current_y, row["status_text"], fontsize=8.42, fontweight="bold", ha="center", va="center", color=row["status_color"])
         note_color = RED if row["note"].startswith("対比") else GRAY
         ax.text(41.0, current_y, row["note"], fontsize=7.34, ha="left", va="center", color=note_color)
-        current_y -= 2.38 # 圧縮
+        current_y -= 2.44
 
 current_y -= 0.65
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.7)
 current_y -= 1.08
 
-# --- QR ---
+# --- QR（右側に縦積み。詳細参考テキストと横並びにして高さを共有） ---
 detail_top = current_y
 
 def wrap_by_width(text, chars_per_line):
@@ -397,13 +397,15 @@ except Exception:
                                    fill=False, edgecolor="#cccccc", zorder=3))
 qr2_y = qr2_center_y - qr_size/2 - 0.85
 ax.text(QR_X, qr2_y, "ご意見・改善案", fontsize=6.8, ha="center", va="top", color="#555555", fontweight="bold")
+qr2_y -= 1.05
+# FORM_URL_SHORT に短縮URL（例: qr.quel.jp等で発行したもの）を設定すると、QRの下にテキスト表示されます。
 FORM_URL_SHORT = ""
 if FORM_URL_SHORT:
     ax.text(QR_X, qr2_y, FORM_URL_SHORT, fontsize=4.4, ha="center", va="top", color="#999999")
     qr2_y -= 1.0
 
-# --- 詳細参考資料の要約 ---
-DL, DR = 0.0, 82.0 
+# --- 詳細参考資料の要約（旧2ページ目を集約・QR列を避けて配置） ---
+DL, DR = 0.0, 82.0  # 本文カラム幅（右のQR縦積み列を避ける）
 y = detail_top
 ax.hlines(y, 0, LOGICAL_W, colors="#999999", linewidth=1.0)
 y -= 1.62
@@ -411,7 +413,7 @@ ax.text(COL_NAME_X, y, "【詳細参考】医療エビデンス・授乳婦指�
         fontsize=9.15, fontweight="bold", ha="left", va="center")
 y -= 1.84
 
-# E. 医療エビデンス
+# E. 医療エビデンス（1行要約×3）
 ax.text(COL_NAME_X, y, "過量服薬リスク:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 ax.text(COL_NAME_X + 12.0, y, "初日=急性心毒性(無水カフェイン等)で致死性不整脈。3日目以降=劇症肝不全(アセトアミノフェン)が急速進行",
         fontsize=6.59, ha="left", va="center", color=GRAY)
@@ -423,7 +425,7 @@ ax.text(COL_NAME_X + 12.0, y, "頭痛が月15日以上ある環境下で複合�
         fontsize=6.4, ha="left", va="center", color=GRAY)
 y -= 2.0
 
-# F. 授乳婦指導
+# F. 授乳婦指導（色マーカー4段）
 ax.text(COL_NAME_X, y, "授乳婦指導:", fontsize=7.07, fontweight="bold", ha="left", va="center", color=BLUE)
 y -= 1.62
 nursing_rows = [
@@ -456,20 +458,18 @@ safety_items = [
     (ORANGE, "アレルギー歴を聞いたら:", "ピリン疹ならNSAIDsへ代替可、アスピリン喘息ならNSAIDs全般NGでAAP単剤のみ提案"),
     (ORANGE, "喘息・不整脈の既往を聞いたら:", "抗コリン薬/抗ヒスタミン薬は痰の粘稠化(喘息)・頻脈やQT延長(不整脈)のリスクを説明"),
     (ORANGE, "他の薬/飲食物との併用を聞かれたら:", "GFJはDXMの血中濃度上昇、高脂肪食後はウレイド系の吸収促進、マクロライド系/アゾール系薬はQT延長に注意"),
-    (ORANGE, "服用後の運転可否を聞かれたら:", "複数成分のうち排泄が最も遅い「最遅排泄成分」(例:経口dl体クロルフェニラミン＝半減期12〜15h)を基準に、翌日への影響を指導"),
     (BLUE, "16〜17歳が購入希望なら:", "薬用法上は成人量でも、濫用防止の年齢規制では18歳未満扱い→大容量は販売不可"),
-    (BLUE, "ドーピング(WADA基準)を懸念されたら:", "エフェドリン類(メチル/プソイド含む)は競技会時に禁止物質となるため、アスリートには非含有の代替薬を提案"),
     (BLUE, "効果が弱いと相談されたら:", "規定量の遵守こそ最大効果を安全に引き出す方法と説明し、自己判断の増量は勧めない"),
     (BLUE, "アンナカはなぜ対象外?と聞かれたら:", "お茶・コーヒー・エナジードリンク等にも大量に含まれ、医薬品だけの一律規制が非現実的なため(危険性は認識されているが対象外)"),
 ]
-y -= 1.25
+y -= 1.35
 for i, (color, subj, detail) in enumerate(safety_items):
     if i % 2 == 0:
-        ax.add_patch(patches.Rectangle((0, y - 0.53), LOGICAL_W, 1.06, facecolor="#fafafa", edgecolor="none"))
+        ax.add_patch(patches.Rectangle((0, y - 0.57), LOGICAL_W, 1.14, facecolor="#fafafa", edgecolor="none"))
     marker(ax, COL_NAME_X + 3.0, y, color, "circle", 0.4)
     ax.text(SAFETY_SUBJ_X, y, subj, fontsize=6.2, fontweight="bold", ha="left", va="center", color=color)
     ax.text(SAFETY_DET_X, y, detail, fontsize=6.1, ha="left", va="center", color=GRAY)
-    y -= 1.06
+    y -= 1.14
 y -= 0.1
 
 y -= 0.25
@@ -485,7 +485,7 @@ plt.savefig(OUTPUT_PNG, dpi=300)
 plt.close()
 
 print("==========================================")
-print("v9（A4 1枚集約版 - 情報追加・高密度化調整済） 早見表生成完了")
+print("v9（A4 1枚集約版） 早見表生成完了")
 print(f"出力ファイル: {OUTPUT_PNG}")
 print(f"最終y座標(0付近が理想): {y:.2f}")
 print("==========================================")

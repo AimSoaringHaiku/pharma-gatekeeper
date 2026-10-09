@@ -15,6 +15,8 @@
 - [未着手] ユーザー: READMEへのパイプライン図追加（コードスペースのClaudeへ依頼予定）
 - [未着手] 2026-10-08 コーディネーター判断: 新発売品・終売品をPMDA検索で継続的に把握する手順の注記を**1枚目と5枚目の両方に**追加する
 
+- [未着手] 2026-10-09 クロードコード(a4ブランチ): PR #5（docs/readme-cleanup、コードスペースClaude作成）のREADME.mdパイプライン図に事実誤りあり（`data_updated.csv`がpage1を直接読む、`confusing_medicines_reference.csv`がpage2を直接読む、など）。a4ブランチ側で実態（page1のみがpackage_verification.csvを読み、2〜5枚目は自己完結／data_updated.csv等はoffline生成スクリプトとbuild_final.py経由）に修正済み。PR #5自体はまだ古い図のままなので、mainマージ時にどちらの版を採用するか要調整。
+
 ## 対応済み
 
 - [対応済み] 2026-10-08: トローチ/ドロップ/舌下錠の区分を「令和8年2月13日局長通知」に基づき統一（1・2・4枚目）
