@@ -29,3 +29,9 @@ bundled-python*
 gcloud-*
 install.bat
 install.sh
+
+gemini_research_request.md
+gemini_research_result.md
+gemini_research_meta.json
+gemini_research_result_*.md
+gemini_research_meta_*.json
