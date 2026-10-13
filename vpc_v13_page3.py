@@ -191,8 +191,11 @@ def draw_callout_note(cx, cy, text, w, fontsize=MIN_FS, line_h=1.5, color=RED, h
 
 
 def draw_poster_image_fit(x, y_top, w, h_avail, img_path):
-    """元資料の画像を、幅・高さ両方の制約に収まるようセンタリング表示する（記述層）。"""
+    """元資料の画像を、幅・高さ両方の制約に収まるようセンタリング表示する（記述層）。
+    自社既存資料は白黒印刷でも情報が欠落しないよう、ここでグレースケール化する
+    （赤枠・ふり番は別レイヤーの描画なので影響を受けない）。"""
     img = mpimg.imread(img_path)
+    gray = img[..., :3] @ [0.299, 0.587, 0.114]
     img_h_px, img_w_px = img.shape[0], img.shape[1]
     aspect = img_w_px / img_h_px
     target_w, target_h = w, w / aspect
@@ -202,7 +205,7 @@ def draw_poster_image_fit(x, y_top, w, h_avail, img_path):
     img_x0 = x + (w - target_w) / 2
     img_y1 = y_top
     img_y0 = img_y1 - target_h
-    ax.imshow(img, extent=[img_x0, img_x0 + target_w, img_y0, img_y1], zorder=2)
+    ax.imshow(gray, cmap="gray", vmin=0, vmax=1, extent=[img_x0, img_x0 + target_w, img_y0, img_y1], zorder=2)
     ax.add_patch(patches.Rectangle((img_x0, img_y0), target_w, target_h, fill=False,
                                     edgecolor="#cccccc", linewidth=0.5, zorder=3))
     return img_x0, img_y1, target_w, target_h

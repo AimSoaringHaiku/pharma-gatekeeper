@@ -34,6 +34,7 @@ flowchart LR
 
 - `package_verification.csv` を実際にCSVとして読み込むのは `vpc_v13_page1.py` だけです。2〜5枚目のスクリプトはCSVを読まず、Python内に直接データを持つ自己完結型です（4・5枚目の本文中に `package_verification.csv` への言及はありますが、あくまる説明文であり読み込みではありません）。
 - 各ページは `python vpc_v13_pageN.py` で `atomic_card_table_v13_pageN.png` / `.pdf` を出力します（matplotlib）。
+- 全5ページを1つのPDF（`atomic_card_table_v13_全5枚.pdf`）にまとめるには、5ページ分の`.pdf`を生成した後に `python build_combined_pdf.py` を実行します（`pip install pypdf`が必要）。1回の印刷操作で5枚とも印刷できます。
 - `data_updated.csv` と `confusing_medicines_reference.csv` は `vpc_v13_page*.py` からは直接読まれません。`extract_package_data_v2.py` / `extract_package_data_with_confusing.py` などのオフライン生成スクリプトが読み込んで `package_verification.csv` を再生成する入力データです。
 - `index.html` は上記スクリプトとは独立して動作するWebアプリで、CSVをその場では読みません。`build_final.py`（旧 `build.py`）が `data_updated.csv` を読み込み、`window.medicineMaster = {...}` という埋め込みJSONを生成して `index.html` に書き込んでいます。
 - `print_style.py` は印刷時フォントサイズ6pt下限を保証する共通モジュールです。現時点では `project-thread-67zu13` ブランチにのみ導入されており、`main` にはまだマージされていません。
