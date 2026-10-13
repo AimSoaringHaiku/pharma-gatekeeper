@@ -327,25 +327,25 @@ ax.text(COL_NAME_X, current_y, "① 成分判別:", fontsize=7.4, fontweight="bo
 ING_X = COL_NAME_X + 9.6
 ING_LH = 1.3
 ing_lines = [
-    (RED, [("対象(指定8成分)＝", {"color": GRAY}),
+    (RED, "circle", [("対象(指定8成分)＝", {"color": GRAY}),
            ("エフェドリン類3種：エフェドリン/メチルエフェドリン/プソイドエフェドリン", {"fontweight": "bold", "color": INK})]),
-    (None, [("　　　　　　　　 ＋", {"color": GRAY}),
+    (None, "circle", [("　　　　　　　　 ＋", {"color": GRAY}),
             ("その他5種：コデイン/ジヒドロコデイン/デキストロメトルファン(DXM)/ジフェンヒドラミン/ブロモバレリル尿素",
              {"fontweight": "bold", "color": INK})]),
-    (GREEN, [("対象外(紛らわしい)＝", {"color": GRAY}),
+    (GREEN, "circle", [("対象外(紛らわしい)＝", {"color": GRAY}),
              ("生薬マオウ（エフェドリンを含むが生薬主体の製剤は通知で除外）／無水カフェイン／プロメタジン等の他の抗ヒス／"
               "アリルイソプロピルアセチル尿素（8成分外）", {"color": GRAY})]),
-    (GREEN, [("対象外(外用剤)＝", {"color": GRAY}),
+    (GREEN, "square", [("対象外(外用剤)＝", {"color": GRAY}),
              ("トローチ・舌下錠などの口腔用錠剤、含嗽剤、口腔用スプレー、軟膏、目薬等（通知で外用剤と明記。8成分はすべて外用剤を除く）",
               {"color": GRAY})]),
-    (RED, [("要注意(のど飴)＝", {"color": GRAY}),
+    (RED, "square", [("要注意(のど飴)＝", {"color": GRAY}),
            ("医薬品のドロップはトローチと違い内服扱い。成分で判定（例：ルルメディカルドロップ＝メチルエフェドリン配合）",
             {"fontweight": "bold", "color": INK}),
            ("（医薬部外品・食品ののど飴は対象外）", {"color": GRAY})]),
 ]
-for mcolor, parts in ing_lines:
+for mcolor, mshape, parts in ing_lines:
     if mcolor:
-        marker(ax, ING_X - 0.75, current_y, mcolor, "circle", 0.38)
+        marker(ax, ING_X - 0.75, current_y, mcolor, mshape, 0.38 if mshape == "circle" else 0.34)
     text_run(ING_X, current_y, parts, fontsize=MIN_FS)
     current_y -= ING_LH
 current_y -= 0.15

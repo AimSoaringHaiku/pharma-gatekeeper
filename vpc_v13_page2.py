@@ -125,8 +125,11 @@ qy -= Q_LH * 0.85
 ax.text(COL_NAME_X + 3.0, qy, "（※法令上の確認。18歳未満への大容量・複数個は一律販売不可。お客様には「お薬を安全にお使いいただくための確認です」と説明）",
         fontsize=Q_FS_SUB - 1.2, ha="left", va="center", color=GRAY, zorder=3)
 qy -= Q_LH * 1.15
-ax.text(COL_NAME_X + 1.5, qy, "②【重複】他店や他のレジで同じお薬（風邪薬、咳止め等）のご購入はありませんか？（譲り受けも含みます）",
+ax.text(COL_NAME_X + 1.5, qy, "②【重複】他店や他のレジで同じお薬（風邪薬、咳止め等）のご購入はありませんか？",
         fontsize=Q_FS_MAIN, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
+qy -= Q_LH * 0.85
+ax.text(COL_NAME_X + 3.0, qy, "（譲り受けも含みます）",
+        fontsize=Q_FS_SUB - 1.2, ha="left", va="center", color=GRAY, zorder=3)
 qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "以下は、お薬の安全な選択に関わります。", fontsize=9.0, fontstyle="italic",
         ha="left", va="center", color=LGRAY, zorder=3)
