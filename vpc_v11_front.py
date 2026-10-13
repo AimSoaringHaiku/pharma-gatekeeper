@@ -100,6 +100,15 @@ mart = pd.DataFrame(processed).sort_values("product").reset_index(drop=True)
 
 reference_df = df[df["kubun"].isin(["＊〇", "＊対象外", "△"])].copy()
 reference_rows = []
+INGREDIENT_DETAILS = {
+    "アレグラFX": "(2錠中)フェキソフェナジン120mg",
+    "コリホグス": "(2錠中)クロルゾキサゾン300mg/エテンザミド300mg/カフェイン水和物50mg",
+    "トラベルミンR": "(1錠中)ジフェニドール16.6mg/スコポラミン0.16mg/無水カフェイン30mg/ピリドキシン5mg",
+    "ナロン錠": "(2錠中)アセトアミノフェン265mg/エテンザミド300mg/ブロモバレリル尿素200mg/無水カフェイン50mg",
+    "新コンタック鼻炎Z": "(1錠中)セチリジン10mg",
+    "新ルルAゴールドDXα": "(9錠中)クレマスチン/ベラドンナ総アルカロイド/ブロムヘキシン/トラネキサム酸/アセトアミノフェン/dl-メチルエフェドリン/デキストロメトルファン/無水カフェイン",
+    "葛根湯エキス錠S「コタロー」": "(12錠中)葛根湯エキス2.2g(カッコン/マオウ/タイソウ/ケイヒ/シャクヤク/カンゾウ/ショウキョウ)",
+}
 CUSTOM_NOTES = {
     "アレグラFX": "対比: FX(通常版)は対象外/プレミアムのみ血管収縮剤(プソイドエフェドリン)追加で該当。",
     "コリホグス": "中枢抑制作用による呼吸抑制リスク。アルコール・ベンゾ系併用/ODに要注意。",
@@ -124,7 +133,8 @@ for product, group in reference_df.groupby("product", sort=True):
         notes = [str(x).strip() for x in group["note"] if str(x).strip() and str(x).strip() != "nan"]
         final_note = shorten_note(" / ".join(list(dict.fromkeys(notes))))
     reference_rows.append({"product": product, "status_text": status_text,
-                            "status_color": status_color, "note": final_note})
+                            "status_color": status_color, "note": final_note,
+                            "ingr_detail": INGREDIENT_DETAILS.get(product, "")})
 reference = pd.DataFrame(reference_rows)
 if not reference.empty:
     reference = reference.sort_values("product").reset_index(drop=True)
@@ -214,13 +224,19 @@ marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
 ax.text(COL_NAME_X + 9.9, current_y,
         "対象外(紛らわしい)＝生薬マオウ/無水カフェイン/プロメタジン等の他の抗ヒス/アリルイソプロピルアセチル尿素",
         fontsize=5.9, ha="left", va="center", color=GRAY)
+current_y -= 1.4
+marker(ax, COL_NAME_X + 9.0, current_y, GREEN, "circle", 0.42)
+ax.text(COL_NAME_X + 9.9, current_y,
+        "対象外(剤形)＝トローチ・のど飴は「口腔内用剤」のため、指定成分を含んでいても対象外（軟膏等の外用剤と同様の扱い）",
+        fontsize=5.9, ha="left", va="center", color=GRAY)
 current_y -= 1.5
-ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.6, fontweight="bold", fontstyle="italic",
-        ha="left", va="center", color=LGRAY, alpha=0.55)
-ax.text(COL_NAME_X + 9.8, current_y,
+WATERMARK_GRAY = "#a8a8a8"  # alpha合成は印刷時に消えることがあるため、不透明な淡いグレー+斜体+小フォントで「参考情報」を表現
+ax.text(COL_NAME_X, current_y, "ブランド速断:", fontsize=6.0, fontweight="bold", fontstyle="italic",
+        ha="left", va="center", color=WATERMARK_GRAY)
+ax.text(COL_NAME_X + 9.0, current_y,
         "外用薬・のどスプレー等は全て対象外。原則対象:ルル・パブロン(50除く)・ベンザブロック｜対象外:セデス・ノーシン・バファリン・イブ"
         "　※正式ルールではなく参考の目安",
-        fontsize=6.0, fontstyle="italic", ha="left", va="center", color=LGRAY, alpha=0.55)
+        fontsize=5.5, fontstyle="italic", ha="left", va="center", color=WATERMARK_GRAY)
 current_y -= 1.45
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.8)
 current_y -= 0.35
@@ -260,7 +276,7 @@ flow_nodes = [
     (["18歳未満の疑い", "→身分証等で氏名・", "年齢を確認"], BLUE, "#eef4fc"),
     (["小容量1個のみ", "購入？"], BLUE, "#eef4fc"),
     (["【いいえ】大容量/複数個", "→18歳未満は一律禁止", "18歳以上は理由を確認"], RED, "#fdecea"),
-    (["【はい】小容量1個", "→18歳未満は氏名+", "周辺状況確認、18歳以上は周辺状況確認"], ORANGE, "#fff3e6"),
+    (["【はい】小容量1個", "→18歳未満は氏名+周辺状況確認", "18歳以上は周辺状況確認"], ORANGE, "#fff3e6"),
     (["条件を満たせば", "販売可"], GREEN, "#eaf5ea"),
 ]
 flow_top = 111.5
@@ -347,14 +363,20 @@ if ref_rows > 0:
     ax.hlines(current_y, 0, LOGICAL_W, colors="#cccccc", linewidth=0.8)
     current_y -= 2.0
 
+    ref_row_h = 3.15
     for j, (_, row) in enumerate(reference.iterrows()):
         if j % 2 == 0:
-            ax.add_patch(patches.Rectangle((0, current_y - 0.95), LOGICAL_W, 1.9, facecolor="#fafafa", edgecolor="none"))
+            ax.add_patch(patches.Rectangle((0, current_y - 1.55), LOGICAL_W, ref_row_h, facecolor="#fafafa", edgecolor="none"))
         ax.text(COL_NAME_X, current_y, row["product"], fontsize=8.42, fontweight="bold", ha="left", va="center")
         ax.text(28.0, current_y, row["status_text"], fontsize=8.42, fontweight="bold", ha="center", va="center", color=row["status_color"])
         note_color = RED if row["note"].startswith("対比") else GRAY
         ax.text(41.0, current_y, row["note"], fontsize=7.34, ha="left", va="center", color=note_color)
-        current_y -= 2.44
+        if row["ingr_detail"]:
+            detail_text = row["ingr_detail"]
+            if len(detail_text) > 34:
+                detail_text = detail_text[:34] + "…"
+            ax.text(COL_NAME_X, current_y - 1.25, detail_text, fontsize=5.1, ha="left", va="center", color="#999999")
+        current_y -= ref_row_h
 
 current_y -= 0.65
 ax.hlines(current_y, 0, LOGICAL_W, colors="#dddddd", linewidth=0.7)
