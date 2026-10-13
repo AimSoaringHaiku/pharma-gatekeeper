@@ -324,7 +324,7 @@ def draw_driving_table(x, y, w, rows, fs_tag, fs_tbl, line_h):
 
 
 def draw_nursing(x, y, w, rows, fs_tag, fs_body, line_h):
-    ax.text(x, y, "授乳婦指導(成分別の目安)：", fontsize=fs_tag - 0.2, fontstyle="italic", ha="left", va="center", color=GRAY)
+    ax.text(x, y, "授乳婦指導(成分別の目安／添付文書の規定ではなく実務上の目安)：", fontsize=fs_tag - 0.2, fontstyle="italic", ha="left", va="center", color=GRAY)
     y -= line_h
     col_w = w / 2 - 1.0
     for i, (mshape, tag, ingr) in enumerate(rows):
