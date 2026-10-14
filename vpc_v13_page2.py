@@ -122,7 +122,7 @@ qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "①【年齢・氏名】18歳未満ですか？",
         fontsize=Q_FS_MAIN, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
 qy -= Q_LH * 0.85
-ax.text(COL_NAME_X + 3.0, qy, "（※法令上の確認。18歳未満への大容量・複数個は一律販売不可。お客様には「お薬を安全にお使いいただくための確認です」と説明）",
+ax.text(COL_NAME_X + 3.0, qy, "（※法令上は性別も確認事項。18歳未満への大容量・複数個は一律販売不可。お客様には「お薬を安全にお使いいただくための確認です」と説明）",
         fontsize=Q_FS_SUB - 1.2, ha="left", va="center", color=GRAY, zorder=3)
 qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "②【重複】他店や他のレジで同じお薬（風邪薬、咳止め等）のご購入はありませんか？",
@@ -134,15 +134,18 @@ qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "以下は、お薬の安全な選択に関わります。", fontsize=9.0, fontstyle="italic",
         ha="left", va="center", color=LGRAY, zorder=3)
 qy -= Q_LH
-ax.text(COL_NAME_X + 1.5, qy, "③【体質】アレルギー歴（アスピリン喘息等）や、喘息、不整脈、緑内障、前立腺肥大の持病はありますか？",
+ax.text(COL_NAME_X + 1.5, qy, "③【体質】アレルギー歴（アスピリン喘息等）や、喘息、不整脈、緑内障、前立腺肥大等の持病・治療中の病気はありますか？",
         fontsize=Q_FS_MAIN, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
 qy -= Q_LH * 1.15
 ax.text(COL_NAME_X + 1.5, qy, "④【併用】現在、病院で処方されたお薬や、他のお薬を飲まれていますか？（SSRI等との重複防止）",
         fontsize=Q_FS_MAIN, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
 qy -= Q_LH * 1.15
-ax.text(COL_NAME_X + 1.5, qy, "⑤【妊婦】妊娠中、または授乳中ではありませんか？（妊娠後期のNSAIDs禁忌、授乳中のコデイン避止）",
+ax.text(COL_NAME_X + 1.5, qy, "⑤【妊婦】妊娠中（週数）、または授乳中ではありませんか？（妊娠後期のNSAIDs禁忌、授乳中のコデイン避止）",
         fontsize=Q_FS_MAIN, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
 qy -= Q_LH * 1.15
+ax.text(COL_NAME_X + 1.5, qy, "＋ このお薬（または同じ成分）を使ったことはありますか？そのとき副作用はありませんでしたか？",
+        fontsize=Q_FS_SUB, ha="left", va="center", color=GRAY, zorder=3)
+qy -= Q_LH
 ax.text(COL_NAME_X + 1.5, qy, "＋【大容量・複数個（成人）】",
         fontsize=Q_FS_SUB, fontweight="bold", ha="left", va="center", color="#222222", zorder=3)
 qy -= Q_LH * 0.85
