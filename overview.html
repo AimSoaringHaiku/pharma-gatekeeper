@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>資料の趣旨・目的・課題 | pharma-gatekeeper</title>
+<meta name="description" content="A4早見表（指定濫用防止医薬品 販売ルール参考資料）の趣旨・目的・課題・未解決事項・次の行動の選択肢">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --gray: #555555;
+    --lgray: #888888;
+    --line: #dddddd;
+    --bg: #ffffff;
+    --card-bg: #fafafa;
+    --accent: #1565c0;
+    --accent-bg: #eef5fc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #eaeaea;
+      --gray: #bdbdbd;
+      --lgray: #9a9a9a;
+      --line: #3a3a3a;
+      --bg: #141414;
+      --card-bg: #1d1d1d;
+      --accent: #6cb3f7;
+      --accent-bg: #16314a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #eaeaea;
+    --gray: #bdbdbd;
+    --lgray: #9a9a9a;
+    --line: #3a3a3a;
+    --bg: #141414;
+    --card-bg: #1d1d1d;
+    --accent: #6cb3f7;
+    --accent-bg: #16314a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    line-height: 1.75;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 16px 56px;
+  }
+  h1 {
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+  .lead {
+    color: var(--gray);
+    font-size: 12.5px;
+    margin: 0 0 24px;
+  }
+  h2 {
+    font-size: 14.5px;
+    margin: 26px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--ink);
+  }
+  p { font-size: 12.5px; color: var(--ink); margin: 0 0 8px; }
+  ul, ol { margin: 0 0 8px; padding-left: 1.3em; }
+  li { font-size: 12.5px; margin-bottom: 5px; }
+  .section-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .cat {
+    font-weight: 700;
+    font-size: 12.5px;
+    margin: 10px 0 2px;
+  }
+  .opt {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-bottom: 7px;
+  }
+  .opt-label {
+    flex: 0 0 auto;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--accent);
+  }
+  .opt-body { font-size: 12.5px; }
+  .note {
+    font-size: 11px;
+    color: var(--lgray);
+    margin-top: 28px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+  .note a { color: var(--lgray); }
+  @media print {
+    .note a::after { content: " (" attr(href) ")"; font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>【 資料の趣旨・目的・課題 】</h1>
+  <p class="lead">A4早見表（指定濫用防止医薬品 販売ルール参考資料・全5枚）が何のために、何を目指して作られ、現時点で何が残っているかをまとめたものです。</p>
+
+  <h2>趣旨</h2>
+  <div class="section-card">
+    <p>令和8年5月1日施行の薬機法改正により、一部のOTC医薬品（指定濫用防止医薬品）の販売には、年齢確認・用途確認・数量制限など、従来の第1類・指定第2類とは異なる追加の確認義務が課されました。この制度はレジ担当者にとって「商品ごとに何を確認し、どこまで販売してよいか」を一瞬で判断する必要がある一方、根拠となる厚労省通知・告示は複数の文書に分散しており、現場で逐一参照するのは非現実的です。本資料は、レジ担当者がその場で判断に迷わないための、A4・全5枚の参考資料（印刷用PDF）とその元データを整備・保守するものです。</p>
+  </div>
+
+  <h2>目的</h2>
+  <div class="section-card">
+    <ul>
+      <li>レジでの接客中に、商品・年齢・数量などの条件から「販売可否」をその場で判定できるようにする（1枚目・2枚目）</li>
+      <li>判断の根拠（厚労省通知・告示・添付文書）を平易な表現に翻訳しつつ、断定できない部分は断定しないという一次資料主義を徹底する</li>
+      <li>早見表に載っていない新商品が出たときの判定手順を、薬剤師でなくても再現できる形にする（5枚目）</li>
+      <li>データ更新担当者が、新商品を早見表に追加する際の手順と基礎知識を独立して参照できるようにする（4枚目）</li>
+      <li>社内マニュアル・厚労省配布物の要点を1枚に集約し、既存の社内資料への参照コストを下げる（3枚目）</li>
+    </ul>
+  </div>
+
+  <h2>解決しようとする課題</h2>
+  <div class="section-card">
+    <ol>
+      <li><strong>情報の分散</strong>：販売時確認事項・数量基準・対象成分の定義などが、複数の通知・告示・施行規則にまたがっている。レジでその都度調べるのは不可能。</li>
+      <li><strong>断定と推測の混同リスク</strong>：薬事に関する記述は、不正確な断定が実害（過剰な販売制限／逆に義務違反）につながる。裏付けが取れない情報を「事実」として書いてしまうリスクがある。</li>
+      <li><strong>現場の認知負荷</strong>：重要度の異なる情報（絶対に確認すべき事項／補足的な参考情報）が同じ見た目で並ぶと、レジでの判断が遅れたり誤ったりする。</li>
+      <li><strong>更新の属人化</strong>：制度・通知は今後も改正されうる。資料の元データと根拠（出典）が紐づいていないと、改正のたびに全ページを人力で洗い直すことになる。</li>
+    </ol>
+  </div>
+
+  <h2>未解決事項（詳細はWISHLIST.md）</h2>
+  <div class="section-card">
+    <p class="cat">デザイン・可読性の調整</p>
+    <p>重要度に応じた強弱表現の再設計（1枚目・2枚目）、1枚目の成分表記の略記化、小包装/大包装セルの視線誘導など。実害は小さいが「ナビとして自然に使えるか」に関わる項目。</p>
+    <p class="cat">一次資料の原文照合が未完了の項目</p>
+    <p>通知・告示のPDF原文照合に制約があり、WebSearchによる間接確認とGeminiの引用主張に頼っている部分がある（SOURCES.mdのB区分）。特に4枚目の基礎知識拡充案（第1類・第2類・指定第2類の品目数など）は未確認のまま保留。</p>
+    <p class="cat">医学的な記述の裏付け不足</p>
+    <p>ピリン疹の添付文書上の正確な表記、一部成分の医療用インタビューフォームに基づく半減期データ、受診勧奨の一次資料など。裏付けが取れるまでページには反映しない方針を維持。</p>
+    <p class="cat">ドキュメント整備</p>
+    <p>README.mdの一部記載が古い（存在しないファイルを参照している）、パイプライン図の整合性確認など。</p>
+  </div>
+
+  <h2>次の行動の選択肢</h2>
+  <div class="section-card">
+    <div class="opt"><span class="opt-label">(A)</span><span class="opt-body">現状のまま運用を開始し、現場からのフィードバックで優先順位を付け直す。デザイン面の未解決事項は実際にレジで使ってみないと重要度が判断しづらいものが多い。</span></div>
+    <div class="opt"><span class="opt-label">(B)</span><span class="opt-body">一次資料の原文照合を優先的に進める。4枚目の基礎知識拡充など、数値の裏付けが取れれば追加できる項目を調査する。</span></div>
+    <div class="opt"><span class="opt-label">(C)</span><span class="opt-body">デザイン・可読性の調整を先に仕上げる。重要度による強弱表現の再設計など、1枚目・2枚目の「ナビとしての自然さ」に関わる項目を優先する。</span></div>
+    <div class="opt"><span class="opt-label">(D)</span><span class="opt-body">ドキュメント整備を先に済ませる。実資料の内容には影響しないが、見た人の信頼性に関わる部分を先に片付ける。</span></div>
+    <p style="margin-top:8px;">(A)〜(D)は排他ではなく、(A)で運用しながら(B)〜(D)を並行して進める形が現実的と考えられます。どれを優先するかはユーザー判断が必要です。</p>
+  </div>
+
+  <p class="note">
+    詳細な経緯・未確認項目は<a href="https://github.com/AimSoaringHaiku/pharma-gatekeeper/blob/main/WISHLIST.md" target="_blank" rel="noopener">WISHLIST.md</a>、出典一覧は<a href="https://github.com/AimSoaringHaiku/pharma-gatekeeper/blob/main/SOURCES.md" target="_blank" rel="noopener">SOURCES.md</a>を参照。
+    A4早見表本体のダウンロードは<a href="downloads.html">こちら</a>。リポジトリ：<a href="https://github.com/AimSoaringHaiku/pharma-gatekeeper" target="_blank" rel="noopener">AimSoaringHaiku/pharma-gatekeeper</a>
+  </p>
+</div>
+</body>
+</html>
