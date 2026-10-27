@@ -47,98 +47,126 @@
     line-height: 1.7;
   }
   .wrap {
-    max-width: 760px;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 32px 16px 64px;
+    padding: 26px 16px 52px;
   }
   h1 {
-    font-size: 22px;
-    margin: 0 0 6px;
+    font-size: 19px;
+    margin: 0 0 4px;
   }
   .lead {
     color: var(--gray);
-    font-size: 14px;
-    margin: 0 0 28px;
+    font-size: 12.5px;
+    margin: 0 0 20px;
   }
   .card {
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 8px;
     background: var(--card-bg);
-    padding: 16px 18px;
-    margin-bottom: 14px;
+    padding: 12px 14px;
+    margin-bottom: 9px;
   }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .icon {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    color: var(--accent);
+    opacity: 0.9;
+  }
+  .icon svg { width: 100%; height: 100%; display: block; }
+  .card-head { flex: 1 1 auto; min-width: 0; }
   .card-title {
     font-weight: 700;
-    font-size: 15px;
-    margin: 0 0 4px;
+    font-size: 13.5px;
+    margin: 0;
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
   .badge {
     display: inline-block;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--accent);
     background: var(--accent-bg);
     border-radius: 4px;
-    padding: 1px 6px;
+    padding: 1px 5px;
   }
   .size {
-    font-size: 12px;
+    font-size: 10.5px;
     color: var(--lgray);
     font-weight: 400;
   }
-  .desc {
-    font-size: 13.5px;
+  .tags {
+    margin: 3px 0 0;
+    line-height: 1.9;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
     color: var(--gray);
-    margin: 6px 0 12px;
+    background: var(--line);
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin: 1px 3px 1px 0;
+  }
+  .desc {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--gray);
+    margin: 6px 0 8px;
   }
   .dl-btn {
     display: inline-block;
-    font-size: 13.5px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--accent);
     text-decoration: none;
     border: 1px solid var(--accent);
-    border-radius: 6px;
-    padding: 6px 14px;
+    border-radius: 5px;
+    padding: 4px 11px;
   }
   .dl-btn:hover { background: var(--accent-bg); }
   .divider {
-    margin: 36px 0 20px;
+    margin: 26px 0 16px;
     border: none;
     border-top: 1px solid var(--line);
   }
   .all-card {
     border: 1.5px solid var(--accent);
-    border-radius: 10px;
+    border-radius: 8px;
     background: var(--accent-bg);
-    padding: 18px 20px;
+    padding: 14px 18px;
     text-align: center;
   }
   .all-card p {
-    margin: 0 0 12px;
-    font-size: 13.5px;
+    margin: 0 0 10px;
+    font-size: 12.5px;
     color: var(--ink);
   }
   .all-dl-btn {
     display: inline-block;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: #fff;
     background: var(--accent);
     text-decoration: none;
     border-radius: 6px;
-    padding: 10px 22px;
+    padding: 9px 20px;
   }
   .note {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--lgray);
-    margin-top: 40px;
+    margin-top: 28px;
     border-top: 1px solid var(--line);
-    padding-top: 14px;
+    padding-top: 12px;
   }
   .note a { color: var(--lgray); }
 </style>
@@ -149,32 +177,97 @@
   <p class="lead">指定濫用防止医薬品の販売ルールに関する、レジ担当者向け参考資料です。A4サイズ・全5枚、PDFでそのまま印刷できます。</p>
 
   <div class="card">
-    <p class="card-title">1枚目 <span class="badge">PDF</span> <span class="size">(232KB)</span></p>
-    <p class="desc">薬剤別 包装区分 早見表。商品ごとに「小容量／大容量」の判定結果を一覧にしています。表にない商品も、成分判別・年齢確認・包装制限の計算ドリルで判定できます。レジでの早見表として最も出番が多い1枚です。</p>
+    <div class="card-top">
+      <div class="icon"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="5" width="36" height="6" rx="1.5" fill="currentColor" opacity="0.9"/>
+        <rect x="4" y="15" width="26" height="6" rx="1.5" fill="currentColor" opacity="0.55"/>
+        <rect x="4" y="25" width="30" height="6" rx="1.5" fill="currentColor" opacity="0.55"/>
+        <rect x="4" y="35" width="20" height="4" rx="1" fill="currentColor" opacity="0.3"/>
+      </svg></div>
+      <div class="card-head">
+        <p class="card-title">1枚目 <span class="badge">PDF</span> <span class="size">(232KB)</span></p>
+        <p class="tags"><span class="tag">商品別早見表</span><span class="tag">成分判別フロー</span><span class="tag">数量計算ドリル</span><span class="tag">凡例</span></p>
+      </div>
+    </div>
+    <p class="desc">上段は商品名から「小容量／大容量」を直接引ける一覧表。該当商品が表にない場合は、下段の成分判別フロー→年齢確認→計算ドリルの3ステップで自分で判定できる構成です。レジでの出番が最も多い1枚。</p>
     <a class="dl-btn" href="atomic_card_table_v13_page1.pdf" target="_blank" rel="noopener">このPDFを開く / ダウンロード</a>
   </div>
 
   <div class="card">
-    <p class="card-title">2枚目 <span class="badge">PDF</span> <span class="size">(268KB)</span></p>
-    <p class="desc">販売判断の表現案。レジでの確認事項（年齢・重複購入・体質・併用薬・妊娠授乳など）と、状況別の対応ポイントをまとめています。接客時にどう聞き、どう答えるかの実務的なガイドです。</p>
+    <div class="card-top">
+      <div class="icon"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="4" width="24" height="8" rx="2" fill="currentColor" opacity="0.9"/>
+        <line x1="22" y1="12" x2="22" y2="18" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+        <line x1="22" y1="18" x2="10" y2="24" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+        <line x1="22" y1="18" x2="34" y2="24" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+        <rect x="2" y="24" width="18" height="8" rx="2" fill="currentColor" opacity="0.55"/>
+        <rect x="24" y="24" width="18" height="8" rx="2" fill="currentColor" opacity="0.55"/>
+        <rect x="10" y="36" width="24" height="5" rx="1.5" fill="currentColor" opacity="0.3"/>
+      </svg></div>
+      <div class="card-head">
+        <p class="card-title">2枚目 <span class="badge">PDF</span> <span class="size">(268KB)</span></p>
+        <p class="tags"><span class="tag">確認トークスクリプト</span><span class="tag">状況別対応ケース集</span><span class="tag">販売可否の分岐</span></p>
+      </div>
+    </div>
+    <p class="desc">上段は年齢・重複購入・体質・併用薬・妊娠授乳など確認事項を「何をどう聞くか」の台詞ベースで並べた表。下段はケース（大容量の理由確認、未成年など）ごとに可否の分岐と対応ポイントをまとめた一覧です。</p>
     <a class="dl-btn" href="atomic_card_table_v13_page2.pdf" target="_blank" rel="noopener">このPDFを開く / ダウンロード</a>
   </div>
 
   <div class="card">
-    <p class="card-title">3枚目 <span class="badge">PDF</span> <span class="size">(372KB)</span></p>
-    <p class="desc">社内マニュアル参考資料集。厚労省・薬局配布資料（購入時掲示物、制度改正のお知らせ、販売可否判断フローチャート）の要点を1枚に再構成し、注意すべき箇所に番号付きの補足説明を添えています。</p>
+    <div class="card-top">
+      <div class="icon"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="4" width="32" height="30" rx="2" fill="currentColor" opacity="0.15"/>
+        <rect x="6" y="4" width="32" height="30" rx="2" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/>
+        <circle cx="12" cy="10" r="4" fill="currentColor" opacity="0.9"/>
+        <circle cx="30" cy="16" r="4" fill="currentColor" opacity="0.7"/>
+        <circle cx="16" cy="28" r="4" fill="currentColor" opacity="0.5"/>
+      </svg></div>
+      <div class="card-head">
+        <p class="card-title">3枚目 <span class="badge">PDF</span> <span class="size">(372KB)</span></p>
+        <p class="tags"><span class="tag">配布物の要点整理</span><span class="tag">販売可否フローチャート</span><span class="tag">番号注記</span></p>
+      </div>
+    </div>
+    <p class="desc">厚労省・薬局配布資料（購入時掲示物、制度改正のお知らせ、販売可否判断フローチャート）を縮小して1枚に再配置し、読み間違えやすい箇所にだけ番号付きの補足説明を添えた「社内マニュアルの要点版」です。</p>
     <a class="dl-btn" href="atomic_card_table_v13_page3.pdf" target="_blank" rel="noopener">このPDFを開く / ダウンロード</a>
   </div>
 
   <div class="card">
-    <p class="card-title">4枚目 <span class="badge">PDF</span> <span class="size">(164KB)</span></p>
-    <p class="desc">社内限定・データ整備リファレンス。新商品を早見表に追加する際のチェックリストと、剤形・医薬品区分（トローチとドロップの違いなど）の基礎知識をまとめた、データ更新担当者向けの1枚です。</p>
+    <div class="card-top">
+      <div class="icon"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="5" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.85"/>
+        <path d="M6 9l2 2 3-4" stroke="var(--card-bg)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="16" y="7" width="24" height="4" rx="1" fill="currentColor" opacity="0.5"/>
+        <rect x="4" y="18" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.85"/>
+        <path d="M6 22l2 2 3-4" stroke="var(--card-bg)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="16" y="20" width="24" height="4" rx="1" fill="currentColor" opacity="0.5"/>
+        <rect x="4" y="31" width="8" height="8" rx="1.5" fill="currentColor" opacity="0.55"/>
+        <rect x="16" y="33" width="18" height="4" rx="1" fill="currentColor" opacity="0.3"/>
+      </svg></div>
+      <div class="card-head">
+        <p class="card-title">4枚目 <span class="badge">PDF</span> <span class="size">(164KB)</span></p>
+        <p class="tags"><span class="tag">新商品追加チェックリスト</span><span class="tag">剤形・区分の基礎知識</span><span class="tag">社内限定</span></p>
+      </div>
+    </div>
+    <p class="desc">新商品を早見表（1枚目）に追加する際の確認項目チェックリストと、剤形・医薬品区分（トローチとドロップの違い、年齢基準数量の考え方など）の基礎知識を整理した、データ更新担当者向けの1枚です。</p>
     <a class="dl-btn" href="atomic_card_table_v13_page4.pdf" target="_blank" rel="noopener">このPDFを開く / ダウンロード</a>
   </div>
 
   <div class="card">
-    <p class="card-title">5枚目 <span class="badge">PDF</span> <span class="size">(156KB)</span></p>
-    <p class="desc">新商品 判定ワークシート（穴埋め式）。早見表にない商品が出たとき、添付文書を見ながら上から埋めていけば「対象外／小容量／大容量」の判定と対応がそのまま決まります。時間に余裕があるときの確認用です。</p>
+    <div class="card-top">
+      <div class="icon"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="6" width="14" height="5" rx="1" fill="currentColor" opacity="0.7"/>
+        <rect x="22" y="6" width="18" height="5" rx="1" fill="currentColor" opacity="0.25"/>
+        <rect x="4" y="17" width="14" height="5" rx="1" fill="currentColor" opacity="0.7"/>
+        <rect x="22" y="17" width="18" height="5" rx="1" fill="currentColor" opacity="0.25"/>
+        <rect x="4" y="28" width="14" height="5" rx="1" fill="currentColor" opacity="0.7"/>
+        <rect x="22" y="28" width="18" height="5" rx="1" fill="currentColor" opacity="0.25"/>
+      </svg></div>
+      <div class="card-head">
+        <p class="card-title">5枚目 <span class="badge">PDF</span> <span class="size">(156KB)</span></p>
+        <p class="tags"><span class="tag">穴埋め式判定ワークシート</span><span class="tag">添付文書記載欄</span><span class="tag">対応チェック</span></p>
+      </div>
+    </div>
+    <p class="desc">早見表にない商品が出たとき用の穴埋め式ワークシート。添付文書の成分・用法用量を転記する欄から順に埋めていくと、「対象外／小容量／大容量」の判定と対応がそのまま決まります。時間に余裕があるときの確認用です。</p>
     <a class="dl-btn" href="atomic_card_table_v13_page5.pdf" target="_blank" rel="noopener">このPDFを開く / ダウンロード</a>
   </div>
 
