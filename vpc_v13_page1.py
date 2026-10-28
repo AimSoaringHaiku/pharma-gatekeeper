@@ -568,6 +568,14 @@ def pack_fontsize(text):
     return 8.9 if len(text) <= 6 else (7.6 if len(text) <= 11 else MIN_FS)
 
 
+def draw_multi_pack_marker(x, y, lines, fs):
+    """小包装/大包装セルに複数の包装規格（新旧パッケージ等）が並ぶ場合、右肩に†を付けて視線誘導する。"""
+    w = max(text_width(line, fs, weight="bold") for line in lines)
+    top_y = y + (TWO_LINE_OFFSET if len(lines) > 1 else 0)
+    ax.text(x + w / 2 + 0.3, top_y + 0.6, "†", fontsize=MIN_FS, fontweight="bold",
+            ha="left", va="center", color=RED, zorder=4)
+
+
 prev_h = None
 for i, row in mart.iterrows():
     rh = row["row_h"]
@@ -596,16 +604,20 @@ for i, row in mart.iterrows():
 
     if row["small"] != "-":
         fs = pack_fontsize(row["small"])
-        draw_cell(COL_SMALL_X, current_y, split_two_lines(row["small"], fs, SMALL_MAX_W, " "), "center",
-                  fontsize=fs, fontweight="bold")
+        small_lines = split_two_lines(row["small"], fs, SMALL_MAX_W, " ")
+        draw_cell(COL_SMALL_X, current_y, small_lines, "center", fontsize=fs, fontweight="bold")
+        if " " in row["small"]:
+            draw_multi_pack_marker(COL_SMALL_X, current_y, small_lines, fs)
 
     ax.vlines(COL_BOUND_X, current_y - 0.85, current_y + 0.85, color="#bbbbbb", linewidth=1.0, zorder=1)
     ax.text(COL_BOUND_X, current_y, row["boundary"], fontsize=7.5, ha="center", va="center", color=GRAY, zorder=2)
 
     if row["large"] != "-":
         fs = pack_fontsize(row["large"])
-        draw_cell(COL_LARGE_X, current_y, split_two_lines(row["large"], fs, LARGE_MAX_W, " "), "center",
-                  fontsize=fs, fontweight="bold", color="#444444")
+        large_lines = split_two_lines(row["large"], fs, LARGE_MAX_W, " ")
+        draw_cell(COL_LARGE_X, current_y, large_lines, "center", fontsize=fs, fontweight="bold", color="#444444")
+        if " " in row["large"]:
+            draw_multi_pack_marker(COL_LARGE_X, current_y, large_lines, fs)
 
 current_y -= prev_h
 
@@ -613,6 +625,11 @@ current_y -= 1.35
 ax.text(COL_NAME_X, current_y,
         "※＝カプレット表記（ベンザブロック◯◯/末尾「錠」なし）。1日成分量は「◯◯錠」と同一ですが服用粒数が異なります。",
         fontsize=MIN_FS, ha="left", va="center", color="#888888")
+
+current_y -= 1.0
+ax.text(COL_NAME_X, current_y,
+        "†＝同じ区分（小包装/大包装）内に複数の包装規格（新旧パッケージ等）があります。該当する数量はお手元のパッケージの表示で確認してください。",
+        fontsize=MIN_FS, ha="left", va="center", color=RED)
 
 current_y -= 0.55
 zone_top = current_y + 0.55
