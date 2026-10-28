@@ -26,10 +26,10 @@ flowchart LR
     EX --> PV[package_verification.csv<br/>早見表の判定ロジックの一次ソース]
     PV --> P1[vpc_v13_page1.py]
     P1 --> OUT[atomic_card_table_v13_pageN.png / .pdf<br/>A4 全5枚]
-    P2["vpc_v13_page2〜5.py<br/>（page5はproject-thread-5md6eqブランチ）"] -.->|CSVを読まず自己完結| OUT
+    P2[vpc_v13_page2〜5.py] -.->|CSVを読まず自己完結| OUT
     DU --> BF[build_final.py など]
     BF --> IDX[index.html<br/>window.medicineMaster を埋め込み生成]
-    PS[print_style.py<br/>印刷フォント6pt下限保証] -.->|project-thread-67zu13ブランチのみ導入済み、未マージ| P1
+    PS[print_style.py<br/>印刷フォント6pt下限保証] -.->|1〜4枚目に導入済み、5枚目は未導入| P1
 ```
 
 - `package_verification.csv` を実際にCSVとして読み込むのは `vpc_v13_page1.py` だけです。2〜5枚目のスクリプトはCSVを読まず、Python内に直接データを持つ自己完結型です（4・5枚目の本文中に `package_verification.csv` への言及はありますが、あくまる説明文であり読み込みではありません）。
@@ -37,7 +37,7 @@ flowchart LR
 - 全5ページを1つのPDF（`atomic_card_table_v13_全5枚.pdf`）にまとめるには、5ページ分の`.pdf`を生成した後に `python build_combined_pdf.py` を実行します（`pip install pypdf`が必要）。1回の印刷操作で5枚とも印刷できます。
 - `data_updated.csv` と `confusing_medicines_reference.csv` は `vpc_v13_page*.py` からは直接読まれません。`extract_package_data_v2.py` / `extract_package_data_with_confusing.py` などのオフライン生成スクリプトが読み込んで `package_verification.csv` を再生成する入力データです。
 - `index.html` は上記スクリプトとは独立して動作するWebアプリで、CSVをその場では読みません。`build_final.py`（旧 `build.py`）が `data_updated.csv` を読み込み、`window.medicineMaster = {...}` という埋め込みJSONを生成して `index.html` に書き込んでいます。
-- `print_style.py` は印刷時フォントサイズ6pt下限を保証する共通モジュールです。現時点では `project-thread-67zu13` ブランチにのみ導入されており、`main` にはまだマージされていません。
+- `print_style.py` は印刷時フォントサイズ6pt下限を保証する共通モジュールです。`main` にマージ済みで、1〜4枚目（`vpc_v13_page1〜4.py`）が利用しています。5枚目（`vpc_v13_page5.py`）はまだ導入されておらず、6pt下限の自動チェックが働いていません。
 
 ## CSVの区分
 
