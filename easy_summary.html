@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>やさしいまとめ</title>
+<meta name="description" content="A4早見表プロジェクトの、やさしい2ページまとめ（印刷用）">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --gray: #555555;
+    --lgray: #888888;
+    --line: #dddddd;
+    --bg: #ffffff;
+    --card-bg: #fafafa;
+    --accent: #1565c0;
+    --accent-bg: #eef5fc;
+    --warm: #e65100;
+    --warm-bg: #fff3e8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #eaeaea; --gray: #bdbdbd; --lgray: #9a9a9a; --line: #3a3a3a;
+      --bg: #141414; --card-bg: #1d1d1d; --accent: #6cb3f7; --accent-bg: #16314a;
+      --warm: #ffb074; --warm-bg: #3a2415;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #eaeaea; --gray: #bdbdbd; --lgray: #9a9a9a; --line: #3a3a3a;
+    --bg: #141414; --card-bg: #1d1d1d; --accent: #6cb3f7; --accent-bg: #16314a;
+    --warm: #ffb074; --warm-bg: #3a2415;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    line-height: 1.85;
+  }
+  .sheet {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+  .sheet + .sheet {
+    border-top: 2px dashed var(--line);
+  }
+  @media print {
+    .sheet { page-break-after: always; padding: 14mm 10mm; max-width: none; }
+    .sheet + .sheet { border-top: none; page-break-before: always; }
+    .screen-only { display: none; }
+  }
+  h1 {
+    font-size: 21px;
+    margin: 0 0 4px;
+  }
+  .lead {
+    color: var(--gray);
+    font-size: 13.5px;
+    margin: 0 0 22px;
+  }
+  .page-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+  .big-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .big-card.warm {
+    border-color: var(--warm);
+    background: var(--warm-bg);
+  }
+  .big-card.accent {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .card-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    flex: 0 0 auto;
+  }
+  p, li { font-size: 13px; color: var(--ink); margin: 0 0 6px; }
+  ul { margin: 0; padding-left: 1.3em; }
+  .plain { color: var(--gray); }
+  .page5-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .mini {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .mini .mini-num {
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .mini .mini-txt {
+    font-size: 10.5px;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: var(--lgray);
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+  .footer-note a { color: var(--lgray); }
+  code {
+    background: var(--card-bg);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 1ページ目（おもて） ============ -->
+<div class="sheet">
+  <span class="page-label">1/2</span>
+  <h1>このリポジトリ、何のための物？（やさしいまとめ）</h1>
+  <p class="lead">細かい話は抜きにして、「結局これは何？」が分かるように、できるだけ短くまとめました。</p>
+
+  <div class="big-card accent">
+    <p class="card-title"><span class="num">?</span>ひとことで言うと</p>
+    <p>薬局のレジで、「この薬は年齢確認が必要？」「何個まで売っていい？」をその場でパッと確認できる、<strong>A4・5枚の早見表</strong>を作っているプロジェクトです。</p>
+  </div>
+
+  <div class="big-card warm">
+    <p class="card-title"><span class="num">!</span>まず知っておいてほしいこと</p>
+    <p>新しいパッケージには、箱に「<strong>要</strong>」という丸い枠の印刷があります。<strong>日常の確認は、基本これを見るだけで十分</strong>です。</p>
+    <p class="plain">この資料一式は、その印だけでは分からない商品や、お客様への説明が必要なときに開く「虎の巻」のようなものです。毎回これを最初から読む前提ではありません。</p>
+  </div>
+
+  <div class="big-card">
+    <p class="card-title"><span class="num">1</span>なぜ必要になったの？</p>
+    <p>2026年5月から、一部のかぜ薬・せき止め等（指定濫用防止医薬品）は、年齢確認や購入数の制限など、今までより細かいルールで売ることになりました。</p>
+    <p class="plain">ルールの根拠は国の通知に分かれていて複雑なので、レジで毎回調べるのは現実的ではありません。そこで「これさえ見れば分かる」形にまとめています。</p>
+  </div>
+
+  <div class="big-card">
+    <p class="card-title"><span class="num">2</span>気をつけて作っているところ</p>
+    <ul>
+      <li>「たぶんこう」という曖昧な情報は、断定せずに「未確認」とはっきり書く</li>
+      <li>重要なことと補足的なことが、パッと見分けられるようにする</li>
+      <li>法律が変わってもすぐ直せるよう、元データと出典をひも付けておく</li>
+    </ul>
+  </div>
+
+  <div class="footer-note">
+    裏面につづきます → 「2. 中身の一覧」「3. いま残っている課題」
+  </div>
+</div>
+
+<!-- ============ 2ページ目（うら） ============ -->
+<div class="sheet">
+  <span class="page-label">2/2</span>
+  <h1>中身と、今どこまでできているか</h1>
+
+  <div class="big-card">
+    <p class="card-title"><span class="num">3</span>5枚の中身（ざっくり）</p>
+    <div class="page5-grid">
+      <div class="mini"><div class="mini-num">1</div><div class="mini-txt">商品別の早見表</div></div>
+      <div class="mini"><div class="mini-num">2</div><div class="mini-txt">レジでの聞き方</div></div>
+      <div class="mini"><div class="mini-num">3</div><div class="mini-txt">社内マニュアル要点</div></div>
+      <div class="mini"><div class="mini-num">4</div><div class="mini-txt">新商品追加の手順</div></div>
+      <div class="mini"><div class="mini-num">5</div><div class="mini-txt">穴埋め判定シート</div></div>
+    </div>
+  </div>
+
+  <div class="big-card">
+    <p class="card-title"><span class="num">4</span>今、残っている課題（正直ベース）</p>
+    <ul>
+      <li>見た目の分かりやすさ：まだ改善の余地あり（実際に使ってみて直す予定）</li>
+      <li>一部の数字（品目数など）は、裏付けが取れるまで空欄のまま</li>
+      <li>医学的な細かい記述は、裏付けなしでは書かない方針を徹底中</li>
+    </ul>
+    <p class="plain">「完璧に仕上がってから出す」より、「今の精度を正直に示しつつ、現場で使いながら直す」方針で進めています。</p>
+  </div>
+
+  <div class="big-card">
+    <p class="card-title"><span class="num">5</span>もっと詳しく知りたいとき</p>
+    <ul>
+      <li>資料のダウンロード：<code>downloads.html</code></li>
+      <li>趣旨・目的のくわしい版：<code>overview.html</code></li>
+      <li>出典の一覧：<code>SOURCES.md</code></li>
+      <li>細かい経緯・やりとり：<code>WISHLIST.md</code></li>
+    </ul>
+  </div>
+
+  <div class="footer-note">
+    詳しいサイト：<a href="https://aimsoaringhaiku.github.io/pharma-gatekeeper/" target="_blank" rel="noopener">aimsoaringhaiku.github.io/pharma-gatekeeper</a>　／　リポジトリ：<a href="https://github.com/AimSoaringHaiku/pharma-gatekeeper" target="_blank" rel="noopener">AimSoaringHaiku/pharma-gatekeeper</a>
+  </div>
+</div>
+
+</body>
+</html>
